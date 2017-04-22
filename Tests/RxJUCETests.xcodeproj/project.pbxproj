@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5B1FB7DA1EAB428200960678 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FB7D11EAB41CE00960678 /* Tests.m */; };
-		5BF335481EAB42C200663EC3 /* ExampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BF335471EAB42C200663EC3 /* ExampleTest.cpp */; };
 		5BF3354F1EAB443E00663EC3 /* libRxJUCE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BF3354E1EAB443600663EC3 /* libRxJUCE.a */; };
+		5BF335561EAB463200663EC3 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF335521EAB463200663EC3 /* Tests.m */; };
+		5BF335571EAB463200663EC3 /* ExampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BF335541EAB463200663EC3 /* ExampleTest.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,10 +24,10 @@
 
 /* Begin PBXFileReference section */
 		5B1FB7CF1EAB41CE00960678 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B1FB7D11EAB41CE00960678 /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
-		5B1FB7D31EAB41CE00960678 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5BF335471EAB42C200663EC3 /* ExampleTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleTest.cpp; sourceTree = "<group>"; };
 		5BF335491EAB443600663EC3 /* RxJUCE.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxJUCE.xcodeproj; path = ../Builds/MacOSX/RxJUCE.xcodeproj; sourceTree = "<group>"; };
+		5BF335511EAB463200663EC3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5BF335521EAB463200663EC3 /* Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
+		5BF335541EAB463200663EC3 /* ExampleTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleTest.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,9 +45,8 @@
 		5B1FB7BB1EAB41B100960678 = {
 			isa = PBXGroup;
 			children = (
-				5BF335471EAB42C200663EC3 /* ExampleTest.cpp */,
-				5B1FB7D11EAB41CE00960678 /* Tests.m */,
-				5B1FB7D31EAB41CE00960678 /* Info.plist */,
+				5BF335531EAB463200663EC3 /* Tests */,
+				5BF335501EAB463200663EC3 /* Other */,
 				5B1FB7C51EAB41B100960678 /* Products */,
 				5BF335491EAB443600663EC3 /* RxJUCE.xcodeproj */,
 			);
@@ -67,6 +66,23 @@
 				5BF3354E1EAB443600663EC3 /* libRxJUCE.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5BF335501EAB463200663EC3 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				5BF335511EAB463200663EC3 /* Info.plist */,
+				5BF335521EAB463200663EC3 /* Tests.m */,
+			);
+			path = Other;
+			sourceTree = "<group>";
+		};
+		5BF335531EAB463200663EC3 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				5BF335541EAB463200663EC3 /* ExampleTest.cpp */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,8 +169,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BF335481EAB42C200663EC3 /* ExampleTest.cpp in Sources */,
-				5B1FB7DA1EAB428200960678 /* Tests.m in Sources */,
+				5BF335571EAB463200663EC3 /* ExampleTest.cpp in Sources */,
+				5BF335561EAB463200663EC3 /* Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +283,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 847N948XY6;
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = Other/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.martin-finke.Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -279,7 +295,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 847N948XY6;
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = Other/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.martin-finke.Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
