@@ -4,3 +4,4 @@ xcuserdata
 *.xcscmblueprint
 /JuceLibraryCode
 /Builds
+/Tests/RxJUCETests.xcodeproj/project.xcworkspace
