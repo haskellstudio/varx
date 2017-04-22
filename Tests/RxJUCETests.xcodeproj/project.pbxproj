@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B4EDA291EAB81BE0087B30B /* ExampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4EDA281EAB81BE0087B30B /* ExampleTest.cpp */; };
+		5B4EDA2D1EAB89620087B30B /* RxJUCETestBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4EDA2B1EAB89620087B30B /* RxJUCETestBase.cpp */; };
+		5B4EDA311EABC4B30087B30B /* CreateXCTestClass_Mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B4EDA301EABC4B30087B30B /* CreateXCTestClass_Mac.mm */; };
+		5B4EDA381EABD5E50087B30B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4EDA371EABD5E50087B30B /* Cocoa.framework */; };
 		5BF3354F1EAB443E00663EC3 /* libRxJUCE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BF3354E1EAB443600663EC3 /* libRxJUCE.a */; };
-		5BF335561EAB463200663EC3 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF335521EAB463200663EC3 /* Tests.m */; };
-		5BF335571EAB463200663EC3 /* ExampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BF335541EAB463200663EC3 /* ExampleTest.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,10 +26,15 @@
 
 /* Begin PBXFileReference section */
 		5B1FB7CF1EAB41CE00960678 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B4EDA281EAB81BE0087B30B /* ExampleTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleTest.cpp; sourceTree = "<group>"; };
+		5B4EDA2B1EAB89620087B30B /* RxJUCETestBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RxJUCETestBase.cpp; sourceTree = "<group>"; };
+		5B4EDA2C1EAB89620087B30B /* RxJUCETestBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RxJUCETestBase.h; sourceTree = "<group>"; };
+		5B4EDA301EABC4B30087B30B /* CreateXCTestClass_Mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateXCTestClass_Mac.mm; sourceTree = "<group>"; };
+		5B4EDA321EABC5850087B30B /* CreateXCTestClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateXCTestClass.h; sourceTree = "<group>"; };
+		5B4EDA341EABC6E90087B30B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5B4EDA371EABD5E50087B30B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		5BF335491EAB443600663EC3 /* RxJUCE.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RxJUCE.xcodeproj; path = ../Builds/MacOSX/RxJUCE.xcodeproj; sourceTree = "<group>"; };
 		5BF335511EAB463200663EC3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5BF335521EAB463200663EC3 /* Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
-		5BF335541EAB463200663EC3 /* ExampleTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleTest.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B4EDA381EABD5E50087B30B /* Cocoa.framework in Frameworks */,
 				5BF3354F1EAB443E00663EC3 /* libRxJUCE.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -49,6 +57,7 @@
 				5BF335501EAB463200663EC3 /* Other */,
 				5B1FB7C51EAB41B100960678 /* Products */,
 				5BF335491EAB443600663EC3 /* RxJUCE.xcodeproj */,
+				5B4EDA331EABC6E90087B30B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,6 +67,15 @@
 				5B1FB7CF1EAB41CE00960678 /* Tests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5B4EDA331EABC6E90087B30B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5B4EDA371EABD5E50087B30B /* Cocoa.framework */,
+				5B4EDA341EABC6E90087B30B /* Foundation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		5BF3354A1EAB443600663EC3 /* Products */ = {
@@ -72,7 +90,10 @@
 			isa = PBXGroup;
 			children = (
 				5BF335511EAB463200663EC3 /* Info.plist */,
-				5BF335521EAB463200663EC3 /* Tests.m */,
+				5B4EDA2C1EAB89620087B30B /* RxJUCETestBase.h */,
+				5B4EDA2B1EAB89620087B30B /* RxJUCETestBase.cpp */,
+				5B4EDA321EABC5850087B30B /* CreateXCTestClass.h */,
+				5B4EDA301EABC4B30087B30B /* CreateXCTestClass_Mac.mm */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -80,7 +101,7 @@
 		5BF335531EAB463200663EC3 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				5BF335541EAB463200663EC3 /* ExampleTest.cpp */,
+				5B4EDA281EAB81BE0087B30B /* ExampleTest.cpp */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -169,8 +190,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BF335571EAB463200663EC3 /* ExampleTest.cpp in Sources */,
-				5BF335561EAB463200663EC3 /* Tests.m in Sources */,
+				5B4EDA311EABC4B30087B30B /* CreateXCTestClass_Mac.mm in Sources */,
+				5B4EDA291EAB81BE0087B30B /* ExampleTest.cpp in Sources */,
+				5B4EDA2D1EAB89620087B30B /* RxJUCETestBase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
