@@ -2,6 +2,6 @@
 xcuserdata
 *.xccheckout
 *.xcscmblueprint
-/JuceLibraryCode
-/Builds
 /Tests/RxJUCETests.xcodeproj/project.xcworkspace
+/Tests/Builds
+/Tests/JuceLibraryCode

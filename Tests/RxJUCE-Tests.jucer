@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="ggJgza" name="RxJUCE-Tests" projectType="consoleapp" version="1.0.0"
+              bundleIdentifier="de.martin-finke.RxJUCE-Tests" includeBinaryInAppConfig="1"
+              jucerVersion="4.3.1" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de">
+  <MAINGROUP id="J6yVM5" name="RxJUCE-Tests">
+    <FILE id="G8CbCM" name="catch.hpp" compile="0" resource="0" file="catch.hpp"/>
+    <FILE id="KS7Zoo" name="main.cpp" compile="1" resource="0" file="main.cpp"/>
+    <GROUP id="{66B2DD06-7C44-A472-71BD-F3BABA3A8F56}" name="Tests">
+      <FILE id="De1OlQ" name="ExampleTest.cpp" compile="1" resource="0" file="Tests/ExampleTest.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" keepCustomXcodeSchemes="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="RxJUCE"
+                       osxCompatibility="10.7 SDK" cppLanguageStandard="c++11" cppLibType="libc++"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="RxJUCE"
+                       cppLanguageStandard="c++11" cppLibType="libc++" osxCompatibility="10.7 SDK"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="/Users/martin/Entwicklung/Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/Users/martin/Entwicklung/Libraries/JUCE/modules"/>
+        <MODULEPATH id="rxjuce" path="../"/>
+        <MODULEPATH id="juce_events" path="/Users/martin/Entwicklung/Libraries/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="rxjuce" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>

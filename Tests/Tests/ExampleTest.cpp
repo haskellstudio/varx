@@ -1,29 +1,22 @@
-//
-//  ExampleTest.cpp
-//  RxJUCETests
-//
-//  Created by Martin Finke on 22.04.17.
-//  Copyright © 2017 Martin Finke. All rights reserved.
-//
+/*
+  ==============================================================================
 
-#include "RxJUCETestBase.h"
+    ExampleTest.cpp
+    Created: 22 Apr 2017 8:47:10pm
+    Author:  Martin Finke
 
-RxJUCETest("My Example Test",
-	{"This is the first test", [this]() {
-		expectEquals(1, 1);
-	}},
-			   
-	{"This is another test", [this]() {
-		expectEquals(1, 1);
-	}}
-);
+  ==============================================================================
+*/
 
-RxJUCETest("Another Example Test",
-	{"This is the first test", [this]() {
-		expectEquals(2, 1);
-	}},
-		   
-	{"This is another test", [this]() {
-		expectEquals(1, 1);
-	}}
-);
+#include "catch.hpp"
+
+unsigned int Factorial( unsigned int number ) {
+	return number > 1 ? Factorial(number-1)*number : 1;
+}
+
+TEST_CASE("Factorials are computed") {
+	REQUIRE( Factorial(1) == 1 );
+	REQUIRE( Factorial(2) == 2 );
+	REQUIRE( Factorial(3) == 6 );
+	REQUIRE( Factorial(10) == 3628800 );
+}
