@@ -4,10 +4,12 @@
               bundleIdentifier="de.martin-finke.RxJUCE-Tests" includeBinaryInAppConfig="1"
               jucerVersion="4.3.1" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de">
   <MAINGROUP id="J6yVM5" name="RxJUCE-Tests">
-    <FILE id="G8CbCM" name="catch.hpp" compile="0" resource="0" file="catch.hpp"/>
-    <FILE id="KS7Zoo" name="main.cpp" compile="1" resource="0" file="main.cpp"/>
     <GROUP id="{66B2DD06-7C44-A472-71BD-F3BABA3A8F56}" name="Tests">
       <FILE id="De1OlQ" name="ExampleTest.cpp" compile="1" resource="0" file="Tests/ExampleTest.cpp"/>
+    </GROUP>
+    <GROUP id="{7DDA8FB2-08B3-CA53-D163-57C4F163D53D}" name="Other">
+      <FILE id="xEG9oK" name="catch.hpp" compile="0" resource="0" file="Other/catch.hpp"/>
+      <FILE id="q2rNbF" name="main.cpp" compile="1" resource="0" file="Other/main.cpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
