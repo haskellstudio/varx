@@ -9,14 +9,16 @@
 */
 
 #include "catch.hpp"
+#include "rxjuce.h"
 
-unsigned int Factorial( unsigned int number ) {
-	return number > 1 ? Factorial(number-1)*number : 1;
-}
+using namespace rxjuce;
 
-TEST_CASE("Factorials are computed") {
-	REQUIRE(Factorial(1) == 1);
-	REQUIRE(Factorial(2) == 2);
-	REQUIRE(Factorial(3) == 6);
-	REQUIRE(Factorial(10) == 3628801);
+TEST_CASE("Observable::just") {
+	double value = 0;
+	
+	Observable::just(3.14).subscribe([&](var newValue) {
+		value = newValue;
+	});
+	
+	REQUIRE(value == 3.14);
 }

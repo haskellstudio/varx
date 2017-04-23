@@ -13,3 +13,7 @@ END_JUCE_MODULE_DECLARATION
 */
 #endif
 
+#pragma once
+
+#include "observable/rxjuce_Observable.h"
+#include "observable/rxjuce_Subscription.h"
