@@ -8,12 +8,11 @@
 
 #pragma once
 
-#include "JuceHeader.h"
-
 #include <functional>
 
 namespace rxjuce {
-	class Subscription {
+	class Subscription
+	{
 	public:
 		Subscription(Subscription&& other);
 		Subscription& operator=(Subscription&& other);

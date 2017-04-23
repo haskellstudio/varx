@@ -15,5 +15,9 @@ END_JUCE_MODULE_DECLARATION
 
 #pragma once
 
+#include <juce_core/juce_core.h>
+#include <juce_data_structures/juce_data_structures.h>
+
 #include "observable/rxjuce_Observable.h"
 #include "observable/rxjuce_Subscription.h"
+#include "value/rxjuce_ValueSource.h"

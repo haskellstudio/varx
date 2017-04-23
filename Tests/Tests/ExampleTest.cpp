@@ -9,7 +9,8 @@
 */
 
 #include "catch.hpp"
-#include "rxjuce.h"
+
+#include "JuceHeader.h"
 
 using namespace rxjuce;
 

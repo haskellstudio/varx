@@ -10,16 +10,15 @@
 
 #include "rxjuce_Subscription.h"
 
-#include "JuceHeader.h"
-
 #include <functional>
 
 namespace rxjuce {
-	class Observable {
+	class Observable
+	{
 	public:
-		Subscription subscribe(const std::function<void(var)>& f);
+		Subscription subscribe(const std::function<void(juce::var)>& f);
 		
-		static Observable just(var value);
+		static Observable just(juce::var value);
 		
 	private:
 		struct Impl;
