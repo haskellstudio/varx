@@ -1,6 +1,6 @@
 //
 //  rxjuce_Subscription.h
-//  RxJUCE-Tests
+//  RxJUCE
 //
 //  Created by Martin Finke on 23.04.17.
 //

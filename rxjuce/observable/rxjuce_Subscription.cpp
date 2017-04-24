@@ -1,6 +1,6 @@
 //
 //  rxjuce_Subscription.cpp
-//  RxJUCE-Tests
+//  RxJUCE
 //
 //  Created by Martin Finke on 23.04.17.
 //
@@ -15,8 +15,7 @@
 namespace rxjuce {
 	Subscription::Subscription(const std::function<void()>& unsubscribe)
 	: _unsubscribe(unsubscribe)
-	{
-	}
+	{}
 	
 	Subscription::Subscription(Subscription&& other)
 	{

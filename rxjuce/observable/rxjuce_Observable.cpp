@@ -1,40 +1,80 @@
 //
 //  rxjuce_Observable.cpp
-//  RxJUCE-Tests
+//  RxJUCE
 //
 //  Created by Martin Finke on 23.04.17.
 //
 //
 
-#include "rxjuce_Observable.h"
-
 #include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
 
+#include "rxjuce_Observable.h"
+
+
 namespace rxjuce {
-	struct Observable::Impl
+	class Observable::Internal : public juce::ReferenceCountedObject
 	{
-		rxcpp::observable<var> o;
+	public:
+		Internal(const rxcpp::observable<juce::var>& o)
+		:	o(o)
+		{}
+		Internal() {}
+		~Internal() {}
+		
+		rxcpp::observable<juce::var> o;
 	};
 	
-	Subscription Observable::subscribe(const std::function<void(var)>& f)
+	Observable::Observable(const juce::Value& value)
+	:	Observable(InternalFromValue(value))
+	{}
+	
+	Observable::Observable(const std::shared_ptr<Internal>& internal)
+	:	internal(internal)
+	{}
+	
+	Subscription Observable::subscribe(const std::function<void(juce::var)>& f)
 	{
-		const rxcpp::subscription s = getImpl().o.subscribe(f);
+		const auto _internal = internal;
+		const auto subscription = _internal->o.subscribe(f);
 		
-		return Subscription([s]() {
-			s.unsubscribe();
+		return Subscription([_internal, subscription]() {
+			subscription.unsubscribe();
 		});
 	}
 	
-	Observable::Observable(const GetImpl& getImpl)
-	: getImpl(getImpl)
+	Observable Observable::just(juce::var value)
 	{
+		return std::make_shared<Internal>(rxcpp::observable<>::just(value));
 	}
 	
-	Observable Observable::just(var value)
+	Observable Observable::map(const std::function<juce::var(juce::var)>& transform)
 	{
-		const auto o = rxcpp::observable<>::just(value);
-		return Observable([o]() -> Impl {
-			return {.o = o};
-		});
+		return std::make_shared<Internal>(internal->o.map(transform));
+	}
+	
+	Observable::Internal_Ptr Observable::InternalFromValue(const juce::Value& value)
+	{
+		class ValueListeningInternal : public Observable::Internal, private juce::Value::Listener
+		{
+		public:
+			ValueListeningInternal(const juce::Value &source)
+			:	value(source),
+				s(value.getValue())
+			{
+				o = s.get_observable();
+				value.addListener(this);
+			}
+			
+		private:
+			void valueChanged(juce::Value &value) override
+			{
+				s.get_subscriber().on_next(value);
+			}
+			
+			juce::Value value;
+			rxcpp::subjects::behavior<juce::var> s;
+		};
+		
+		return std::make_shared<ValueListeningInternal>(value);
 	}
 }

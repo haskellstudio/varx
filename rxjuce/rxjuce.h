@@ -20,4 +20,3 @@ END_JUCE_MODULE_DECLARATION
 
 #include "observable/rxjuce_Observable.h"
 #include "observable/rxjuce_Subscription.h"
-#include "value/rxjuce_ValueSource.h"
