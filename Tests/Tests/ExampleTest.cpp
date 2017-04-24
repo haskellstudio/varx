@@ -16,6 +16,7 @@
 using namespace rxjuce;
 using juce::var;
 using juce::Value;
+using juce::String;
 
 TEST_CASE("Observable::just") {
 	double result = 0;
@@ -32,7 +33,7 @@ TEST_CASE("Value Observable") {
 	
 	double result = 0;
 	
-	auto subscription = Observable(value).subscribe([&](var newValue) {
+	auto subscription = Observable(value).subscribe([&](double newValue) {
 		result = newValue;
 	});
 	
@@ -43,4 +44,24 @@ TEST_CASE("Value Observable") {
 	juce::MessageManager::getInstance()->runDispatchLoopUntil(0);
 	
 	REQUIRE(result == 42);
+}
+
+TEST_CASE("Observable::map") {
+	Observable stringObservable = Observable::just("17.25");
+	
+	Observable floatObservable = stringObservable.map([](String s) {
+		return s.getFloatValue() * 2;
+	});
+	
+	Observable secondStringObservable = floatObservable.map([](float f) {
+		return String(f) + " years.";
+	});
+	
+	
+	String result;
+	secondStringObservable.subscribe([&](String s) {
+		result = s;
+	});
+	
+	REQUIRE(result == "34.5 years.");
 }
