@@ -24,6 +24,7 @@ namespace rxjuce {
 		static Observable just(juce::var value);
 		
 		Observable map(const std::function<juce::var(juce::var)>& transform);
+		Observable combineLatest(juce::Array<Observable> others, const std::function<juce::var(const juce::Array<juce::var>&)>& transform);
 		
 	private:
 		class Internal;
@@ -32,6 +33,6 @@ namespace rxjuce {
 		Observable(const Internal_Ptr& internal);
 		static Internal_Ptr InternalFromValue(const juce::Value& value);
 		
-		const Internal_Ptr internal;
+		Internal_Ptr internal;
 	};
 }

@@ -47,13 +47,14 @@ TEST_CASE("Value Observable") {
 }
 
 TEST_CASE("Observable::map") {
-	Observable stringObservable = Observable::just("17.25");
+	bool b = 3.14;
+	auto stringObservable = Observable::just("17.25");
 	
-	Observable floatObservable = stringObservable.map([](String s) {
+	auto floatObservable = stringObservable.map([](String s) {
 		return s.getFloatValue() * 2;
 	});
 	
-	Observable secondStringObservable = floatObservable.map([](float f) {
+	auto secondStringObservable = floatObservable.map([](float f) {
 		return String(f) + " years.";
 	});
 	
@@ -64,4 +65,24 @@ TEST_CASE("Observable::map") {
 	});
 	
 	REQUIRE(result == "34.5 years.");
+}
+
+TEST_CASE("Observable::combineLatest") {
+	auto f = Observable::just(4.54);
+	auto s = Observable::just(String(juce::CharPointer_UTF8("€")));
+	auto comment = Observable::just("not a lot!");
+	
+	juce::Array<Observable> others;
+	others.add(s);
+	others.add(comment);
+	auto combined = f.combineLatest(others, [](juce::Array<var> values) {
+		return String(float(values[0])) + " " + values[1].toString() + " is " + values[2].toString();
+	});
+	
+	String result;
+	combined.subscribe([&](String s) {
+		result = s;
+	});
+	
+	REQUIRE(result == "4.54 € is not a lot!");
 }
