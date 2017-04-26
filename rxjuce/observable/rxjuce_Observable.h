@@ -10,6 +10,8 @@
 
 #include "rxjuce_Subscription.h"
 
+class Subscriber;
+
 class Observable
 {
 public:
@@ -19,11 +21,17 @@ public:
 	/**
 	 Creation
 	 */
-	Observable(const juce::Value& value);
+	
+	/**
+		Creates a new `Observable` from a given JUCE `Value`'s **source**. The observable refers to the value's underlying `ValueSource` and continues to emit values even after the `Value` disappears.
+	 */
+	static Observable fromValue(const juce::Value& value);
 	
 	static Observable just(var value);
 	
-	static Observable range(var first, var last, std::ptrdiff_t step);
+	static Observable range(var first, var last, int step);
+	
+	static Observable create(const std::function<void(const Subscriber&)>& onSubscribe);
 	
 	
 	
@@ -32,14 +40,15 @@ public:
 	 Subscription
 	 */
 	
-	Subscription subscribe(const std::function<void(var)>& f);
+	Subscription subscribe(const std::function<void(var)>& f) const;
 	
 	
 	//==============================================================================
 	/**
-	 Transformation functions with different arity.
+	 Operators
 	 */
 	
+	// Transformation functions with different arity.
 	typedef const std::function<var(const var&)>& Transform1;
 	typedef const std::function<var(const var&, const var&)>& Transform2;
 	typedef const std::function<var(const var&, const var&, const var&)>& Transform3;
@@ -51,10 +60,6 @@ public:
 	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform9;
 	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform10;
 	
-	//==============================================================================
-	/**
-	 Operators
-	 */
 	
 	Observable map(Transform1 transform);
 	

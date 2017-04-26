@@ -33,6 +33,7 @@ END_JUCE_MODULE_DECLARATION
 namespace rxjuce {
 
 #include "observable/rxjuce_Observable.h"
+#include "observable/rxjuce_Subscriber.h"
 #include "observable/rxjuce_Subscription.h"
 
 }

@@ -27,6 +27,12 @@ namespace juce {\
 RXJUCE_DEFINE_PRINT_FUNCTION(var, {
 	if (value.isBool())
 		return (value ? "true" : "false");
+	else if (value.isVoid())
+		return "void";
+	else if (value.isUndefined())
+		return "undefined";
+	else if (value.isString())
+		return "\"" + value.toString() + "\"";
 	else
 		return value.toString();
 })
@@ -48,9 +54,6 @@ RXJUCE_DEFINE_PRINT_FUNCTION(Array<var>, {
 #include "catch.hpp"
 
 using namespace rxjuce;
-using juce::var;
-using juce::Value;
-using juce::String;
 
 TEST_CASE("Observable::just") {
 	double result = 0;
@@ -62,12 +65,12 @@ TEST_CASE("Observable::just") {
 	REQUIRE(result == 3.14);
 }
 
-TEST_CASE("Value Observable") {
+TEST_CASE("Observable::fromValue") {
 	Value value(17);
 	
 	double result = 0;
 	
-	auto subscription = Observable(value).subscribe([&](double newValue) {
+	auto subscription = Observable::fromValue(value).subscribe([&](double newValue) {
 		result = newValue;
 	});
 	
@@ -75,7 +78,7 @@ TEST_CASE("Value Observable") {
 	
 	value = 42;
 
-	juce::MessageManager::getInstance()->runDispatchLoopUntil(0);
+	MessageManager::getInstance()->runDispatchLoopUntil(0);
 	
 	REQUIRE(result == 42);
 }
@@ -118,10 +121,10 @@ TEST_CASE("Observable::combineLatest with one other Observable") {
 
 TEST_CASE("Observable::combineLatest with Array") {
 	auto f = Observable::just(4.54);
-	auto s = Observable::just(String(juce::CharPointer_UTF8("€")));
+	auto s = Observable::just(String(CharPointer_UTF8("€")));
 	auto comment = Observable::just("not a lot!");
 	
-	auto combined = f.combineLatest({s, comment}, [](juce::Array<var> values) {
+	auto combined = f.combineLatest({s, comment}, [](Array<var> values) {
 		return String(float(values[0])) + " " + values[1].toString() + " is " + values[2].toString();
 	});
 	
@@ -138,28 +141,61 @@ TEST_CASE("Observable::range") {
 	{
 		var first, last;
 		std::ptrdiff_t step;
-		juce::Array<var> expected;
+		Array<var> expected;
 	};
 	
-	const juce::Array<TestSetup> setups({
+	const Array<TestSetup> setups({
 		TestSetup({.first=0, .last=5, .step=1, .expected={0, 1, 2, 3, 4, 5}}),
 		TestSetup({.first=17.5, .last=22.8, .step=2, .expected={17.5, 19.5, 21.5, 22.8}})
 	});
 	
-	juce::var b(true);
-	juce::var strVar("Hello");
-	juce::var dbl(3.14);
-	juce::String s("Hey this is a string");
-	juce::Array<var> arr({b, strVar, dbl, var(s)});
-	juce::StringArray strArr({"Hello", "World!"});
+	var b(true);
+	var strVar("Hello");
+	var dbl(3.14);
+	String s("Hey this is a string");
+	Array<var> arr({b, strVar, dbl, var(s)});
+	StringArray strArr({"Hello", "World!"});
 	
 	for (auto setup : setups) {
 		auto range = Observable::range(setup.first, setup.last, setup.step);
-		juce::Array<var> results;
+		Array<var> results;
 		range.subscribe([&](var v) {
 			results.add(v);
 		});
 
 		REQUIRE(results == setup.expected);
 	}
+}
+
+TEST_CASE("Observable::create") {
+	auto o = Observable::create([](Subscriber s) {
+		s.onNext(3);
+		s.onNext("Hello there!");
+		s.onNext(14.33);
+	});
+	
+	Array<var> result;
+	o.subscribe([&](var value) {
+		result.add(value);
+	});
+	
+	REQUIRE(result == Array<var>({var(3), var("Hello there!"), var(14.33)}));
+}
+
+TEST_CASE("Observable::create with async onSubscribe") {
+	auto o = Observable::create([](Subscriber s) {
+		MessageManager::callAsync([s] () mutable {
+			s.onNext(3.14);
+			s.onNext("Test");
+		});
+	});
+	
+	Array<var> values;
+	o.subscribe([&](var value) {
+		values.add(value);
+	});
+	
+	MessageManager::getInstance()->runDispatchLoopUntil(0);
+	
+	REQUIRE(values == Array<var>({var(3.14), var("Test")}));
 }

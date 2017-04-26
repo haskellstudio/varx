@@ -28,6 +28,4 @@ void Subscription::unsubscribe()
 }
 
 Subscription::~Subscription()
-{
-	unsubscribe();
-}
+{}
