@@ -12,14 +12,13 @@ public:
 	typedef Array<shared_ptr<void>> Sources;
 	typedef shared_ptr<Internal> Ptr;
 	
-	static Ptr fromRxCpp(const rxcpp::observable<var>& o, const std::initializer_list<shared_ptr<void>>& sources = {})
+	static Ptr fromRxCpp(const rxcpp::observable<var>& o)
 	{
-		return std::make_shared<Internal>(o, sources);
+		return std::make_shared<Internal>(o);
 	}
 	
-	Internal(const rxcpp::observable<var>& o = rxcpp::observable<>::never<var>(), const Array<shared_ptr<void>>& sources = {})
-	:	o(o),
-	sources(sources)
+	Internal(const rxcpp::observable<var>& o)
+	:	o(o)
 	{}
 	
 	~Internal() {}
@@ -27,7 +26,7 @@ public:
 	template<typename Transform, typename O, typename... Os>
 	static Ptr combineLatest(Transform&& transform, O&& observable, Os... observables)
 	{
-		return fromRxCpp(observable.internal->o.combine_latest(transform, observables.internal->o...), {observable.internal, observables.internal...});
+		return fromRxCpp(observable.internal->o.combine_latest(transform, observables.internal->o...));
 	}
 	
 	template<typename T>
@@ -37,7 +36,6 @@ public:
 	}
 	
 	rxcpp::observable<var> o;
-	Sources sources;
 	
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Internal)
@@ -165,7 +163,7 @@ Observable Observable::create(const std::function<void(const Subscriber&)>& onSu
 
 Observable Observable::map(Transform1 transform)
 {
-	return Internal::fromRxCpp(internal->o.map(transform), {internal});
+	return Internal::fromRxCpp(internal->o.map(transform));
 }
 
 Observable Observable::combineLatest(Observable o1, Transform2& transform)
