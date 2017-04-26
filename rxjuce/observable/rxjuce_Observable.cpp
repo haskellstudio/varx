@@ -76,7 +76,11 @@ Observable Observable::fromValue(Value value)
 		void add(ValueListener *listener)
 		{
 			{
-				const MessageManagerLock lock;
+				// The timerCallback is called on the message thread. This may be called from a background thread, in which case the message manager must be locked.
+				const MessageManagerLock lock(Thread::getCurrentThread());
+				if (!lock.lockWasGained())
+					return; // Some other thread is trying to kill this thread
+				
 				listeners.add(listener);
 			}
 			startTimerHz(60);
