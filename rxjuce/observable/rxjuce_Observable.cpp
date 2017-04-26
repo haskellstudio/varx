@@ -14,14 +14,8 @@ public:
 	
 	static Ptr fromRxCpp(const rxcpp::observable<var>& o)
 	{
-		return std::make_shared<Internal>(o);
+		return Ptr(new Internal(o));
 	}
-	
-	Internal(const rxcpp::observable<var>& o)
-	:	o(o)
-	{}
-	
-	~Internal() {}
 	
 	template<typename Transform, typename O, typename... Os>
 	static Ptr combineLatest(Transform&& transform, O&& observable, Os... observables)
@@ -35,9 +29,13 @@ public:
 		return fromRxCpp(rxcpp::observable<>::range<T>(first, last, step).map(VariantConverter<T>::toVar));
 	}
 	
-	rxcpp::observable<var> o;
+	const rxcpp::observable<var> o;
 	
 private:
+	Internal(const rxcpp::observable<var>& o)
+	:	o(o)
+	{}
+	
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Internal)
 };
 
@@ -75,18 +73,18 @@ Observable Observable::fromValue(Value value)
 	public:
 		ValueListenerPool() {}
 		
-		void add(ValueListener* listener)
+		void add(ValueListener *listener)
 		{
-			const OwnedArray<ValueListener>::ScopedLockType lock(listeners.getLock());
-			listeners.add(listener);
+			{
+				const MessageManagerLock lock;
+				listeners.add(listener);
+			}
 			startTimerHz(60);
 		}
 		
 	private:
 		void timerCallback() override
 		{
-			const OwnedArray<ValueListener>::ScopedLockType lock(listeners.getLock());
-			
 			for (size_t i = 0; i < listeners.size();) {
 				if (listeners[i]->sourceHasExpired())
 					listeners.remove(i);
@@ -94,9 +92,8 @@ Observable Observable::fromValue(Value value)
 					i += 1;
 			}
 			
-			if (listeners.isEmpty()) {
+			if (listeners.isEmpty())
 				stopTimer();
-			}
 		}
 		
 		OwnedArray<ValueListener> listeners;
@@ -107,10 +104,19 @@ Observable Observable::fromValue(Value value)
 	static ValueListenerPool pool;
 	
 	return create([value](Subscriber s) mutable {
+		// Send the current value
 		s.onNext(value.getValue());
-		pool.add(new ValueListener(value.getValueSource(), [s](const var& newValue) {
+		
+		// Called when the value is changed
+		const auto onValueChanged = [s](const var& newValue) {
 			s.onNext(newValue);
-		}));
+		};
+		
+		// Create the value listener
+		ScopedPointer<ValueListener> listener(new ValueListener(value.getValueSource(), onValueChanged));
+		
+		// Add the listener to the pool, to keep getting updates from the value source
+		pool.add(listener.release());
 	});
 }
 
@@ -120,10 +126,9 @@ Observable::Observable(const shared_ptr<Internal>& internal)
 
 Subscription Observable::subscribe(const std::function<void(var)>& f) const
 {
-	const auto _internal = internal;
-	const auto subscription = _internal->o.subscribe(f);
+	const auto subscription = internal->o.subscribe(f);
 	
-	return Subscription([_internal, subscription]() {
+	return Subscription([subscription]() {
 		subscription.unsubscribe();
 	});
 }
@@ -132,7 +137,6 @@ Observable Observable::just(var value)
 {
 	return Internal::fromRxCpp(rxcpp::observable<>::just(value));
 }
-
 
 Observable Observable::range(var first, var last, int step)
 {
