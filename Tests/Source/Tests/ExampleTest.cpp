@@ -72,20 +72,15 @@ TEST_CASE("Observable::just") {
 TEST_CASE("Observable::fromValue") {
 	Value value(17);
 	
-	double result = 0;
+	RxJUCECollectResult(Observable::fromValue(value), result);
 	
-#warning Fix this, subscription should not be needed.
-	auto subscription = Observable::fromValue(value).subscribe([&](double newValue) {
-		result = newValue;
-	});
-	
-	REQUIRE(result == 17);
+	REQUIRE(result == var(17));
 	
 	value = 42;
 
 	MessageManager::getInstance()->runDispatchLoopUntil(0);
 	
-	REQUIRE(result == 42);
+	REQUIRE(result == var(42));
 }
 
 TEST_CASE("Observable::map") {

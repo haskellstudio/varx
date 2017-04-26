@@ -25,7 +25,7 @@ public:
 	/**
 		Creates a new `Observable` from a given JUCE `Value`'s **source**. The observable refers to the value's underlying `ValueSource` and continues to emit values even after the `Value` disappears.
 	 */
-	static Observable fromValue(const juce::Value& value);
+	static Observable fromValue(juce::Value value);
 	
 	static Observable just(var value);
 	

@@ -17,32 +17,6 @@ public:
 		return std::make_shared<Internal>(o, sources);
 	}
 	
-	static Ptr fromValueSource(Value::ValueSource &source)
-	{
-		class ValueListeningInternal : public Internal, private Value::Listener
-		{
-		public:
-			ValueListeningInternal(Value::ValueSource &source)
-			:	value(&source),
-				s(value.getValue())
-			{
-				o = s.get_observable();
-				value.addListener(this);
-			}
-			
-		private:
-			void valueChanged(Value &value) override
-			{
-				s.get_subscriber().on_next(value);
-			}
-			
-			Value value;
-			rxcpp::subjects::behavior<var> s;
-		};
-		
-		return std::make_shared<ValueListeningInternal>(source);
-	}
-	
 	Internal(const rxcpp::observable<var>& o = rxcpp::observable<>::never<var>(), const Array<shared_ptr<void>>& sources = {})
 	:	o(o),
 	sources(sources)
@@ -69,9 +43,77 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Internal)
 };
 
-Observable Observable::fromValue(const Value& value)
+Observable Observable::fromValue(Value value)
 {
-	return Internal::fromValueSource(Value(value).getValueSource());
+	class ValueListener : private Value::Listener
+	{
+	public:
+		ValueListener(Value::ValueSource &source, const std::function<void(var)>& valueChanged)
+		:	value(&source),
+			_valueChanged(valueChanged)
+		{
+			value.addListener(this);
+		}
+		
+		bool sourceHasExpired()
+		{
+			return (value.getValueSource().getReferenceCount() == 1);
+		}
+		
+	private:
+		void valueChanged(Value &value) override
+		{
+			_valueChanged(value.getValue());
+		}
+		
+		Value value;
+		const std::function<void(var)> _valueChanged;
+		
+		JUCE_DECLARE_NON_COPYABLE(ValueListener)
+	};
+	
+	class ValueListenerPool : private Timer
+	{
+	public:
+		ValueListenerPool() {}
+		
+		void add(ValueListener* listener)
+		{
+			const OwnedArray<ValueListener>::ScopedLockType lock(listeners.getLock());
+			listeners.add(listener);
+			startTimerHz(60);
+		}
+		
+	private:
+		void timerCallback() override
+		{
+			const OwnedArray<ValueListener>::ScopedLockType lock(listeners.getLock());
+			
+			for (size_t i = 0; i < listeners.size();) {
+				if (listeners[i]->sourceHasExpired())
+					listeners.remove(i);
+				else
+					i += 1;
+			}
+			
+			if (listeners.isEmpty()) {
+				stopTimer();
+			}
+		}
+		
+		OwnedArray<ValueListener> listeners;
+		
+		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ValueListenerPool)
+	};
+	
+	static ValueListenerPool pool;
+	
+	return create([value](Subscriber s) mutable {
+		s.onNext(value.getValue());
+		pool.add(new ValueListener(value.getValueSource(), [s](const var& newValue) {
+			s.onNext(newValue);
+		}));
+	});
 }
 
 Observable::Observable(const shared_ptr<Internal>& internal)

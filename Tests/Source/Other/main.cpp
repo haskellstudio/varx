@@ -3,16 +3,27 @@
 
 #include "JuceHeader.h"
 
-int main(int argc, char* argv[])
+class TestRunnerApplication : public JUCEApplication
 {
-	// global setup...
-	juce::MessageManager::getInstance();
+public:
+	void initialise (const String& commandLine) override
+	{
+		Catch::Session().run();
+		quit();
+	}
 	
-	int result = Catch::Session().run( argc, argv );
+	void shutdown() override
+	{}
 	
-	// global clean-up...
+	const String getApplicationName() override
+	{
+		return "RxJUCE-Tests";
+	}
 	
-	juce::MessageManager::deleteInstance();
-	
-	return ( result < 0xff ? result : 0xff );
-}
+	const String getApplicationVersion() override
+	{
+		return "1.0";
+	}
+};
+
+START_JUCE_APPLICATION(TestRunnerApplication)
