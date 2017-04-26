@@ -6,10 +6,6 @@
 //
 //
 
-#include "rxjuce_Subscription.h"
-
-#include <utility>
-
 Subscription::Subscription(const std::function<void()>& unsubscribe)
 : _unsubscribe(unsubscribe)
 {}
@@ -27,7 +23,8 @@ Subscription& Subscription::operator=(Subscription&& other)
 
 void Subscription::unsubscribe()
 {
-	_unsubscribe();
+	if (_unsubscribe)
+		_unsubscribe();
 }
 
 Subscription::~Subscription()

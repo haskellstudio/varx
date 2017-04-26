@@ -26,6 +26,10 @@ END_JUCE_MODULE_DECLARATION
 #include <juce_core/juce_core.h>
 #include <juce_data_structures/juce_data_structures.h>
 
+#include <functional>
+#include <memory>
+#include <cstddef>
+
 namespace rxjuce {
 
 #include "observable/rxjuce_Observable.h"

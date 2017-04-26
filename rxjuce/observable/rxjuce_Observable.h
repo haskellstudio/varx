@@ -10,10 +10,6 @@
 
 #include "rxjuce_Subscription.h"
 
-#include <functional>
-#include <memory>
-#include <cstddef>
-
 class Observable
 {
 public:

@@ -6,10 +6,6 @@
 //
 //
 
-#include "rxjuce_Observable.h"
-
-#include <initializer_list>
-
 class Observable::Internal
 {
 public:
