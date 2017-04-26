@@ -12,24 +12,38 @@
 
 #include <iostream>
 
-namespace juce
-{
-	std::ostream& operator<<(std::ostream& os, const Array<var> array) {
-		os << "Hello World";
-		return os;
-	}
-}
+#define RXJUCE_DEFINE_PRINT_FUNCTION(__type, __body) namespace rxjuce {\
+	namespace util {\
+		String desc(const __type& value) __body\
+	}\
+}\
+namespace juce {\
+	std::ostream& operator<<(std::ostream& os, const __type& value) {\
+		os << rxjuce::util::desc(value);\
+		return os;\
+	}\
+}\
 
-/*
-namespace Catch {
-	template<typename T>
-	std::string toString(const juce::Array<T>& array) {
-		std::string s = "{";
-		s += "Hello";
-		return s + "}";
-	}
-}
- */
+RXJUCE_DEFINE_PRINT_FUNCTION(var, {
+	if (value.isBool())
+		return (value ? "true" : "false");
+	else
+		return value.toString();
+})
+
+RXJUCE_DEFINE_PRINT_FUNCTION(StringArray, {
+	return "{" + value.joinIntoString(", ") + "}";
+})
+
+RXJUCE_DEFINE_PRINT_FUNCTION(Array<var>, {
+	StringArray strings;
+	for (var v : value)
+		strings.add(rxjuce::util::desc(v));
+	
+	return rxjuce::util::desc(strings);
+})
+
+#undef RXJUCE_DEFINE_PRINT_FUNCTION
 
 #include "catch.hpp"
 
@@ -119,20 +133,6 @@ TEST_CASE("Observable::combineLatest with Array") {
 	REQUIRE(result == "4.54 € is not a lot!");
 }
 
-namespace rxjuce {
-	namespace util {
-		String desc(const var& v) {return v.toString();}
-		String desc(const String &s) { return s; }
-		String desc(const juce::Array<var>& arr) { return "Some array description."; }
-		String desc(const juce::StringArray &sa) {
-			return ("{" + sa.joinIntoString(", ") + "}");
-		}
-		String desc(const juce::StringPairArray &spa) { return spa.getDescription(); }
-		
-	}
-}
-
-
 TEST_CASE("Observable::range") {
 	struct TestSetup
 	{
@@ -143,7 +143,7 @@ TEST_CASE("Observable::range") {
 	
 	const juce::Array<TestSetup> setups({
 		TestSetup({.first=0, .last=5, .step=1, .expected={0, 1, 2, 3, 4, 5}}),
-		TestSetup({.first=17.5, .last=22.8, .step=2, .expected={17.5, 19.5, 21.5}})
+		TestSetup({.first=17.5, .last=22.8, .step=2, .expected={17.5, 19.5, 21.5, 22.8}})
 	});
 	
 	juce::var b(true);
@@ -160,6 +160,6 @@ TEST_CASE("Observable::range") {
 			results.add(v);
 		});
 
-		// REQUIRE(results == setup.expected);
+		REQUIRE(results == setup.expected);
 	}
 }
