@@ -51,18 +51,22 @@ RXJUCE_DEFINE_PRINT_FUNCTION(Array<var>, {
 
 #undef RXJUCE_DEFINE_PRINT_FUNCTION
 
+#define RxJUCECollectResult(__observable, __resultName) var __resultName; (__observable).subscribe([&__resultName](var v){ __resultName = v; })
+
+#define RxJUCECollectResults(__observable, __arrayName) Array<var> __arrayName; (__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); })
+
 #include "catch.hpp"
 
 using namespace rxjuce;
 
+
+
+
+
 TEST_CASE("Observable::just") {
-	double result = 0;
+	RxJUCECollectResult(Observable::just(3.14), result);
 	
-	Observable::just(3.14).subscribe([&](var newValue) {
-		result = newValue;
-	});
-	
-	REQUIRE(result == 3.14);
+	REQUIRE(result == var(3.14));
 }
 
 TEST_CASE("Observable::fromValue") {
@@ -70,6 +74,7 @@ TEST_CASE("Observable::fromValue") {
 	
 	double result = 0;
 	
+#warning Fix this, subscription should not be needed.
 	auto subscription = Observable::fromValue(value).subscribe([&](double newValue) {
 		result = newValue;
 	});
@@ -84,7 +89,6 @@ TEST_CASE("Observable::fromValue") {
 }
 
 TEST_CASE("Observable::map") {
-	bool b = 3.14;
 	auto stringObservable = Observable::just("17.25");
 	
 	auto floatObservable = stringObservable.map([](String s) {
@@ -95,10 +99,7 @@ TEST_CASE("Observable::map") {
 		return String(f) + " years.";
 	});
 	
-	String result;
-	secondStringObservable.subscribe([&](String s) {
-		result = s;
-	});
+	RxJUCECollectResult(secondStringObservable, result);
 	
 	REQUIRE(result == "34.5 years.");
 }
@@ -111,10 +112,7 @@ TEST_CASE("Observable::combineLatest with one other Observable") {
 		return s1 + " " + s2 + "!";
 	});
 	
-	String result;
-	combined.subscribe([&](String s) {
-		result = s;
-	});
+	RxJUCECollectResult(combined, result);
 	
 	REQUIRE(result == "Hello World!");
 }
@@ -128,10 +126,7 @@ TEST_CASE("Observable::combineLatest with Array") {
 		return String(float(values[0])) + " " + values[1].toString() + " is " + values[2].toString();
 	});
 	
-	String result;
-	combined.subscribe([&](String s) {
-		result = s;
-	});
+	RxJUCECollectResult(combined, result);
 	
 	REQUIRE(result == "4.54 € is not a lot!");
 }
@@ -157,11 +152,7 @@ TEST_CASE("Observable::range") {
 	StringArray strArr({"Hello", "World!"});
 	
 	for (auto setup : setups) {
-		auto range = Observable::range(setup.first, setup.last, setup.step);
-		Array<var> results;
-		range.subscribe([&](var v) {
-			results.add(v);
-		});
+		RxJUCECollectResults(Observable::range(setup.first, setup.last, setup.step), results);
 
 		REQUIRE(results == setup.expected);
 	}
@@ -174,28 +165,22 @@ TEST_CASE("Observable::create") {
 		s.onNext(14.33);
 	});
 	
-	Array<var> result;
-	o.subscribe([&](var value) {
-		result.add(value);
-	});
+	RxJUCECollectResults(o, results);
 	
-	REQUIRE(result == Array<var>({var(3), var("Hello there!"), var(14.33)}));
+	REQUIRE(results == Array<var>({var(3), var("Hello there!"), var(14.33)}));
 }
 
 TEST_CASE("Observable::create with async onSubscribe") {
 	auto o = Observable::create([](Subscriber s) {
-		MessageManager::callAsync([s] () mutable {
+		MessageManager::callAsync([s] () {
 			s.onNext(3.14);
 			s.onNext("Test");
 		});
 	});
 	
-	Array<var> values;
-	o.subscribe([&](var value) {
-		values.add(value);
-	});
+	RxJUCECollectResults(o, results);
 	
 	MessageManager::getInstance()->runDispatchLoopUntil(0);
 	
-	REQUIRE(values == Array<var>({var(3.14), var("Test")}));
+	REQUIRE(results == Array<var>({var(3.14), var("Test")}));
 }
