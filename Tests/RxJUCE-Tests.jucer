@@ -4,12 +4,14 @@
               bundleIdentifier="de.martin-finke.RxJUCE-Tests" includeBinaryInAppConfig="1"
               jucerVersion="4.3.1" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de">
   <MAINGROUP id="J6yVM5" name="RxJUCE-Tests">
-    <GROUP id="{66B2DD06-7C44-A472-71BD-F3BABA3A8F56}" name="Tests">
-      <FILE id="De1OlQ" name="ExampleTest.cpp" compile="1" resource="0" file="Tests/ExampleTest.cpp"/>
-    </GROUP>
-    <GROUP id="{7DDA8FB2-08B3-CA53-D163-57C4F163D53D}" name="Other">
-      <FILE id="xEG9oK" name="catch.hpp" compile="0" resource="0" file="Other/catch.hpp"/>
-      <FILE id="q2rNbF" name="main.cpp" compile="1" resource="0" file="Other/main.cpp"/>
+    <GROUP id="{3E021249-15C8-F098-B5C0-2A3DBD19388C}" name="Source">
+      <GROUP id="{BBCE1761-6AF0-DAE7-65CD-AE0365C41BE7}" name="Other">
+        <FILE id="Ct7vkg" name="catch.hpp" compile="0" resource="0" file="Source/Other/catch.hpp"/>
+        <FILE id="PO03Yc" name="main.cpp" compile="1" resource="0" file="Source/Other/main.cpp"/>
+      </GROUP>
+      <GROUP id="{10CA88C8-F94B-695D-F44B-6A2C94F559D1}" name="Tests">
+        <FILE id="ai65EQ" name="ExampleTest.cpp" compile="1" resource="0" file="Source/Tests/ExampleTest.cpp"/>
+      </GROUP>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
@@ -62,7 +64,16 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="rxjuce" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
-  <JUCEOPTIONS/>
+  <JUCEOPTIONS JUCE_ASIO="disabled" JUCE_WASAPI="disabled" JUCE_WASAPI_EXCLUSIVE="disabled"
+               JUCE_DIRECTSOUND="disabled" JUCE_ALSA="disabled" JUCE_JACK="disabled"
+               JUCE_USE_ANDROID_OPENSLES="disabled" JUCE_USE_FLAC="disabled"
+               JUCE_USE_OGGVORBIS="disabled" JUCE_USE_MP3AUDIOFORMAT="disabled"
+               JUCE_USE_LAME_AUDIO_FORMAT="disabled" JUCE_USE_WINDOWS_MEDIA_FORMAT="disabled"
+               JUCE_PLUGINHOST_VST="disabled" JUCE_PLUGINHOST_VST3="disabled"
+               JUCE_PLUGINHOST_AU="disabled" JUCE_USE_CDREADER="disabled" JUCE_USE_CDBURNER="disabled"
+               JUCE_ALLOW_STATIC_NULL_VARIABLES="disabled" JUCE_WEB_BROWSER="disabled"
+               JUCE_DIRECTSHOW="disabled" JUCE_MEDIAFOUNDATION="disabled" JUCE_QUICKTIME="disabled"
+               JUCE_USE_CAMERA="disabled" RXJUCE_ENABLE_LONG_SIGNATURES="disabled"/>
   <LIVE_SETTINGS>
     <OSX/>
   </LIVE_SETTINGS>
