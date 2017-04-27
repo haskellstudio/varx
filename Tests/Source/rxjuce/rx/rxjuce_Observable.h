@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "rxjuce_Prefixes.h"
+#include "rxjuce_Prefix.h"
 
 #include "rxjuce_Subscription.h"
 
@@ -29,7 +29,7 @@ public:
 	 */
 	
 	/**
-		Creates a new `Observable` from a given JUCE `Value`'s **source**. The observable refers to the value's underlying `ValueSource` and continues to emit values even after the `Value` disappears.
+		Creates a new `Observable` from a given JUCE `Value`'s **source**. The observable refers to the value's underlying `ValueSource` and continues to emit values even after the passed `Value` is deleted.
 	 */
 	static Observable fromValue(juce::Value value);
 	

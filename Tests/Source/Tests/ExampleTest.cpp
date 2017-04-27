@@ -8,63 +8,7 @@
   ==============================================================================
 */
 
-#include "rxjuce_Observable.h"
-#include "rxjuce_Subscriber.h"
-
-using namespace juce;
-
-#include <iostream>
-
-#define RXJUCE_DEFINE_PRINT_FUNCTION(__type, __body) namespace rxjuce {\
-	namespace util {\
-		String desc(const __type& value) __body\
-	}\
-}\
-namespace juce {\
-	std::ostream& operator<<(std::ostream& os, const __type& value) {\
-		os << rxjuce::util::desc(value);\
-		return os;\
-	}\
-}\
-
-RXJUCE_DEFINE_PRINT_FUNCTION(var, {
-	if (value.isBool())
-		return (value ? "true" : "false");
-	else if (value.isVoid())
-		return "void";
-	else if (value.isUndefined())
-		return "undefined";
-	else if (value.isString())
-		return "\"" + value.toString() + "\"";
-	else
-		return value.toString();
-})
-
-RXJUCE_DEFINE_PRINT_FUNCTION(StringArray, {
-	return "{" + value.joinIntoString(", ") + "}";
-})
-
-RXJUCE_DEFINE_PRINT_FUNCTION(Array<var>, {
-	StringArray strings;
-	for (var v : value)
-		strings.add(rxjuce::util::desc(v));
-	
-	return rxjuce::util::desc(strings);
-})
-
-#undef RXJUCE_DEFINE_PRINT_FUNCTION
-
-#define RxJUCECollectResult(__observable, __resultName) var __resultName; (__observable).subscribe([&__resultName](var v){ __resultName = v; })
-
-#define RxJUCECollectResults(__observable, __arrayName) Array<var> __arrayName; (__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); })
-
-#include "catch.hpp"
-
-using namespace rxjuce;
-
-
-
-
+#include "rxjuce_TestPrefix.h"
 
 TEST_CASE("Observable::just") {
 	RxJUCECollectResult(Observable::just(3.14), result);

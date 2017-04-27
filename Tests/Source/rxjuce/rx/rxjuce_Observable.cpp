@@ -13,7 +13,6 @@
 #include "rxjuce_Observable_Internal.h"
 
 #include "rxjuce_Subscriber.h"
-
 #include "rxjuce_LifetimeWatcherPool.h"
 #include "rxjuce_ReferenceCountedObjectLifetimeWatcher.h"
 
@@ -25,6 +24,7 @@ RXJUCE_NAMESPACE_BEGIN
 
 Observable Observable::fromValue(Value value)
 {
+	// Watches the lifetime of a ValueSource. Notifies a given subscriber whenever the ValueSource has set a new value.
 	class ValueListener : public ReferenceCountedObjectLifetimeWatcher, private Value::Listener
 	{
 	public:
@@ -79,8 +79,8 @@ Observable Observable::range(var first, var last, int step)
 {
 	jassert(first.hasSameTypeAs(last));
 	
+	// Choose the rxcpp template parameter type depending on the var type
 	std::function<Internal::Ptr(var, var, int)> createRange;
-	
 	if (first.isInt())
 		createRange = Internal::range<int>;
 	else if (first.isInt64())

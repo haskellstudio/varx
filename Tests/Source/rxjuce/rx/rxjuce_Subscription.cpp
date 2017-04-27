@@ -35,7 +35,4 @@ void Subscription::unsubscribe() const
 		_unsubscribe();
 }
 
-Subscription::~Subscription()
-{}
-
 RXJUCE_NAMESPACE_END

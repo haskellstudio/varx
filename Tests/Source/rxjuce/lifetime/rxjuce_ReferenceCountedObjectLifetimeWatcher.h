@@ -14,9 +14,17 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
+/**
+ Watches a ReferenceCountedObject.
+ 
+ If an instance of this is added to a LifetimeWatcherPool, it will be deleted shortly after there are no other references to the watched object.
+ 
+ @see LifetimeWatcherPool
+ */
 class ReferenceCountedObjectLifetimeWatcher : public LifetimeWatcher
 {
 public:
+	/** Creates a new ReferenceCountedObjectLifetimeWatcher that watches a given object. */
 	ReferenceCountedObjectLifetimeWatcher(juce::ReferenceCountedObject& object);
 
 	bool isExpired() const override;

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "rxjuce_Prefixes.h"
+#include "rxjuce_Prefix.h"
 
 RXJUCE_NAMESPACE_BEGIN
 

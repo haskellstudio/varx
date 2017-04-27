@@ -14,6 +14,13 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
+/**
+ Keeps a list of LifetimeWatcher instances and periodically checks whether they have expired.
+ 
+ An expired watcher is removed from the list and deleted. You can send a notification by implementing the destructor of a LifetimeWatcher subclass.
+ 
+ @see LifetimeWatcher, ReferenceCountedObjectLifetimeWatcher, WeakReferenceLifetimeWatcher
+ */
 class LifetimeWatcherPool : private juce::Timer
 {
 public:

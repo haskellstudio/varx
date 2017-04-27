@@ -10,14 +10,22 @@
 
 #pragma once
 
-#include "rxjuce_Prefixes.h"
+#include "rxjuce_Prefix.h"
 
 RXJUCE_NAMESPACE_BEGIN
 
+/**
+ Base class for lifetime watcher objects.
+ 
+ @see LifetimeWatcherPool, ReferenceCountedObjectLifetimeWatcher, WeakReferenceLifetimeWatcher
+ */
 class LifetimeWatcher
 {
 public:
+	/** Called when the LifetimeWatcher is removed from the LifetimeWatcherPool, shortly after it has expired. */
     virtual ~LifetimeWatcher() {}
+	
+	/** Should return whether the watched object has expired. */
 	virtual bool isExpired() const = 0;
 };
 
