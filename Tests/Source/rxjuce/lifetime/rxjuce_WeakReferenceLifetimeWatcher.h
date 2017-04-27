@@ -30,14 +30,22 @@ public:
 	/** Creates a new WeakReferenceLifetimeWatcher that watches a given weak reference. */
 	WeakReferenceLifetimeWatcher(const juce::WeakReference<T>& ref)
 	: ref(ref)
-	{}
+	{
+	}
+	
+	const void* getAddress() const override
+	{
+		return ref.get();
+	}
 
-	bool isExpired() const override
+	bool isExpired(int) const override
 	{
 		return ref.wasObjectDeleted();
 	}
 private:
 	const juce::WeakReference<T> ref;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WeakReferenceLifetimeWatcher)
 };
 
 RXJUCE_NAMESPACE_END

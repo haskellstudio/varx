@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <map>
 
 #define RXJUCE_NAMESPACE_BEGIN namespace rxjuce {
 #define RXJUCE_NAMESPACE_END }

@@ -13,8 +13,8 @@
 #include "rxjuce_Observable_Internal.h"
 
 #include "rxjuce_Subscriber.h"
+#include "rxjuce_LifetimeWatcher.h"
 #include "rxjuce_LifetimeWatcherPool.h"
-#include "rxjuce_ReferenceCountedObjectLifetimeWatcher.h"
 
 #include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
 
@@ -25,15 +25,25 @@ RXJUCE_NAMESPACE_BEGIN
 Observable Observable::fromValue(Value value)
 {
 	// Watches the lifetime of a ValueSource. Notifies a given subscriber whenever the ValueSource has set a new value.
-	class ValueListener : public ReferenceCountedObjectLifetimeWatcher, private Value::Listener
+	class ValueSourceListener : public LifetimeWatcher, private Value::Listener
 	{
 	public:
-		ValueListener(Value::ValueSource &source, Subscriber subscriber)
-		:	ReferenceCountedObjectLifetimeWatcher(&source),
+		ValueSourceListener(Value::ValueSource& source, Subscriber subscriber)
+		:	source(&source),
 			value(&source),
 			subscriber(subscriber)
 		{
 			value.addListener(this);
+		}
+		
+		const void* getAddress() const override
+		{
+			return source;
+		}
+		
+		bool isExpired(int numLifetimeWatchers) const override
+		{
+			return (source->getReferenceCount() <= numLifetimeWatchers);
 		}
 		
 	private:
@@ -42,10 +52,11 @@ Observable Observable::fromValue(Value value)
 			subscriber.onNext(value.getValue());
 		}
 		
+		const Value::ValueSource* source;
 		Value value;
 		Subscriber subscriber;
 		
-		JUCE_DECLARE_NON_COPYABLE(ValueListener)
+		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ValueSourceListener)
 	};
 	
 	return create([value](Subscriber subscriber) mutable {
@@ -53,7 +64,7 @@ Observable Observable::fromValue(Value value)
 		subscriber.onNext(value.getValue());
 		
 		// Add the listener to the pool, to keep getting updates from the value source
-		LifetimeWatcherPool::getInstance().add(std::unique_ptr<LifetimeWatcher>(new ValueListener(value.getValueSource(), subscriber)));
+		LifetimeWatcherPool::getInstance().add(std::unique_ptr<LifetimeWatcher>(new ValueSourceListener(value.getValueSource(), subscriber)));
 	});
 }
 

@@ -10,16 +10,24 @@
 
 #include "rxjuce_LifetimeWatcherPool.h"
 
+#include "rxjuce_LifetimeWatcher.h"
+
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-LifetimeWatcherPool& LifetimeWatcherPool::getInstance() {
-	static LifetimeWatcherPool instance;
-	return instance;
+LifetimeWatcherPool& LifetimeWatcherPool::getInstance()
+{
+	if (!instance)
+		instance = new LifetimeWatcherPool();
+	
+	return *instance;
 }
 
-LifetimeWatcherPool::LifetimeWatcherPool() {}
+LifetimeWatcherPool::LifetimeWatcherPool()
+{}
+
+LifetimeWatcherPool* LifetimeWatcherPool::instance = nullptr;
 
 void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 {
@@ -29,21 +37,24 @@ void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 		if (!lock.lockWasGained())
 			return; // Some other thread is trying to kill this thread
 		
-		watchers.add(watcher.release());
+		watchers.insert(std::make_pair(watcher->getAddress(), std::move(watcher)));
 	}
+	
 	startTimerHz(60);
 }
 
 void LifetimeWatcherPool::timerCallback()
 {
-	for (size_t i = 0; i < watchers.size();) {
-		if (watchers[i]->isExpired())
-			watchers.remove(i);
-		else
-			i += 1;
+	for (auto it = watchers.begin(); it != watchers.end(); it++) {
+		if (it->second->isExpired(watchers.count(it->first))) {
+			const auto range = watchers.equal_range(it->first);
+			it = watchers.erase(range.first, range.second);
+			if (it == watchers.end())
+				break;
+		}
 	}
 	
-	if (watchers.isEmpty())
+	if (watchers.empty())
 		stopTimer();
 }
 

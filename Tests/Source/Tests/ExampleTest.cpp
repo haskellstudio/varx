@@ -24,7 +24,7 @@ TEST_CASE("Observable::fromValue") {
 	REQUIRE(result == var(17));
 	
 	value = 42;
-
+	
 	MessageManager::getInstance()->runDispatchLoopUntil(0);
 	
 	REQUIRE(result == var(42));

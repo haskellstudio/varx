@@ -29,10 +29,6 @@
                 resource="0" file="Source/rxjuce/lifetime/rxjuce_LifetimeWatcherPool.cpp"/>
           <FILE id="OPP2eu" name="rxjuce_LifetimeWatcherPool.h" compile="0" resource="0"
                 file="Source/rxjuce/lifetime/rxjuce_LifetimeWatcherPool.h"/>
-          <FILE id="ts4AlD" name="rxjuce_ReferenceCountedObjectLifetimeWatcher.cpp"
-                compile="1" resource="0" file="Source/rxjuce/lifetime/rxjuce_ReferenceCountedObjectLifetimeWatcher.cpp"/>
-          <FILE id="BhAlRn" name="rxjuce_ReferenceCountedObjectLifetimeWatcher.h"
-                compile="0" resource="0" file="Source/rxjuce/lifetime/rxjuce_ReferenceCountedObjectLifetimeWatcher.h"/>
           <FILE id="dlVcSG" name="rxjuce_WeakReferenceLifetimeWatcher.h" compile="0"
                 resource="0" file="Source/rxjuce/lifetime/rxjuce_WeakReferenceLifetimeWatcher.h"/>
         </GROUP>

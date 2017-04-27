@@ -12,9 +12,9 @@
 
 #include "rxjuce_Prefix.h"
 
-#include "rxjuce_LifetimeWatcher.h"
-
 RXJUCE_NAMESPACE_BEGIN
+
+class LifetimeWatcher;
 
 /**
  Keeps a list of LifetimeWatcher instances and periodically checks whether they have expired.
@@ -23,7 +23,7 @@ RXJUCE_NAMESPACE_BEGIN
  
  @see LifetimeWatcher, ReferenceCountedObjectLifetimeWatcher, WeakReferenceLifetimeWatcher
  */
-class LifetimeWatcherPool : private juce::Timer
+class LifetimeWatcherPool : private juce::Timer, private juce::DeletedAtShutdown
 {
 public:
 	static LifetimeWatcherPool& getInstance();
@@ -36,7 +36,9 @@ private:
 	
 	void timerCallback() override;
 	
-	juce::OwnedArray<const LifetimeWatcher> watchers;
+	std::multimap<const void*, std::unique_ptr<const LifetimeWatcher>> watchers;
+	
+	static LifetimeWatcherPool* instance;
 	
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LifetimeWatcherPool)
 };
