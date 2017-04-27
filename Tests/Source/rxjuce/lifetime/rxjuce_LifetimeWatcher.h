@@ -17,7 +17,7 @@ RXJUCE_NAMESPACE_BEGIN
 /**
  Base class for lifetime watcher objects.
  
- @see LifetimeWatcherPool, ReferenceCountedObjectLifetimeWatcher, WeakReferenceLifetimeWatcher
+ @see LifetimeWatcherPool, WeakReferenceLifetimeWatcher
  */
 class LifetimeWatcher
 {

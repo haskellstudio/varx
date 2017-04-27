@@ -24,7 +24,7 @@ RXJUCE_NAMESPACE_BEGIN
 
 Observable Observable::fromValue(Value value)
 {
-	// Watches the lifetime of a ValueSource. Notifies a given subscriber whenever the ValueSource has set a new value.
+	/** Watches the lifetime of a ValueSource. Notifies a given subscriber whenever the ValueSource has set a new value. */
 	class ValueSourceListener : public LifetimeWatcher, private Value::Listener
 	{
 	public:

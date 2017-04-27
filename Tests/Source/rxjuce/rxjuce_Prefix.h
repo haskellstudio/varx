@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include <map>
+#include <type_traits>
 
 #define RXJUCE_NAMESPACE_BEGIN namespace rxjuce {
 #define RXJUCE_NAMESPACE_END }

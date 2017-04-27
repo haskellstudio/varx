@@ -1,11 +1,11 @@
 /*
   ==============================================================================
 
-    rxjuce_ObservedButton.cpp
+    rxjuce_Observed.cpp
     Created: 27 Apr 2017 8:51:03am
     Author:  Martin Finke
 
   ==============================================================================
 */
 
-#include "rxjuce_ObservedButton.h"
+#include "rxjuce_Observed.h"

@@ -37,7 +37,9 @@ void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 		if (!lock.lockWasGained())
 			return; // Some other thread is trying to kill this thread
 		
-		watchers.insert(std::make_pair(watcher->getAddress(), std::move(watcher)));
+		// Add the watcher. Get the address before making the call, because the order of evaluation of arguments is unspecified.
+		const auto address = watcher->getAddress();
+		watchers.insert(std::make_pair(address, std::move(watcher)));
 	}
 	
 	startTimerHz(60);
@@ -45,15 +47,20 @@ void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 
 void LifetimeWatcherPool::timerCallback()
 {
+	// Check if any watchers have expired
 	for (auto it = watchers.begin(); it != watchers.end(); it++) {
 		if (it->second->isExpired(watchers.count(it->first))) {
+			// Watcher has expired. Remove all watchers with the same address
 			const auto range = watchers.equal_range(it->first);
 			it = watchers.erase(range.first, range.second);
+			
+			// Don't increment iterator past the end
 			if (it == watchers.end())
 				break;
 		}
 	}
 	
+	// No need for a timer if there are no more watchers
 	if (watchers.empty())
 		stopTimer();
 }

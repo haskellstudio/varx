@@ -17,15 +17,18 @@ RXJUCE_NAMESPACE_BEGIN
 class LifetimeWatcher;
 
 /**
- Keeps a list of LifetimeWatcher instances and periodically checks whether they have expired.
+	Keeps a list of LifetimeWatcher instances and periodically checks whether they have expired.
  
- An expired watcher is removed from the list and deleted. You can send a notification by implementing the destructor of a LifetimeWatcher subclass.
+	An expired watcher is removed from the pool and deleted. If you want to react when this happens, please implement the destructor in your LifetimeWatcher subclass.
  
- @see LifetimeWatcher, ReferenceCountedObjectLifetimeWatcher, WeakReferenceLifetimeWatcher
+	@see LifetimeWatcher, WeakReferenceLifetimeWatcher
  */
 class LifetimeWatcherPool : private juce::Timer, private juce::DeletedAtShutdown
 {
 public:
+	/**
+		Returns the global pool.
+	 */
 	static LifetimeWatcherPool& getInstance();
 
 	/** Adds a new watcher to the pool. The pool takes ownership of the watcher. */

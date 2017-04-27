@@ -13,10 +13,10 @@
       </GROUP>
       <GROUP id="{AAC38EBE-F6C2-A3B5-51FB-6DE3BC2C9994}" name="rxjuce">
         <GROUP id="{E527C2EC-CBF0-1913-2847-0065E31DA35C}" name="gui">
-          <FILE id="ngKjmq" name="rxjuce_ObservedButton.cpp" compile="1" resource="0"
-                file="Source/rxjuce/gui/rxjuce_ObservedButton.cpp"/>
-          <FILE id="aBSZg0" name="rxjuce_ObservedButton.h" compile="0" resource="0"
-                file="Source/rxjuce/gui/rxjuce_ObservedButton.h"/>
+          <FILE id="EMbJyP" name="rxjuce_Observed.cpp" compile="1" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Observed.cpp"/>
+          <FILE id="IwF3P1" name="rxjuce_Observed.h" compile="0" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Observed.h"/>
         </GROUP>
         <GROUP id="{AD8089E2-1815-3BBD-C046-CA92D277ED4D}" name="util">
           <FILE id="mkwt56" name="rxjuce_PrintFunctions.h" compile="0" resource="0"

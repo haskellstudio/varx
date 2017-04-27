@@ -12,13 +12,17 @@
 
 #include "rxjuce_Observable.h"
 #include "rxjuce_Subscriber.h"
-#include "rxjuce_ObservedButton.h"
+#include "rxjuce_Observed.h"
 #include "rxjuce_PrintFunctions.h"
 #include "catch.hpp"
 
 #define RxJUCECollectResult(__observable, __resultName) var __resultName; (__observable).subscribe([&__resultName](var v){ __resultName = v; })
 
 #define RxJUCECollectResults(__observable, __arrayName) Array<var> __arrayName; (__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); })
+
+#define RxJUCERequireResults(...) REQUIRE(results == Array<var>({__VA_ARGS__}))
+
+#define RxJUCERunDispatchLoop MessageManager::getInstance()->runDispatchLoopUntil(0);
 
 using namespace juce;
 using namespace rxjuce;

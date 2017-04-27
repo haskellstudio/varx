@@ -25,7 +25,7 @@ TEST_CASE("Observable::fromValue") {
 	
 	value = 42;
 	
-	MessageManager::getInstance()->runDispatchLoopUntil(0);
+	RxJUCERunDispatchLoop;
 	
 	REQUIRE(result == var(42));
 }
@@ -81,7 +81,6 @@ TEST_CASE("Observable::range") {
 	
 	for (auto setup : setups) {
 		RxJUCECollectResults(Observable::range(setup.first, setup.last, setup.step), results);
-
 		REQUIRE(results == setup.expected);
 	}
 }
@@ -95,7 +94,7 @@ TEST_CASE("Observable::create") {
 	
 	RxJUCECollectResults(o, results);
 	
-	REQUIRE(results == Array<var>({var(3), var("Hello there!"), var(14.33)}));
+	RxJUCERequireResults(var(3), var("Hello there!"), var(14.33));
 }
 
 TEST_CASE("Observable::create with async onSubscribe") {
@@ -108,17 +107,17 @@ TEST_CASE("Observable::create with async onSubscribe") {
 	
 	RxJUCECollectResults(o, results);
 	
-	MessageManager::getInstance()->runDispatchLoopUntil(0);
+	RxJUCERunDispatchLoop;
 	
-	REQUIRE(results == Array<var>({var(3.14), var("Test")}));
+	RxJUCERequireResults(var(3.14), var("Test"));
 }
 
 TEST_CASE("Button Click Observation") {
-	ObservedButton<TextButton> button;
+	Observed<TextButton> button;
 	
 	// This should not be recorded
 	button.triggerClick();
-	MessageManager::getInstance()->runDispatchLoopUntil(0);
+	RxJUCERunDispatchLoop;
 	
 	RxJUCECollectResults(button.clickedObservable(), results);
 	
@@ -131,8 +130,34 @@ TEST_CASE("Button Click Observation") {
 		button.triggerClick();
 	});
 	
-	MessageManager::getInstance()->runDispatchLoopUntil(0);
+	RxJUCERunDispatchLoop;
 	
 	// There should be 3 observed clicks
-	REQUIRE(results == Array<var>({var(), var(), var()}));
+	RxJUCERequireResults(var(), var(), var());
+}
+
+TEST_CASE("Button State Change Observation") {
+	Observed<TextButton> button;
+	
+	// This should not be recorded
+	button.setState(Button::buttonDown);
+	RxJUCERunDispatchLoop;
+	
+	RxJUCECollectResults(button.stateChangedObservable(), results);
+	
+	// Change state synchronously
+	button.setState(Button::buttonOver);
+	
+	// Change state asynchronously
+	MessageManager::callAsync([&]() {
+		button.setState(Button::buttonNormal);
+		button.setState(Button::buttonDown);
+	});
+	
+	RxJUCERunDispatchLoop;
+	
+	// There should be 3 observed state changes
+	RxJUCERequireResults(var(Button::buttonOver),
+						 var(Button::buttonNormal),
+						 var(Button::buttonDown));
 }
