@@ -1,11 +1,3 @@
-//
-//  rxjuce_Prefixes.h
-//  RxJUCE
-//
-//  Created by Martin Finke on 27.04.17.
-//
-//
-
 #define DONT_SET_USING_JUCE_NAMESPACE 1
 #include "JuceHeader.h"
 

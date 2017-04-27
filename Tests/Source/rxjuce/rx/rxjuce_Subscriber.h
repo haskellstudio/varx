@@ -1,10 +1,12 @@
-//
-//  rxjuce_Subscriber.hpp
-//  RxJUCE
-//
-//  Created by Martin Finke on 26.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Subscriber.h
+    Created: 27 Apr 2017 7:08:56am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #pragma once
 

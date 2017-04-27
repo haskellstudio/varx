@@ -1,16 +1,21 @@
-//
-//  rxjuce_Observable.cpp
-//  RxJUCE
-//
-//  Created by Martin Finke on 23.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Observable.cpp
+    Created: 27 Apr 2017 7:07:33am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #include "rxjuce_Observable.h"
 
 #include "rxjuce_Observable_Internal.h"
 
 #include "rxjuce_Subscriber.h"
+
+#include "rxjuce_LifetimeWatcherPool.h"
+#include "rxjuce_ReferenceCountedObjectLifetimeWatcher.h"
 
 #include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
 
@@ -20,86 +25,35 @@ RXJUCE_NAMESPACE_BEGIN
 
 Observable Observable::fromValue(Value value)
 {
-	class ValueListener : private Value::Listener
+	class ValueListener : public ReferenceCountedObjectLifetimeWatcher, private Value::Listener
 	{
 	public:
-		ValueListener(Value::ValueSource &source, const std::function<void(var)>& valueChanged)
-		:	value(&source),
-			_valueChanged(valueChanged)
+		ValueListener(Value::ValueSource &source, Subscriber subscriber)
+		:	ReferenceCountedObjectLifetimeWatcher(source),
+			value(&source),
+			subscriber(subscriber)
 		{
 			value.addListener(this);
-		}
-		
-		bool sourceHasExpired()
-		{
-			return (value.getValueSource().getReferenceCount() == 1);
 		}
 		
 	private:
 		void valueChanged(Value &value) override
 		{
-			_valueChanged(value.getValue());
+			subscriber.onNext(value.getValue());
 		}
 		
 		Value value;
-		const std::function<void(var)> _valueChanged;
+		Subscriber subscriber;
 		
 		JUCE_DECLARE_NON_COPYABLE(ValueListener)
 	};
 	
-	class ValueListenerPool : private Timer
-	{
-	public:
-		ValueListenerPool() {}
-		
-		void add(ValueListener *listener)
-		{
-			{
-				// The timerCallback is called on the message thread. This may be called from a background thread, in which case the message manager must be locked.
-				const MessageManagerLock lock(Thread::getCurrentThread());
-				if (!lock.lockWasGained())
-					return; // Some other thread is trying to kill this thread
-				
-				listeners.add(listener);
-			}
-			startTimerHz(60);
-		}
-		
-	private:
-		void timerCallback() override
-		{
-			for (size_t i = 0; i < listeners.size();) {
-				if (listeners[i]->sourceHasExpired())
-					listeners.remove(i);
-				else
-					i += 1;
-			}
-			
-			if (listeners.isEmpty())
-				stopTimer();
-		}
-		
-		OwnedArray<ValueListener> listeners;
-		
-		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ValueListenerPool)
-	};
-	
-	static ValueListenerPool pool;
-	
-	return create([value](Subscriber s) mutable {
+	return create([value](Subscriber subscriber) mutable {
 		// Send the current value
-		s.onNext(value.getValue());
-		
-		// Called when the value is changed
-		const auto onValueChanged = [s](const var& newValue) {
-			s.onNext(newValue);
-		};
-		
-		// Create the value listener
-		ScopedPointer<ValueListener> listener(new ValueListener(value.getValueSource(), onValueChanged));
+		subscriber.onNext(value.getValue());
 		
 		// Add the listener to the pool, to keep getting updates from the value source
-		pool.add(listener.release());
+		LifetimeWatcherPool::getInstance().add(new ValueListener(value.getValueSource(), subscriber));
 	});
 }
 

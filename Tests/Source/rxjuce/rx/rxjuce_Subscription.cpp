@@ -1,10 +1,12 @@
-//
-//  rxjuce_Subscription.cpp
-//  RxJUCE
-//
-//  Created by Martin Finke on 23.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Subscription.cpp
+    Created: 27 Apr 2017 7:09:19am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #include "rxjuce_Subscription.h"
 
@@ -27,7 +29,7 @@ Subscription& Subscription::operator=(Subscription&& other)
 	return *this;
 }
 
-void Subscription::unsubscribe()
+void Subscription::unsubscribe() const
 {
 	if (_unsubscribe)
 		_unsubscribe();

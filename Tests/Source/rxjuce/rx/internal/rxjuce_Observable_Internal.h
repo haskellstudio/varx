@@ -1,10 +1,12 @@
-//
-//  rxjuce_Observable_Internal.h
-//  RxJUCE
-//
-//  Created by Martin Finke on 23.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Observable_Internal.h
+    Created: 27 Apr 2017 7:11:30am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #pragma once
 

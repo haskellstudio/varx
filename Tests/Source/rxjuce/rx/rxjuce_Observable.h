@@ -1,10 +1,12 @@
-//
-//  rxjuce_Observable.h
-//  RxJUCE
-//
-//  Created by Martin Finke on 23.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Observable.h
+    Created: 27 Apr 2017 7:07:33am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #pragma once
 

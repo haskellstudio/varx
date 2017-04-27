@@ -1,10 +1,12 @@
-//
-//  rxjuce_Subscriber.cpp
-//  RxJUCE
-//
-//  Created by Martin Finke on 26.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Subscriber.cpp
+    Created: 27 Apr 2017 7:08:56am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #include "rxjuce_Subscriber.h"
 

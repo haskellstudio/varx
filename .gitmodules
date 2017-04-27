@@ -1,6 +1,6 @@
 [submodule "JUCE"]
 	path = JUCE
 	url = https://github.com/julianstorer/JUCE
-[submodule "rxjuce/RxCpp"]
-	path = rxjuce/RxCpp
+[submodule "Tests/Source/rxjuce/RxCpp"]
+	path = Tests/Source/rxjuce/RxCpp
 	url = https://github.com/Reactive-Extensions/RxCpp

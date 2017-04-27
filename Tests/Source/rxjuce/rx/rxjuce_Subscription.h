@@ -1,10 +1,12 @@
-//
-//  rxjuce_Subscription.h
-//  RxJUCE
-//
-//  Created by Martin Finke on 23.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Subscription.h
+    Created: 27 Apr 2017 7:09:19am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #pragma once
 
@@ -19,13 +21,15 @@ public:
 	Subscription& operator=(Subscription&& other);
 	~Subscription();
 	
-	void unsubscribe();
+	void unsubscribe() const;
 	
 private:
 	friend class Observable;
 	Subscription(const std::function<void()>& unsubscribe);
 	
 	std::function<void()> _unsubscribe;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Subscription)
 };
 
 RXJUCE_NAMESPACE_END

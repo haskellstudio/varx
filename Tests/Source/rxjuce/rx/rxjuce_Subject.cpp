@@ -1,10 +1,12 @@
-//
-//  rxjuce_Subject.cpp
-//  RxJUCE
-//
-//  Created by Martin Finke on 27.04.17.
-//
-//
+/*
+  ==============================================================================
+
+    rxjuce_Subject.cpp
+    Created: 27 Apr 2017 7:08:29am
+    Author:  Martin Finke
+
+  ==============================================================================
+*/
 
 #include "rxjuce_Subject.h"
 
