@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "rxjuce_Prefix.h"
+
 #include "rxjuce_LifetimeWatcher.h"
 
 RXJUCE_NAMESPACE_BEGIN
@@ -25,7 +27,7 @@ class ReferenceCountedObjectLifetimeWatcher : public LifetimeWatcher
 {
 public:
 	/** Creates a new ReferenceCountedObjectLifetimeWatcher that watches a given object. */
-	ReferenceCountedObjectLifetimeWatcher(juce::ReferenceCountedObject& object);
+	ReferenceCountedObjectLifetimeWatcher(juce::ReferenceCountedObject *object);
 
 	bool isExpired() const override;
 	

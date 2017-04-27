@@ -10,8 +10,14 @@
 
 #pragma once
 
+#include "rxjuce_Prefix.h"
+
+#include "rxjuce_LifetimeWatcher.h"
+
+RXJUCE_NAMESPACE_BEGIN
+
 /**
- Watches an object containing a WeakReference::Master.
+ Watches a WeakReference to an object.
  
  If an instance of this is added to a LifetimeWatcherPool, it is deleted shortly after the watched object has been deleted.
  
@@ -21,9 +27,9 @@ template<typename T>
 class WeakReferenceLifetimeWatcher : public LifetimeWatcher
 {
 public:
-	/** Creates a new WeakReferenceLifetimeWatcher that watches a given object. */
-	WeakReferenceLifetimeWatcher(const T& object)
-	: ref(&object)
+	/** Creates a new WeakReferenceLifetimeWatcher that watches a given weak reference. */
+	WeakReferenceLifetimeWatcher(const juce::WeakReference<T>& ref)
+	: ref(ref)
 	{}
 
 	bool isExpired() const override
@@ -31,5 +37,7 @@ public:
 		return ref.wasObjectDeleted();
 	}
 private:
-	const WeakReference<T> ref;
+	const juce::WeakReference<T> ref;
 };
+
+RXJUCE_NAMESPACE_END

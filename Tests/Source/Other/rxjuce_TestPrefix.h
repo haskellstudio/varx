@@ -12,6 +12,7 @@
 
 #include "rxjuce_Observable.h"
 #include "rxjuce_Subscriber.h"
+#include "rxjuce_ObservedButton.h"
 #include "rxjuce_PrintFunctions.h"
 #include "catch.hpp"
 

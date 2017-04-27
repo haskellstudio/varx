@@ -14,8 +14,8 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-ReferenceCountedObjectLifetimeWatcher::ReferenceCountedObjectLifetimeWatcher(ReferenceCountedObject& object)
-: object(&object)
+ReferenceCountedObjectLifetimeWatcher::ReferenceCountedObjectLifetimeWatcher(ReferenceCountedObject *object)
+: object(object)
 {}
 
 bool ReferenceCountedObjectLifetimeWatcher::isExpired() const

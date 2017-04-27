@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "rxjuce_Prefix.h"
+
 #include "rxjuce_LifetimeWatcher.h"
 
 RXJUCE_NAMESPACE_BEGIN
@@ -26,7 +28,8 @@ class LifetimeWatcherPool : private juce::Timer
 public:
 	static LifetimeWatcherPool& getInstance();
 
-	void add(const LifetimeWatcher *watcher);
+	/** Adds a new watcher to the pool. The pool takes ownership of the watcher. */
+	void add(std::unique_ptr<const LifetimeWatcher>&& watcher);
 
 private:
 	LifetimeWatcherPool();

@@ -29,7 +29,7 @@ Observable Observable::fromValue(Value value)
 	{
 	public:
 		ValueListener(Value::ValueSource &source, Subscriber subscriber)
-		:	ReferenceCountedObjectLifetimeWatcher(source),
+		:	ReferenceCountedObjectLifetimeWatcher(&source),
 			value(&source),
 			subscriber(subscriber)
 		{
@@ -53,7 +53,7 @@ Observable Observable::fromValue(Value value)
 		subscriber.onNext(value.getValue());
 		
 		// Add the listener to the pool, to keep getting updates from the value source
-		LifetimeWatcherPool::getInstance().add(new ValueListener(value.getValueSource(), subscriber));
+		LifetimeWatcherPool::getInstance().add(std::unique_ptr<LifetimeWatcher>(new ValueListener(value.getValueSource(), subscriber)));
 	});
 }
 

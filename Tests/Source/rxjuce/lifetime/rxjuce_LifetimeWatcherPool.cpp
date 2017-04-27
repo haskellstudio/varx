@@ -21,7 +21,7 @@ LifetimeWatcherPool& LifetimeWatcherPool::getInstance() {
 
 LifetimeWatcherPool::LifetimeWatcherPool() {}
 
-void LifetimeWatcherPool::add(const LifetimeWatcher *watcher)
+void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 {
 	{
 		// The timerCallback is called on the message thread. This may be called from a background thread, in which case the message manager must be locked.
@@ -29,7 +29,7 @@ void LifetimeWatcherPool::add(const LifetimeWatcher *watcher)
 		if (!lock.lockWasGained())
 			return; // Some other thread is trying to kill this thread
 		
-		watchers.add(watcher);
+		watchers.add(watcher.release());
 	}
 	startTimerHz(60);
 }

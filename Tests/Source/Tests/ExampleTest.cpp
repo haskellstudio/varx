@@ -100,7 +100,7 @@ TEST_CASE("Observable::create") {
 
 TEST_CASE("Observable::create with async onSubscribe") {
 	auto o = Observable::create([](Subscriber s) {
-		MessageManager::callAsync([s] () {
+		MessageManager::callAsync([s]() {
 			s.onNext(3.14);
 			s.onNext("Test");
 		});
@@ -111,4 +111,28 @@ TEST_CASE("Observable::create with async onSubscribe") {
 	MessageManager::getInstance()->runDispatchLoopUntil(0);
 	
 	REQUIRE(results == Array<var>({var(3.14), var("Test")}));
+}
+
+TEST_CASE("Button Click Observation") {
+	ObservedButton<TextButton> button;
+	
+	// This should not be recorded
+	button.triggerClick();
+	MessageManager::getInstance()->runDispatchLoopUntil(0);
+	
+	RxJUCECollectResults(button.clickedObservable(), results);
+	
+	// Trigger a synchronous click
+	button.triggerClick();
+	
+	// Trigger two async clicks
+	MessageManager::callAsync([&]() {
+		button.triggerClick();
+		button.triggerClick();
+	});
+	
+	MessageManager::getInstance()->runDispatchLoopUntil(0);
+	
+	// There should be 3 observed clicks
+	REQUIRE(results == Array<var>({var(), var(), var()}));
 }
