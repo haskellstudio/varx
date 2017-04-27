@@ -6,38 +6,17 @@
 //
 //
 
-class Observable::Internal
-{
-public:
-	typedef Array<shared_ptr<void>> Sources;
-	typedef shared_ptr<Internal> Ptr;
-	
-	static Ptr fromRxCpp(const rxcpp::observable<var>& o)
-	{
-		return Ptr(new Internal(o));
-	}
-	
-	template<typename Transform, typename O, typename... Os>
-	static Ptr combineLatest(Transform&& transform, O&& observable, Os... observables)
-	{
-		return fromRxCpp(observable.internal->o.combine_latest(transform, observables.internal->o...));
-	}
-	
-	template<typename T>
-	static Ptr range(var first, var last, int step)
-	{
-		return fromRxCpp(rxcpp::observable<>::range<T>(first, last, step).map(VariantConverter<T>::toVar));
-	}
-	
-	const rxcpp::observable<var> o;
-	
-private:
-	Internal(const rxcpp::observable<var>& o)
-	:	o(o)
-	{}
-	
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Internal)
-};
+#include "rxjuce_Observable.h"
+
+#include "rxjuce_Observable_Internal.h"
+
+#include "rxjuce_Subscriber.h"
+
+#include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
+
+RXJUCE_SOURCE_PREFIX
+
+RXJUCE_NAMESPACE_BEGIN
 
 Observable Observable::fromValue(Value value)
 {
@@ -208,3 +187,5 @@ Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3
 {
 	return Internal::combineLatest(transform, *this, o1, o2, o3, o4, o5, o6, o7);
 }
+
+RXJUCE_NAMESPACE_END

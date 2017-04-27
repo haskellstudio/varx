@@ -8,6 +8,11 @@
 
 #pragma once
 
+#include "rxjuce_Prefixes.h"
+#include "rxjuce_Observable.h"
+
+RXJUCE_NAMESPACE_BEGIN
+
 class Subject
 {
 public:
@@ -21,3 +26,5 @@ private:
 	class Internal;
 	std::shared_ptr<Internal> internal;
 };
+
+RXJUCE_NAMESPACE_END

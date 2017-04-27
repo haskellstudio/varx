@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include "rxjuce_Prefixes.h"
+
+RXJUCE_NAMESPACE_BEGIN
+
 class Subscriber
 {
 public:
@@ -19,3 +23,5 @@ private:
 	
 	std::function<void(const juce::var&)> _onNext;
 };
+
+RXJUCE_NAMESPACE_END

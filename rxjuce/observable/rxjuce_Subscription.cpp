@@ -6,6 +6,12 @@
 //
 //
 
+#include "rxjuce_Subscription.h"
+
+RXJUCE_SOURCE_PREFIX
+
+RXJUCE_NAMESPACE_BEGIN
+
 Subscription::Subscription(const std::function<void()>& unsubscribe)
 : _unsubscribe(unsubscribe)
 {}
@@ -29,3 +35,5 @@ void Subscription::unsubscribe()
 
 Subscription::~Subscription()
 {}
+
+RXJUCE_NAMESPACE_END

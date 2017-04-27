@@ -8,7 +8,11 @@
 
 #pragma once
 
+#include "rxjuce_Prefixes.h"
+
 #include "rxjuce_Subscription.h"
+
+RXJUCE_NAMESPACE_BEGIN
 
 class Subscriber;
 
@@ -75,3 +79,5 @@ private:
 	Observable(const std::shared_ptr<Internal> & internal);
 	std::shared_ptr<Internal>  internal;
 };
+
+RXJUCE_NAMESPACE_END

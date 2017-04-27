@@ -4,6 +4,203 @@
               bundleIdentifier="de.martin-finke.RxJUCE-Tests" includeBinaryInAppConfig="1"
               jucerVersion="4.3.1" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de">
   <MAINGROUP id="J6yVM5" name="RxJUCE-Tests">
+    <GROUP id="{AAC38EBE-F6C2-A3B5-51FB-6DE3BC2C9994}" name="rxjuce">
+      <GROUP id="{23583D7A-A554-FE49-893A-19F147333A6A}" name="observable">
+        <FILE id="JjswGU" name="rxjuce_Observable.cpp" compile="1" resource="0"
+              file="../rxjuce/observable/rxjuce_Observable.cpp"/>
+        <FILE id="GLrkte" name="rxjuce_Observable.h" compile="0" resource="0"
+              file="../rxjuce/observable/rxjuce_Observable.h"/>
+        <FILE id="a4KhEJ" name="rxjuce_Subject.cpp" compile="1" resource="0"
+              file="../rxjuce/observable/rxjuce_Subject.cpp"/>
+        <FILE id="a5dbBz" name="rxjuce_Subject.h" compile="0" resource="0"
+              file="../rxjuce/observable/rxjuce_Subject.h"/>
+        <FILE id="KlZPbm" name="rxjuce_Subscriber.cpp" compile="1" resource="0"
+              file="../rxjuce/observable/rxjuce_Subscriber.cpp"/>
+        <FILE id="smtQux" name="rxjuce_Subscriber.h" compile="0" resource="0"
+              file="../rxjuce/observable/rxjuce_Subscriber.h"/>
+        <FILE id="kolWrp" name="rxjuce_Subscription.cpp" compile="1" resource="0"
+              file="../rxjuce/observable/rxjuce_Subscription.cpp"/>
+        <FILE id="aNap8Q" name="rxjuce_Subscription.h" compile="0" resource="0"
+              file="../rxjuce/observable/rxjuce_Subscription.h"/>
+        <GROUP id="{B085BDFF-FD89-65D2-D445-BF9E04A4D716}" name="internal">
+          <FILE id="YkvRin" name="rxjuce_Observable_Internal.cpp" compile="1"
+                resource="0" file="../rxjuce/observable/internal/rxjuce_Observable_Internal.cpp"/>
+          <FILE id="VVwV7e" name="rxjuce_Observable_Internal.h" compile="0" resource="0"
+                file="../rxjuce/observable/internal/rxjuce_Observable_Internal.h"/>
+        </GROUP>
+      </GROUP>
+      <GROUP id="{D5AF6A28-2E79-73AD-8BF3-FEC0F6AF1AB8}" name="RxCpp">
+        <GROUP id="{8112CCFB-011C-5F92-BED5-3A4B39870F81}" name="Rx">
+          <GROUP id="{CD8DC645-60E8-2D47-0A22-7CDF03FE2AA1}" name="v2">
+            <GROUP id="{DDC1A8E1-18B4-B133-21A5-061073A6F069}" name="src">
+              <GROUP id="{F4E6649A-F89A-BAA7-4F54-6FC39BE48E17}" name="rxcpp">
+                <GROUP id="{84486056-F555-54DE-6AF6-C659F703ACBB}" name="operators">
+                  <FILE id="D2UsUO" name="rx-all.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-all.hpp"/>
+                  <FILE id="kE9S1v" name="rx-amb.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-amb.hpp"/>
+                  <FILE id="kJlLBY" name="rx-any.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-any.hpp"/>
+                  <FILE id="b8n1i3" name="rx-buffer_count.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-buffer_count.hpp"/>
+                  <FILE id="ARWdb8" name="rx-buffer_time.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-buffer_time.hpp"/>
+                  <FILE id="LaiW7U" name="rx-buffer_time_count.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-buffer_time_count.hpp"/>
+                  <FILE id="SeOIsK" name="rx-combine_latest.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-combine_latest.hpp"/>
+                  <FILE id="ZxP49p" name="rx-concat.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-concat.hpp"/>
+                  <FILE id="eOOWnk" name="rx-concat_map.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-concat_map.hpp"/>
+                  <FILE id="zeRuhx" name="rx-connect_forever.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-connect_forever.hpp"/>
+                  <FILE id="TTy5LZ" name="rx-debounce.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-debounce.hpp"/>
+                  <FILE id="JZUp9a" name="rx-delay.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-delay.hpp"/>
+                  <FILE id="CICKKf" name="rx-distinct.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-distinct.hpp"/>
+                  <FILE id="J03WVX" name="rx-distinct_until_changed.hpp" compile="0"
+                        resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-distinct_until_changed.hpp"/>
+                  <FILE id="vXjYBp" name="rx-element_at.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-element_at.hpp"/>
+                  <FILE id="PdoUj0" name="rx-filter.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-filter.hpp"/>
+                  <FILE id="jJ0qvd" name="rx-finally.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-finally.hpp"/>
+                  <FILE id="AqfASw" name="rx-flat_map.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-flat_map.hpp"/>
+                  <FILE id="r3UdEy" name="rx-group_by.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-group_by.hpp"/>
+                  <FILE id="xfQY0O" name="rx-ignore_elements.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-ignore_elements.hpp"/>
+                  <FILE id="LDuKlG" name="rx-lift.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-lift.hpp"/>
+                  <FILE id="HIzn6D" name="rx-map.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-map.hpp"/>
+                  <FILE id="jvMz58" name="rx-merge.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-merge.hpp"/>
+                  <FILE id="Xc6WrC" name="rx-multicast.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-multicast.hpp"/>
+                  <FILE id="aJzxUp" name="rx-observe_on.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-observe_on.hpp"/>
+                  <FILE id="GcPySC" name="rx-on_error_resume_next.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-on_error_resume_next.hpp"/>
+                  <FILE id="htVOKH" name="rx-pairwise.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-pairwise.hpp"/>
+                  <FILE id="Dku9Hc" name="rx-publish.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-publish.hpp"/>
+                  <FILE id="k8Kk5C" name="rx-reduce.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-reduce.hpp"/>
+                  <FILE id="ebbZIi" name="rx-ref_count.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-ref_count.hpp"/>
+                  <FILE id="k8lM76" name="rx-repeat.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-repeat.hpp"/>
+                  <FILE id="OHGF7l" name="rx-replay.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-replay.hpp"/>
+                  <FILE id="F6NGQY" name="rx-retry-repeat-common.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-retry-repeat-common.hpp"/>
+                  <FILE id="fNUSV0" name="rx-retry.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-retry.hpp"/>
+                  <FILE id="Z7COWX" name="rx-sample_time.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-sample_time.hpp"/>
+                  <FILE id="pLE7JG" name="rx-scan.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-scan.hpp"/>
+                  <FILE id="TUDht3" name="rx-sequence_equal.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-sequence_equal.hpp"/>
+                  <FILE id="mYesaa" name="rx-skip.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-skip.hpp"/>
+                  <FILE id="XYK29S" name="rx-skip_last.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-skip_last.hpp"/>
+                  <FILE id="XHAtev" name="rx-skip_until.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-skip_until.hpp"/>
+                  <FILE id="EZPOfj" name="rx-start_with.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-start_with.hpp"/>
+                  <FILE id="WrPw2D" name="rx-subscribe.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-subscribe.hpp"/>
+                  <FILE id="uMapa3" name="rx-subscribe_on.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-subscribe_on.hpp"/>
+                  <FILE id="xR6Bhj" name="rx-switch_if_empty.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-switch_if_empty.hpp"/>
+                  <FILE id="fdbn1H" name="rx-switch_on_next.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-switch_on_next.hpp"/>
+                  <FILE id="GDD8tt" name="rx-take.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-take.hpp"/>
+                  <FILE id="fGdvwo" name="rx-take_last.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-take_last.hpp"/>
+                  <FILE id="a5K0Nc" name="rx-take_until.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-take_until.hpp"/>
+                  <FILE id="HceYny" name="rx-take_while.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-take_while.hpp"/>
+                  <FILE id="MCVtbQ" name="rx-tap.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-tap.hpp"/>
+                  <FILE id="OJLgId" name="rx-time_interval.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-time_interval.hpp"/>
+                  <FILE id="biFbFe" name="rx-timeout.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-timeout.hpp"/>
+                  <FILE id="jq8uRg" name="rx-timestamp.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-timestamp.hpp"/>
+                  <FILE id="SvlCoc" name="rx-window.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-window.hpp"/>
+                  <FILE id="sa6KOq" name="rx-window_time.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-window_time.hpp"/>
+                  <FILE id="IVgA3O" name="rx-window_time_count.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-window_time_count.hpp"/>
+                  <FILE id="SsQSjs" name="rx-window_toggle.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-window_toggle.hpp"/>
+                  <FILE id="NCasoD" name="rx-with_latest_from.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-with_latest_from.hpp"/>
+                  <FILE id="vvX2jo" name="rx-zip.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/operators/rx-zip.hpp"/>
+                </GROUP>
+                <GROUP id="{8AC32D9D-24C9-B63D-6EFE-3881F2970421}" name="schedulers">
+                  <FILE id="z47gMV" name="rx-currentthread.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-currentthread.hpp"/>
+                  <FILE id="KXnYog" name="rx-eventloop.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-eventloop.hpp"/>
+                  <FILE id="V8X1J0" name="rx-immediate.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-immediate.hpp"/>
+                  <FILE id="R7BThy" name="rx-newthread.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-newthread.hpp"/>
+                  <FILE id="MkdmzU" name="rx-runloop.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-runloop.hpp"/>
+                  <FILE id="frOuOC" name="rx-sameworker.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-sameworker.hpp"/>
+                  <FILE id="ncmpXL" name="rx-test.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-test.hpp"/>
+                  <FILE id="TjP7JZ" name="rx-virtualtime.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/schedulers/rx-virtualtime.hpp"/>
+                </GROUP>
+                <GROUP id="{9B94EF7B-16F3-0172-4415-A1B90740733F}" name="sources">
+                  <FILE id="nIP9GJ" name="rx-create.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-create.hpp"/>
+                  <FILE id="aQPX3j" name="rx-defer.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-defer.hpp"/>
+                  <FILE id="XewdE6" name="rx-empty.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-empty.hpp"/>
+                  <FILE id="kaa3G0" name="rx-error.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-error.hpp"/>
+                  <FILE id="mJXxxl" name="rx-interval.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-interval.hpp"/>
+                  <FILE id="rrt3EX" name="rx-iterate.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-iterate.hpp"/>
+                  <FILE id="l83aKf" name="rx-never.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-never.hpp"/>
+                  <FILE id="b9LKuq" name="rx-range.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-range.hpp"/>
+                  <FILE id="pd9jxR" name="rx-scope.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-scope.hpp"/>
+                  <FILE id="HTNg5W" name="rx-timer.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/sources/rx-timer.hpp"/>
+                </GROUP>
+                <GROUP id="{D3D61558-AA87-F1D6-981C-15B8A4F3A9F2}" name="subjects">
+                  <FILE id="tVSaLt" name="rx-behavior.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/subjects/rx-behavior.hpp"/>
+                  <FILE id="izaAbb" name="rx-replaysubject.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/subjects/rx-replaysubject.hpp"/>
+                  <FILE id="LWCyM0" name="rx-subject.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/subjects/rx-subject.hpp"/>
+                  <FILE id="hFoRvh" name="rx-synchronize.hpp" compile="0" resource="0"
+                        file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/subjects/rx-synchronize.hpp"/>
+                </GROUP>
+                <FILE id="sVqwVY" name="rx-connectable_observable.hpp" compile="0"
+                      resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-connectable_observable.hpp"/>
+                <FILE id="cPth6N" name="rx-coordination.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-coordination.hpp"/>
+                <FILE id="e5pAFZ" name="rx-coroutine.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-coroutine.hpp"/>
+                <FILE id="WShaqd" name="rx-grouped_observable.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-grouped_observable.hpp"/>
+                <FILE id="MmbCfq" name="rx-includes.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-includes.hpp"/>
+                <FILE id="d7XhaB" name="rx-lite.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-lite.hpp"/>
+                <FILE id="uoaBHV" name="rx-notification.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-notification.hpp"/>
+                <FILE id="gZbtr6" name="rx-observable.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-observable.hpp"/>
+                <FILE id="mECTM0" name="rx-observer.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-observer.hpp"/>
+                <FILE id="HGRJXN" name="rx-operators.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-operators.hpp"/>
+                <FILE id="BJuPkg" name="rx-predef.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-predef.hpp"/>
+                <FILE id="UYnUgQ" name="rx-scheduler.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-scheduler.hpp"/>
+                <FILE id="SHrqgs" name="rx-sources.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-sources.hpp"/>
+                <FILE id="rU5k1v" name="rx-subjects.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-subjects.hpp"/>
+                <FILE id="btmdsL" name="rx-subscriber.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-subscriber.hpp"/>
+                <FILE id="Z4wvVh" name="rx-subscription.hpp" compile="0" resource="0"
+                      file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-subscription.hpp"/>
+                <FILE id="JJ5RgE" name="rx-test.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-test.hpp"/>
+                <FILE id="NqzcET" name="rx-trace.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-trace.hpp"/>
+                <FILE id="cAMfHc" name="rx-util.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx-util.hpp"/>
+                <FILE id="C43FYM" name="rx.hpp" compile="0" resource="0" file="../rxjuce/RxCpp/Rx/v2/src/rxcpp/rx.hpp"/>
+              </GROUP>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+      <FILE id="cQq2EJ" name="rxjuce_Prefixes.h" compile="0" resource="0"
+            file="../rxjuce/rxjuce_Prefixes.h"/>
+    </GROUP>
     <GROUP id="{3E021249-15C8-F098-B5C0-2A3DBD19388C}" name="Source">
       <GROUP id="{BBCE1761-6AF0-DAE7-65CD-AE0365C41BE7}" name="Other">
         <FILE id="Ct7vkg" name="catch.hpp" compile="0" resource="0" file="Source/Other/catch.hpp"/>
@@ -25,7 +222,6 @@
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
-        <MODULEPATH id="rxjuce" path="../"/>
         <MODULEPATH id="juce_events" path="../JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
         <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
@@ -62,7 +258,6 @@
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_tracktion_marketplace" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
-    <MODULE id="rxjuce" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_ASIO="disabled" JUCE_WASAPI="disabled" JUCE_WASAPI_EXCLUSIVE="disabled"
                JUCE_DIRECTSOUND="disabled" JUCE_ALSA="disabled" JUCE_JACK="disabled"

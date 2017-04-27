@@ -8,7 +8,10 @@
   ==============================================================================
 */
 
-#include "JuceHeader.h"
+#include "rxjuce_Observable.h"
+#include "rxjuce_Subscriber.h"
+
+using namespace juce;
 
 #include <iostream>
 
