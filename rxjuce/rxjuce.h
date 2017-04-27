@@ -13,14 +13,6 @@ END_JUCE_MODULE_DECLARATION
 */
 #endif
 
-//==============================================================================
-/** Config: RXJUCE_ENABLE_LONG_SIGNATURES
- If this is set to 0, only overloads with short signatures are added for Rx Observable operators. This can reduce compile time.
- */
-#ifndef RXJUCE_ENABLE_LONG_SIGNATURES
-#define RXJUCE_ENABLE_LONG_SIGNATURES 1
-#endif
-
 #pragma once
 
 #include <juce_core/juce_core.h>
@@ -33,6 +25,7 @@ END_JUCE_MODULE_DECLARATION
 namespace rxjuce {
 
 #include "observable/rxjuce_Observable.h"
+#include "observable/rxjuce_Subject.h"
 #include "observable/rxjuce_Subscriber.h"
 #include "observable/rxjuce_Subscription.h"
 

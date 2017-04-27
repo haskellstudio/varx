@@ -112,20 +112,6 @@ TEST_CASE("Observable::combineLatest with one other Observable") {
 	REQUIRE(result == "Hello World!");
 }
 
-TEST_CASE("Observable::combineLatest with Array") {
-	auto f = Observable::just(4.54);
-	auto s = Observable::just(String(CharPointer_UTF8("€")));
-	auto comment = Observable::just("not a lot!");
-	
-	auto combined = f.combineLatest({s, comment}, [](Array<var> values) {
-		return String(float(values[0])) + " " + values[1].toString() + " is " + values[2].toString();
-	});
-	
-	RxJUCECollectResult(combined, result);
-	
-	REQUIRE(result == "4.54 € is not a lot!");
-}
-
 TEST_CASE("Observable::range") {
 	struct TestSetup
 	{

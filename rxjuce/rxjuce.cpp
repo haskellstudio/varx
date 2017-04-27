@@ -12,6 +12,7 @@ namespace rxjuce {
 	using shared_ptr = std::shared_ptr<T>;
 
 #include "observable/rxjuce_Observable.cpp"
+#include "observable/rxjuce_Subject.cpp"
 #include "observable/rxjuce_Subscriber.cpp"
 #include "observable/rxjuce_Subscription.cpp"
 

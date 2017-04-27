@@ -194,8 +194,6 @@ Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3
 	return Internal::combineLatest(transform, *this, o1, o2, o3, o4);
 }
 
-#ifdef RXJUCE_ENABLE_LONG_SIGNATURES
-
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform)
 {
 	return Internal::combineLatest(transform, *this, o1, o2, o3, o4, o5);
@@ -209,37 +207,4 @@ Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform)
 {
 	return Internal::combineLatest(transform, *this, o1, o2, o3, o4, o5, o6, o7);
-}
-
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Observable o8, Transform9 transform)
-{
-	return Internal::combineLatest(transform, *this, o1, o2, o3, o4, o5, o6, o7, o8);
-}
-
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Observable o8, Observable o9, Transform10 transform)
-{
-	return Internal::combineLatest(transform, *this, o1, o2, o3, o4, o5, o6, o7, o8, o9);
-}
-
-#endif
-
-Observable Observable::combineLatest(const Array<Observable>& others, const std::function<var(const Array<var>&)>& transform)
-{
-	static const auto wrapIntoArray = [](const var& v) {
-		Array<var> array;
-		array.add(v);
-		return array;
-	};
-	
-	Observable o = map(wrapIntoArray);
-	
-	static const auto combine = [](const var& array, const var& other) {
-		array.getArray()->add(other);
-		return array;
-	};
-	
-	for (const auto& other : others)
-		o = Internal::combineLatest(combine, o, other);
-	
-	return o.map([transform](const var& array){ return transform(*array.getArray()); });
 }
