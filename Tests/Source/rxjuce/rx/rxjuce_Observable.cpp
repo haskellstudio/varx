@@ -47,7 +47,7 @@ Observable Observable::fromValue(Value value)
 		}
 		
 	private:
-		void valueChanged(Value &value) override
+		void valueChanged(Value &) override
 		{
 			subscriber.onNext(value.getValue());
 		}
@@ -104,7 +104,7 @@ Observable Observable::range(var first, var last, int step)
 	return createRange(first, last, step);
 }
 
-Observable Observable::create(const std::function<void(const Subscriber&)>& onSubscribe)
+Observable Observable::create(const std::function<void(Subscriber)>& onSubscribe)
 {
 	return Internal::fromRxCpp(rxcpp::observable<>::create<var>([onSubscribe](rxcpp::subscriber<var> s) {
 		onSubscribe(Subscriber([s](const var& next) {
