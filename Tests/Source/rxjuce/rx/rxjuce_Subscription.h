@@ -31,4 +31,15 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Subscription)
 };
 
+class RAIISubscription
+{
+public:
+	RAIISubscription(Subscription&& subscription);
+	~RAIISubscription();
+private:
+	Subscription subscription;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RAIISubscription)
+};
+
 RXJUCE_NAMESPACE_END

@@ -24,4 +24,12 @@ void Subscription::unsubscribe() const
 		_unsubscribe();
 }
 
+RAIISubscription::RAIISubscription(Subscription&& subscription)
+: subscription(std::move(subscription))
+{}
+RAIISubscription::~RAIISubscription()
+{
+	subscription.unsubscribe();
+}
+
 RXJUCE_NAMESPACE_END
