@@ -18,7 +18,7 @@ RXJUCE_NAMESPACE_BEGIN
 
 Observable::Internal::Ptr Observable::Internal::fromRxCpp(const rxcpp::observable<var>& o)
 {
-	return Ptr(new Internal(o));
+	return std::make_shared<Internal>(o);
 }
 
 Observable::Internal::Internal(const rxcpp::observable<var>& o)

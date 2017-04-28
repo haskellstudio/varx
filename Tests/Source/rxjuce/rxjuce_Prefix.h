@@ -5,6 +5,9 @@
 #include <memory>
 #include <map>
 #include <type_traits>
+#include <utility>
+
+#include "rxjuce_MakeUnique.h"
 
 #define RXJUCE_NAMESPACE_BEGIN namespace rxjuce {
 #define RXJUCE_NAMESPACE_END }
@@ -14,4 +17,6 @@ using namespace juce; \
 \
 template<class T> \
 using shared_ptr = std::shared_ptr<T>; \
+template<typename T, typename D = std::default_delete<T>>\
+using unique_ptr = std::unique_ptr<T, D>;\
 }

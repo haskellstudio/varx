@@ -115,7 +115,7 @@ private:
 			if (weakSelf.wasObjectDeleted())
 				return;
 			
-			std::unique_ptr<Forwarder> forwarder(new Forwarder(weakSelf, subscriber));
+			auto forwarder = std::make_unique<Forwarder>(weakSelf, subscriber);
 			weakSelf->addListener(forwarder.get());
 			LifetimeWatcherPool::getInstance().add(std::move(forwarder));
 		});

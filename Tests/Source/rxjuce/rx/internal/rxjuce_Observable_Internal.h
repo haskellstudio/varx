@@ -24,6 +24,8 @@ public:
 	typedef Array<std::shared_ptr<void>> Sources;
 	typedef std::shared_ptr<Internal> Ptr;
 	
+	Internal(const rxcpp::observable<var>& o);
+	
 	static Ptr fromRxCpp(const rxcpp::observable<var>& o);
 	
 	template<typename Transform, typename O, typename... Os>
@@ -41,8 +43,6 @@ public:
 	const rxcpp::observable<var> o;
 	
 private:
-	Internal(const rxcpp::observable<var>& o);
-	
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Internal)
 };
 

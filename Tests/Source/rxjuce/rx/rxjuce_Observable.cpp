@@ -64,7 +64,7 @@ Observable Observable::fromValue(Value value)
 		subscriber.onNext(value.getValue());
 		
 		// Add the listener to the pool, to keep getting updates from the value source
-		LifetimeWatcherPool::getInstance().add(std::unique_ptr<LifetimeWatcher>(new ValueSourceListener(value.getValueSource(), subscriber)));
+		LifetimeWatcherPool::getInstance().add(std::make_unique<ValueSourceListener>(value.getValueSource(), subscriber));
 	});
 }
 
