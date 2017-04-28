@@ -78,7 +78,7 @@ TEST_CASE("A Slider Value can be observed",
 TEST_CASE("A Value can have 2 Observables",
 		  "[Observable][Observable::fromValue]")
 {
-	GIVEN("A Value with 2 Observables") {
+	GIVEN("a Value with 2 Observables") {
 		Value value(3.54);
 		Observable o1 = Observable::fromValue(value);
 		Observable o2 = Observable::fromValue(value);
@@ -95,6 +95,36 @@ TEST_CASE("A Value can have 2 Observables",
 			THEN("both Observables emit an item") {
 				RxJUCERequireResults(o1Results, 3.54, 76.4);
 				RxJUCERequireResults(o2Results, 3.54, 76.4);
+			}
+		}
+	}
+}
+
+TEST_CASE("A Value Observable can have 2 Subscriptions",
+		  "[Observable][Observable::fromValue]")
+{
+	GIVEN("a Value Observable with 2 Subscriptions") {
+		Value value("Foo");
+		Observable o = Observable::fromValue(value);
+		Array<var> allResults;
+		
+		RAIISubscription s1 = o.subscribe([&](var newValue) {
+			allResults.add(newValue);
+		});
+		
+		RAIISubscription s2 = o.subscribe([&](var newValue) {
+			allResults.add(newValue.toString().toUpperCase());
+		});
+		
+		WHEN("the Value changes multiple times") {
+			value.setValue("Bar");
+			RxJUCERunDispatchLoop();
+			
+			value.setValue("Baz");
+			RxJUCERunDispatchLoop();
+			
+			THEN("both Subscriptions are notified") {
+				RxJUCERequireResults(allResults, "Foo", "FOO", "BAR", "Bar", "BAZ", "Baz");
 			}
 		}
 	}
