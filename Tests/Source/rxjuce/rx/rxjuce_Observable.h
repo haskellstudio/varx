@@ -29,7 +29,7 @@ public:
 	 */
 	
 	/**
-		Creates a new `Observable` from a given JUCE `Value`'s **source**. The observable refers to the value's underlying `ValueSource` and continues to emit values even after the passed `Value` is deleted.
+		Creates a new `Observable` from a given JUCE `Value`'s **source**. The observable refers to the value's underlying `ValueSource` and continues to emit values even after the passed `Value` is destroyed.
 	 */
 	static Observable fromValue(juce::Value value);
 	
@@ -46,7 +46,7 @@ public:
 	 Subscription
 	 */
 	
-	Subscription subscribe(const std::function<void(var)>& f) const;
+	Subscription subscribe(const std::function<void(const var&)>& onNext) const;
 	
 	
 	//==============================================================================
@@ -77,9 +77,10 @@ public:
 	
 private:
 	class Internal;
-	friend class Subject;
 	Observable(const std::shared_ptr<Internal> & internal);
 	std::shared_ptr<Internal>  internal;
+	
+	JUCE_LEAK_DETECTOR(Observable)
 };
 
 RXJUCE_NAMESPACE_END

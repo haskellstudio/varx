@@ -17,14 +17,14 @@ RXJUCE_NAMESPACE_BEGIN
 class Subscription
 {
 public:
-	Subscription(Subscription&& other);
-	Subscription& operator=(Subscription&& other);
+	Subscription(Subscription&&) = default;
+	Subscription& operator=(Subscription&&) = default;
 	
 	void unsubscribe() const;
 	
 private:
 	friend class Observable;
-	Subscription(const std::function<void()>& unsubscribe);
+	explicit Subscription(const std::function<void()>& unsubscribe);
 	
 	std::function<void()> _unsubscribe;
 	

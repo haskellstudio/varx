@@ -21,9 +21,11 @@ public:
 	
 private:
 	friend class Observable;
-	Subscriber(const std::function<void(const juce::var&)>& onNext);
+	explicit Subscriber(const std::function<void(const juce::var&)>& onNext);
 	
 	std::function<void(const juce::var&)> _onNext;
+	
+	JUCE_LEAK_DETECTOR(Subscriber)
 };
 
 RXJUCE_NAMESPACE_END

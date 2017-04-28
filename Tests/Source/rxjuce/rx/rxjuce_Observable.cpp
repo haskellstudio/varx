@@ -72,9 +72,9 @@ Observable::Observable(const shared_ptr<Internal>& internal)
 :	internal(internal)
 {}
 
-Subscription Observable::subscribe(const std::function<void(var)>& f) const
+Subscription Observable::subscribe(const std::function<void(const var&)>& onNext) const
 {
-	const auto subscription = internal->o.subscribe(f);
+	const auto subscription = internal->o.subscribe(onNext);
 	
 	return Subscription([subscription]() {
 		subscription.unsubscribe();

@@ -39,10 +39,6 @@
                 file="Source/rxjuce/rx/rxjuce_Observable.cpp"/>
           <FILE id="Iif8lu" name="rxjuce_Observable.h" compile="0" resource="0"
                 file="Source/rxjuce/rx/rxjuce_Observable.h"/>
-          <FILE id="vZl9fl" name="rxjuce_Subject.cpp" compile="1" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subject.cpp"/>
-          <FILE id="RCG0KT" name="rxjuce_Subject.h" compile="0" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subject.h"/>
           <FILE id="xg7RFM" name="rxjuce_Subscriber.cpp" compile="1" resource="0"
                 file="Source/rxjuce/rx/rxjuce_Subscriber.cpp"/>
           <FILE id="iXH4Hq" name="rxjuce_Subscriber.h" compile="0" resource="0"

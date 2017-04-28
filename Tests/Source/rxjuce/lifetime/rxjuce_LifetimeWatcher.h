@@ -32,6 +32,9 @@ public:
 	
 	/** Should return whether the object is referenced by more than the provided number of LifetimeWatchers. */
 	virtual bool isExpired(int numLifetimeWatchers) const = 0;
+	
+private:
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LifetimeWatcher)
 };
 
 RXJUCE_NAMESPACE_END

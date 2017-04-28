@@ -28,7 +28,7 @@ class WeakReferenceLifetimeWatcher : public LifetimeWatcher
 {
 public:
 	/** Creates a new WeakReferenceLifetimeWatcher that watches a given weak reference. */
-	WeakReferenceLifetimeWatcher(const juce::WeakReference<T>& ref)
+	explicit WeakReferenceLifetimeWatcher(const juce::WeakReference<T>& ref)
 	: ref(ref)
 	{}
 	
