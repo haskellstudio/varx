@@ -8,7 +8,14 @@ class TestRunnerApplication : public JUCEApplication
 public:
 	void initialise (const String& commandLine) override
 	{
-		Catch::Session().run();
+		
+		Catch::ConfigData config;
+		config.shouldDebugBreak = true;
+		
+		Catch::Session session;
+		session.useConfigData(config);
+		session.run();
+		
 		quit();
 	}
 	
