@@ -34,7 +34,12 @@ private:
 class RAIISubscription
 {
 public:
+	RAIISubscription(RAIISubscription&&) = default;
+	RAIISubscription& operator=(RAIISubscription&&) = default;
+	
 	RAIISubscription(Subscription&& subscription);
+	RAIISubscription& operator=(Subscription&&);
+	
 	~RAIISubscription();
 private:
 	Subscription subscription;
