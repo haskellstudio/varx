@@ -25,7 +25,7 @@ TEST_CASE("Observable::fromValue") {
 	
 	value = 42;
 	
-	RxJUCERunDispatchLoop;
+	RxJUCERunDispatchLoop();
 	
 	REQUIRE(result == var(42));
 }
@@ -94,7 +94,7 @@ TEST_CASE("Observable::create") {
 	
 	RxJUCECollectResults(o, results);
 	
-	RxJUCERequireResults(var(3), var("Hello there!"), var(14.33));
+	RxJUCERequireResults(results, var(3), var("Hello there!"), var(14.33));
 }
 
 TEST_CASE("Observable::create with async onSubscribe") {
@@ -107,9 +107,9 @@ TEST_CASE("Observable::create with async onSubscribe") {
 	
 	RxJUCECollectResults(o, results);
 	
-	RxJUCERunDispatchLoop;
+	RxJUCERunDispatchLoop();
 	
-	RxJUCERequireResults(var(3.14), var("Test"));
+	RxJUCERequireResults(results, var(3.14), var("Test"));
 }
 
 TEST_CASE("Button Click Observation") {
@@ -117,7 +117,7 @@ TEST_CASE("Button Click Observation") {
 	
 	// This should not be recorded
 	button.triggerClick();
-	RxJUCERunDispatchLoop;
+	RxJUCERunDispatchLoop();
 	
 	RxJUCECollectResults(button.clickedObservable(), results);
 	
@@ -130,10 +130,10 @@ TEST_CASE("Button Click Observation") {
 		button.triggerClick();
 	});
 	
-	RxJUCERunDispatchLoop;
+	RxJUCERunDispatchLoop();
 	
 	// There should be 3 observed clicks
-	RxJUCERequireResults(var(), var(), var());
+	RxJUCERequireResults(results, var(), var(), var());
 }
 
 TEST_CASE("Button State Change Observation") {
@@ -141,7 +141,7 @@ TEST_CASE("Button State Change Observation") {
 	
 	// This should not be recorded
 	button.setState(Button::buttonDown);
-	RxJUCERunDispatchLoop;
+	RxJUCERunDispatchLoop();
 	
 	RxJUCECollectResults(button.stateChangedObservable(), results);
 	
@@ -154,10 +154,11 @@ TEST_CASE("Button State Change Observation") {
 		button.setState(Button::buttonDown);
 	});
 	
-	RxJUCERunDispatchLoop;
+	RxJUCERunDispatchLoop();
 	
 	// There should be 3 observed state changes
-	RxJUCERequireResults(var(Button::buttonOver),
+	RxJUCERequireResults(results,
+						 var(Button::buttonOver),
 						 var(Button::buttonNormal),
 						 var(Button::buttonDown));
 }
