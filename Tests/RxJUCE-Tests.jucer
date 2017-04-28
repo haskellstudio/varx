@@ -227,6 +227,8 @@
       </GROUP>
       <GROUP id="{10CA88C8-F94B-695D-F44B-6A2C94F559D1}" name="Tests">
         <FILE id="ai65EQ" name="ExampleTest.cpp" compile="1" resource="0" file="Source/Tests/ExampleTest.cpp"/>
+        <FILE id="kXq69B" name="ObservableTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ObservableTest.cpp"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>
