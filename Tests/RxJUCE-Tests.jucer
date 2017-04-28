@@ -226,7 +226,6 @@
         <FILE id="BNm3W1" name="rxjuce_Prefix.h" compile="0" resource="0" file="Source/rxjuce/rxjuce_Prefix.h"/>
       </GROUP>
       <GROUP id="{10CA88C8-F94B-695D-F44B-6A2C94F559D1}" name="Tests">
-        <FILE id="ai65EQ" name="ExampleTest.cpp" compile="1" resource="0" file="Source/Tests/ExampleTest.cpp"/>
         <FILE id="rrI8Xe" name="LifetimeWatcherPoolTest.cpp" compile="1" resource="0"
               file="Source/Tests/LifetimeWatcherPoolTest.cpp"/>
         <FILE id="kXq69B" name="ObservableTest.cpp" compile="1" resource="0"
