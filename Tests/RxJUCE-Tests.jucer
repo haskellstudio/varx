@@ -227,8 +227,14 @@
       </GROUP>
       <GROUP id="{10CA88C8-F94B-695D-F44B-6A2C94F559D1}" name="Tests">
         <FILE id="ai65EQ" name="ExampleTest.cpp" compile="1" resource="0" file="Source/Tests/ExampleTest.cpp"/>
+        <FILE id="rrI8Xe" name="LifetimeWatcherPoolTest.cpp" compile="1" resource="0"
+              file="Source/Tests/LifetimeWatcherPoolTest.cpp"/>
         <FILE id="kXq69B" name="ObservableTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObservableTest.cpp"/>
+        <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ObservedTest.cpp"/>
+        <FILE id="K3FGg8" name="SubscriptionTest.cpp" compile="1" resource="0"
+              file="Source/Tests/SubscriptionTest.cpp"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>
