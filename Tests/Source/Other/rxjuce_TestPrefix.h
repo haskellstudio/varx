@@ -22,9 +22,9 @@
 
 #define RxJUCERequireResults(__arrayName, ...) REQUIRE(__arrayName == Array<var>({__VA_ARGS__}))
 
-inline void RxJUCERunDispatchLoop()
+inline void RxJUCERunDispatchLoop(int millisecondsToRunFor = 0)
 {
-	juce::MessageManager::getInstance()->runDispatchLoopUntil(0);
+	juce::MessageManager::getInstance()->runDispatchLoopUntil(millisecondsToRunFor);
 }
 
 using namespace juce;

@@ -20,8 +20,7 @@ Subscription::Subscription(const std::function<void()>& unsubscribe)
 
 void Subscription::unsubscribe() const
 {
-	if (_unsubscribe)
-		_unsubscribe();
+	_unsubscribe();
 }
 
 RAIISubscription::RAIISubscription(Subscription&& subscription)

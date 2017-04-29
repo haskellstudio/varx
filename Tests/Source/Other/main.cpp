@@ -11,6 +11,7 @@ public:
 		
 		Catch::ConfigData config;
 		config.shouldDebugBreak = true;
+//		config.testsOrTags = {"[unrelated-subscriptions]"};
 		
 		Catch::Session session;
 		session.useConfigData(config);
