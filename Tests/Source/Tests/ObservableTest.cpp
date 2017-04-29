@@ -40,6 +40,24 @@ TEST_CASE("Value and ValueSource lifetime",
 	}
 }
 
+TEST_CASE("A Value notifies asynchronously",
+		  "[Observable][Observable::fromValue]") {
+	Value value("Initial Value");
+	Array<var> results;
+	RxJUCECollectResults(Observable::fromValue(value), results);
+	
+	RxJUCERequireResults(results, "Initial Value");
+	
+	IT("emites only one item if the Value is set multiple times synchronously") {
+		value.setValue("2");
+		value.setValue("3");
+		value.setValue("4");
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireResults(results, "Initial Value", "4");
+	}
+}
+
 TEST_CASE("A Value can have multiple Subscriptions or Observables",
 		  "[Observable][Observable::fromValue]")
 {
