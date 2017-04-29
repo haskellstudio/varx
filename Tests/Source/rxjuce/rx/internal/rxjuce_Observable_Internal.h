@@ -34,12 +34,6 @@ public:
 		return fromRxCpp(observable.internal->o.combine_latest(transform, observables.internal->o...));
 	}
 	
-	template<typename T>
-	static Ptr range(var first, var last, int step)
-	{
-		return fromRxCpp(rxcpp::observable<>::range<T>(first, last, step).map(VariantConverter<T>::toVar));
-	}
-	
 	const rxcpp::observable<var> o;
 	
 private:

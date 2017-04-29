@@ -36,26 +36,24 @@ TEST_CASE("Observable::range",
 {
 	Array<var> results;
 	
-	IT("throws if first has an invalid type") {
-		std::string error = "first has invalid type.";
-		REQUIRE_THROWS_WITH(Observable::range("Hello", "Hello", 1), error);
-		REQUIRE_THROWS_WITH(Observable::range("12", "16", 1), error);
-		REQUIRE_THROWS_WITH(Observable::range(var(), var(), 1), error);
-		REQUIRE_THROWS_WITH(Observable::range(var::undefined(), var::undefined(), 1), error);
-		REQUIRE_THROWS_WITH(Observable::range(true, false, 1), error);
-		REQUIRE_THROWS_WITH(Observable::range(Array<var>(), Array<var>(), 1), error);
-		REQUIRE_THROWS_WITH(Observable::range(StringArray(), StringArray(), 1), error);
+	IT("emits integer numbers with an integer range") {
+		RxJUCECollectResults(Observable::range(Range<int>(3, 7), 3), results);
+		RxJUCERequireResults(results, 3, 6, 7);
 	}
 	
-	IT("throws if first and last have different types") {
-		int _int = 3;
-		int64 _int64 = 4;
-		double _double = 5.66;
-		
-		std::string error = "first and last must have the same type.";
-		REQUIRE_THROWS_WITH(Observable::range(_int, _int64, 1), error);
-		REQUIRE_THROWS_WITH(Observable::range(_int, _double, 1), error);
-		REQUIRE_THROWS_WITH(Observable::range(_int64, _double, 1), error);
+	IT("emits double numbers with a double range") {
+		RxJUCECollectResults(Observable::range(Range<double>(17.5, 22.8), 2), results);
+		RxJUCERequireResults(results, 17.5, 19.5, 21.5, 22.8);
+	}
+	
+	IT("emits just start if start == end") {
+		RxJUCECollectResults(Observable::range(Range<int>(10, 10), 1), results);
+		RxJUCERequireResults(results, 10);
+	}
+	
+	IT("emits just start if start > end") {
+		RxJUCECollectResults(Observable::range(Range<int>(10, 9), 1), results);
+		RxJUCERequireResults(results, 10);
 	}
 }
 

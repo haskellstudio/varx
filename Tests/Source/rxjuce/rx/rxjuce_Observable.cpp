@@ -41,6 +41,7 @@ Observable Observable::fromValue(Value value)
 			return source;
 		}
 		
+#warning TODO getReferenceCount, and let pool decide
 		bool isExpired(int numLifetimeWatchers) const override
 		{
 			return (source->getReferenceCount() <= numLifetimeWatchers);
@@ -86,23 +87,13 @@ Observable Observable::just(var value)
 	return Internal::fromRxCpp(rxcpp::observable<>::just(value));
 }
 
-Observable Observable::range(var first, var last, int step) throw(std::runtime_error)
+Observable Observable::range(juce::Range<int> range, int step)
 {
-	if (!first.hasSameTypeAs(last))
-		throw std::runtime_error("first and last must have the same type.");
-	
-	// Choose the rxcpp template parameter type depending on the var type
-	std::function<Internal::Ptr(var, var, int)> createRange;
-	if (first.isInt())
-		createRange = Internal::range<int>;
-	else if (first.isInt64())
-		createRange = Internal::range<int64>;
-	else if (first.isDouble())
-		createRange = Internal::range<double>;
-	else
-		throw std::runtime_error("first has invalid type.");
-	
-	return createRange(first, last, step);
+	return Internal::fromRxCpp(rxcpp::observable<>::range<int>(range.getStart(), range.getEnd(), step).map(juce::VariantConverter<int>::toVar));
+}
+Observable Observable::range(juce::Range<double> range, int step)
+{
+	return Internal::fromRxCpp(rxcpp::observable<>::range<double>(range.getStart(), range.getEnd(), step).map(juce::VariantConverter<double>::toVar));
 }
 
 Observable Observable::create(const std::function<void(Subscriber)>& onSubscribe)

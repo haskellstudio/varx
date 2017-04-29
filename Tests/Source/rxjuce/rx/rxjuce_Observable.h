@@ -45,18 +45,17 @@ public:
 	static Observable just(var value);
 	
 	/**
-		Creates an Observable which emits a range between (and including) the first and last value, with a given step size.
+		Creates an Observable which emits values from a given range, starting at range.getStart() to (and including) range.getEnd().
 	 
 		For example:
 	 
 		```cpp
-		range(3, 7, 3) -> {3, 6, 7}
-		range(17.5, 22.8, 2) -> {17.5, 19.5, 21.5, 22.8}
+		range(Range<int>(3, 7), 3) -> {3, 6, 7}
+		range(Range<double>(17.5, 22.8), 2) -> {17.5, 19.5, 21.5, 22.8}
 		```
-	 
-		**The first and last values must have the same type! They must be int, int64 or double.**
 	 */
-	static Observable range(var first, var last, int step) throw(std::runtime_error);
+	static Observable range(juce::Range<int> range, int step);
+	static Observable range(juce::Range<double> range, int step);
 	
 	/**
 		Creates an Observable which emits values from a Subscriber on each subscription.
