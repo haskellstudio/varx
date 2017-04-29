@@ -39,6 +39,9 @@ TEST_CASE("Observable::range",
 	IT("throws if first has an invalid type") {
 		std::string error = "first has invalid type.";
 		REQUIRE_THROWS_WITH(Observable::range("Hello", "Hello", 1), error);
+		REQUIRE_THROWS_WITH(Observable::range("12", "16", 1), error);
+		REQUIRE_THROWS_WITH(Observable::range(var(), var(), 1), error);
+		REQUIRE_THROWS_WITH(Observable::range(var::undefined(), var::undefined(), 1), error);
 		REQUIRE_THROWS_WITH(Observable::range(true, false, 1), error);
 		REQUIRE_THROWS_WITH(Observable::range(Array<var>(), Array<var>(), 1), error);
 		REQUIRE_THROWS_WITH(Observable::range(StringArray(), StringArray(), 1), error);
