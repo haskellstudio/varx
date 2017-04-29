@@ -10,123 +10,103 @@
 
 #include "rxjuce_TestPrefix.h"
 
-SCENARIO("Value and ValueSource lifetime",
-		 "[Observable][Observable::fromValue]")
+TEST_CASE("Value and ValueSource lifetime",
+		  "[Observable][Observable::fromValue]")
 {
-	GIVEN("an Observable from a Value") {
-		auto value = std::make_shared<Value>("Initial");
-		Array<var> results;
-		RxJUCECollectResults(Observable::fromValue(*value), results);
-		RxJUCERequireResults(results, "Initial");
+	LifetimeWatcherPool::getInstance().removeExpiredWatchers();
+	
+	// Create Value and subscribe
+	auto value = std::make_shared<Value>("Initial");
+	Array<var> results;
+	RxJUCECollectResults(Observable::fromValue(*value), results);
+	RxJUCERequireResults(results, "Initial");
+	
+	IT("still receives an item if the Value is destroyed immediately after calling setValue") {
+		value->setValue("New Value");
+		value.reset();
+		RxJUCERunDispatchLoop();
 		
-		WHEN("the Value is set to a new value and destroyed immediately") {
-			value->setValue("New Value");
-			value.reset();
-			RxJUCERunDispatchLoop();
-			
-			THEN("the Observable still emits an item") {
-				RxJUCERequireResults(results, "Initial", "New Value");
-			}
-		}
+		RxJUCERequireResults(results, "Initial", "New Value");
+	}
+	
+	IT("still receives an item if the Value is copied, the original is destroyed, and the copy sets a new value") {
+		Value copy(*value);
+		value.reset();
+		RxJUCERunDispatchLoop();
+		copy.setValue("New");
+		RxJUCERunDispatchLoop();
 		
-		WHEN("a copy of the Value is made, the original is destroyed, and the copy sets a new value") {
-			Value copy(*value);
-			value.reset();
-			RxJUCERunDispatchLoop();
-			copy.setValue("New");
-			RxJUCERunDispatchLoop();
-			
-			THEN("the subscription still receives items") {
-				RxJUCERequireResults(results, "Initial", "New");
-			}
-		}
-		
-		WHEN("the value is alive") {
-			THEN("there are two references to its source (one from itself, and one from the LifetimeWatcher") {
-				REQUIRE(value->getValueSource().getReferenceCount() == 2);
-			}
-		}
+		RxJUCERequireResults(results, "Initial", "New");
 	}
 }
 
 TEST_CASE("A Value can have multiple Subscriptions or Observables",
 		  "[Observable][Observable::fromValue]")
 {
-	GIVEN("a Subscription to a Value Observable") {
-		Value value("Foo");
-		Observable o = Observable::fromValue(value);
-		Array<var> results;
-		RxJUCECollectResults(o, results);
+	// Create Value and subscribe
+	Value value("Foo");
+	Observable o = Observable::fromValue(value);
+	Array<var> results;
+	RxJUCECollectResults(o, results);
+	
+	RxJUCERequireResults(results, "Foo");
+	
+	IT("notifies multiple Subscriptions on subscribe") {
+		Observable another = Observable::fromValue(value);
+		RxJUCECollectResults(another, results);
+	
+		RxJUCERequireResults(results, "Foo", "Foo");
+	}
+	
+	IT("notifies multiple Values referring to the same ValueSource") {
+		Value anotherValue(value);
+		Observable anotherObservable = Observable::fromValue(anotherValue);
+		RxJUCECollectResults(anotherObservable, results);
 		
-		RxJUCERequireResults(results, "Foo");
+		RxJUCERequireResults(results, "Foo", "Foo");
+	}
+	
+	IT("notifies multiple Subscriptions if a Value is set multiple times") {
+		RAIISubscription another = o.subscribe([&](String newValue) {
+			results.add(newValue.toUpperCase());
+		});
 		
-		WHEN("there is another Subscription and the Value is set twice") {
-			RAIISubscription another = o.subscribe([&](String newValue) {
-				results.add(newValue.toUpperCase());
-			});
-			
-			value.setValue("Bar");
-			RxJUCERunDispatchLoop();
-			
-			value.setValue("Baz");
-			RxJUCERunDispatchLoop();
-			
-			THEN("both Subscriptions are notified") {
-				for (auto s : {"Foo", "FOO", "BAR", "Bar", "BAZ", "Baz"})
-					REQUIRE(results.contains(s));
-			}
-		}
+		value.setValue("Bar");
+		RxJUCERunDispatchLoop();
 		
-		WHEN("there is another Observable and the Value is set once") {
-			Observable another = Observable::fromValue(value);
-			RxJUCECollectResults(another, results);
-			
-			THEN("both Observables emit an item") {
-				RxJUCERequireResults(results, "Foo", "Foo");
-			}
-		}
+		value.setValue("Baz");
+		RxJUCERunDispatchLoop();
 		
-		WHEN("there is another Value referring to the same Source") {
-			Value another(value);
-			Observable o2 = Observable::fromValue(another);
-			RxJUCECollectResults(o2, results);
-			
-			THEN("both Values emit an item") {
-				RxJUCERequireResults(results, "Foo", "Foo");
-			}
-		}
+		REQUIRE(results.size() == 6);
+		
+		for (auto s : {"Foo", "FOO", "BAR", "Bar", "BAZ", "Baz"})
+			REQUIRE(results.contains(s));
 	}
 }
 
 TEST_CASE("A Slider Value can be observed",
 		  "[Observable][Observable::fromValue]")
 {
-	GIVEN("a Slider with an initial value") {
-		Slider slider;
-		slider.setValue(7.6);
-		Observable o = Observable::fromValue(slider.getValueObject());
-		Array<var> results;
-		RxJUCECollectResults(o, results);
-		RxJUCERequireResults(results, 7.6);
+	Slider slider;
+	slider.setValue(7.6);
+	Observable o = Observable::fromValue(slider.getValueObject());
+	Array<var> results;
+	RxJUCECollectResults(o, results);
+	RxJUCERequireResults(results, 7.6);
+	
+	IT("emits once if the Slider is changed once") {
+		slider.setValue(0.45);
+		RxJUCERunDispatchLoop();
 		
-		WHEN("the Slider value is changed once") {
-			slider.setValue(0.45);
-			RxJUCERunDispatchLoop();
-			
-			THEN("the Observable emits once") {
-				RxJUCERequireResults(results, 7.6, 0.45);
-			}
-		}
+		RxJUCERequireResults(results, 7.6, 0.45);
+	}
+	
+	IT("emits just once if the Slider value changes rapidly") {
+		for (double value : {3.41, 9.54, 4.67, 3.56})
+			slider.setValue(value);
 		
-		WHEN("the Slider value is changed rapidly") {
-			for (double value : {3.41, 9.54, 4.67, 3.56})
-				slider.setValue(value);
-			
-			RxJUCERunDispatchLoop();
-			
-			THEN("the Observable emits just once") {
-				RxJUCERequireResults(results, 7.6, 3.56);
-			}
-		}
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireResults(results, 7.6, 3.56);
 	}
 }

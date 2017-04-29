@@ -45,7 +45,7 @@ void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 	}
 }
 
-void LifetimeWatcherPool::timerCallback()
+void LifetimeWatcherPool::removeExpiredWatchers()
 {
 	// Check if any watchers have expired
 	for (auto it = watchers.begin(); it != watchers.end(); it++) {
@@ -59,6 +59,16 @@ void LifetimeWatcherPool::timerCallback()
 				break;
 		}
 	}
+}
+
+int LifetimeWatcherPool::getNumWatchers() const
+{
+	return watchers.size();
+}
+
+void LifetimeWatcherPool::timerCallback()
+{
+	removeExpiredWatchers();
 	
 	// No need for a timer if there are no more watchers
 	if (watchers.empty())

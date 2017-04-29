@@ -37,6 +37,10 @@ public:
 		Can be called from a thread other than the message thread. If so, it will lock the message thread.
 	 */
 	void add(std::unique_ptr<const LifetimeWatcher>&& watcher);
+	
+	void removeExpiredWatchers();
+	
+	int getNumWatchers() const;
 
 private:
 	LifetimeWatcherPool();
