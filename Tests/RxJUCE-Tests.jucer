@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="ggJgza" name="RxJUCE-Tests" projectType="consoleapp" version="1.0.0"
               bundleIdentifier="de.martin-finke.RxJUCE-Tests" includeBinaryInAppConfig="1"
-              jucerVersion="4.3.1" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de">
+              jucerVersion="5.0.0" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de"
+              displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark">
   <MAINGROUP id="J6yVM5" name="RxJUCE-Tests">
     <GROUP id="{3E021249-15C8-F098-B5C0-2A3DBD19388C}" name="Source">
       <GROUP id="{BBCE1761-6AF0-DAE7-65CD-AE0365C41BE7}" name="Other">
@@ -261,7 +262,6 @@
         <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_tracktion_marketplace" path="../JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
@@ -282,7 +282,6 @@
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0"/>
-    <MODULE id="juce_tracktion_marketplace" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_ASIO="disabled" JUCE_WASAPI="disabled" JUCE_WASAPI_EXCLUSIVE="disabled"
