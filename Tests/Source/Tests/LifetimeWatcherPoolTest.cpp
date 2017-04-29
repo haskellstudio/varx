@@ -9,13 +9,13 @@
 */
 
 #include "rxjuce_TestPrefix.h"
+#include "rxjuce_LifetimeWatcherPoolFixture.h"
 
-TEST_CASE("LifetimeWatcherPool",
-		  "[LifetimeWatcherPool]")
+
+TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
+				 "Values in LifetimeWatcherPool",
+				 "[LifetimeWatcherPool]")
 {
-	auto& pool = LifetimeWatcherPool::getInstance();
-	pool.removeExpiredWatchers();
-	
 	IT("initially has 0 watchers") {
 		REQUIRE(pool.getNumWatchers() == 0);
 	}
@@ -58,4 +58,78 @@ TEST_CASE("LifetimeWatcherPool",
 			}
 		}
 	}
+}
+
+TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
+				 "WeakReferenceLifetimeWatcher in LifetimeWatcherPool",
+				 "[LifetimeWatcherPool]")
+{	
+	// A watched object that sends a String when it's deleted
+	class WatchedObject
+	{
+	public:
+		WatchedObject(std::function<void(String)> notify)
+		: notify(notify)
+		{}
+		
+		~WatchedObject()
+		{
+			notify(String("~WatchedObject"));
+			masterReference.clear();
+		}
+		
+	private:
+		WeakReference<WatchedObject>::Master masterReference;
+		friend class WeakReference<WatchedObject>;
+		
+		const std::function<void(String)> notify;
+		
+		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WatchedObject)
+	};
+	
+	// A lifetime watcher for the above object, which also sends a String when it's deleted
+	class Watcher : public WeakReferenceLifetimeWatcher<WatchedObject>
+	{
+	public:
+		Watcher(const juce::WeakReference<WatchedObject>& ref, std::function<void(String)> notify)
+		: WeakReferenceLifetimeWatcher<WatchedObject>(ref),
+		  notify(notify)
+		{}
+		
+		~Watcher()
+		{
+			notify(String("~Watcher"));
+		}
+		
+	private:
+		const std::function<void(String)> notify;
+		
+		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Watcher)
+	};
+	
+	Array<var> log;
+	
+	// Create watched object
+	ScopedPointer<WatchedObject> watchedObject(new WatchedObject([&](String message) {
+		log.add(message);
+	}));
+	
+	// Create watcher and add it to pool
+	pool.add(std::make_unique<Watcher>(juce::WeakReference<WatchedObject>(watchedObject), [&](String message) {
+		log.add(message);
+	}));
+	
+	REQUIRE(log.isEmpty());
+	
+	// Delete watched object
+	watchedObject = nullptr;
+	
+	RxJUCERequireResults(log, "~WatchedObject");
+	
+	// Watcher should be there, until removeExpiredWatchers is called
+	REQUIRE(pool.getNumWatchers() == 1);
+	pool.removeExpiredWatchers();
+	REQUIRE(pool.getNumWatchers() == 0);
+	
+	RxJUCERequireResults(log, "~WatchedObject", "~Watcher");
 }

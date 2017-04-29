@@ -9,12 +9,12 @@
 */
 
 #include "rxjuce_TestPrefix.h"
+#include "rxjuce_LifetimeWatcherPoolFixture.h"
 
-TEST_CASE("Value and ValueSource lifetime",
-		  "[Observable][Observable::fromValue]")
+TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
+				 "Value and ValueSource lifetime",
+				 "[Observable][Observable::fromValue]")
 {
-	LifetimeWatcherPool::getInstance().removeExpiredWatchers();
-	
 	// Create Value and subscribe
 	auto value = std::make_shared<Value>("Initial");
 	Array<var> results;
@@ -40,8 +40,9 @@ TEST_CASE("Value and ValueSource lifetime",
 	}
 }
 
-TEST_CASE("A Value notifies asynchronously",
-		  "[Observable][Observable::fromValue]") {
+TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
+				 "A Value notifies asynchronously",
+				 "[Observable][Observable::fromValue]") {
 	Value value("Initial Value");
 	Array<var> results;
 	RxJUCECollectResults(Observable::fromValue(value), results);
@@ -58,8 +59,9 @@ TEST_CASE("A Value notifies asynchronously",
 	}
 }
 
-TEST_CASE("A Value can have multiple Subscriptions or Observables",
-		  "[Observable][Observable::fromValue]")
+TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
+				 "A Value can have multiple Subscriptions or Observables",
+				 "[Observable][Observable::fromValue]")
 {
 	// Create Value and subscribe
 	Value value("Foo");
@@ -102,8 +104,9 @@ TEST_CASE("A Value can have multiple Subscriptions or Observables",
 	}
 }
 
-TEST_CASE("A Slider Value can be observed",
-		  "[Observable][Observable::fromValue]")
+TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
+				 "A Slider Value can be observed",
+				 "[Observable][Observable::fromValue]")
 {
 	Slider slider;
 	slider.setValue(7.6);
