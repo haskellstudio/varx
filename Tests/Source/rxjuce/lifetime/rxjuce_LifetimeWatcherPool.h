@@ -30,8 +30,12 @@ public:
 		Returns the global pool.
 	 */
 	static LifetimeWatcherPool& getInstance();
-
-	/** Adds a new watcher to the pool. The pool takes ownership of the watcher. */
+	
+	/**
+		Adds a new watcher to the pool. The pool takes ownership of the watcher.
+	 
+		Can be called from a thread other than the message thread. If so, it will lock the message thread.
+	 */
 	void add(std::unique_ptr<const LifetimeWatcher>&& watcher);
 
 private:
