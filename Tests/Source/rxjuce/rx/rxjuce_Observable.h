@@ -56,7 +56,7 @@ public:
 	 
 		**The first and last values must have the same type! They must be int, int64 or double.**
 	 */
-	static Observable range(var first, var last, int step);
+	static Observable range(var first, var last, int step) throw(std::runtime_error);
 	
 	/**
 		Creates an Observable which emits values from a Subscriber on each subscription.

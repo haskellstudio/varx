@@ -86,9 +86,10 @@ Observable Observable::just(var value)
 	return Internal::fromRxCpp(rxcpp::observable<>::just(value));
 }
 
-Observable Observable::range(var first, var last, int step)
+Observable Observable::range(var first, var last, int step) throw(std::runtime_error)
 {
-	jassert(first.hasSameTypeAs(last));
+	if (!first.hasSameTypeAs(last))
+		throw std::runtime_error("first and last must have the same type.");
 	
 	// Choose the rxcpp template parameter type depending on the var type
 	std::function<Internal::Ptr(var, var, int)> createRange;
@@ -99,7 +100,7 @@ Observable Observable::range(var first, var last, int step)
 	else if (first.isDouble())
 		createRange = Internal::range<double>;
 	else
-		jassertfalse;
+		throw std::runtime_error("first has invalid type.");
 	
 	return createRange(first, last, step);
 }

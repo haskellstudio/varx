@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    LifetimeWatcherPoolFixture.h
+    rxjuce_LifetimeWatcherPoolFixture.h
     Created: 29 Apr 2017 1:51:42pm
     Author:  Martin Finke
 

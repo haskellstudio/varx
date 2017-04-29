@@ -19,8 +19,6 @@
 #define CONTEXT( desc )     SECTION( std::string(" Context: ") + desc, "" )
 #define IT( desc )			SECTION( std::string("       It ") + desc, "" )
 
-#define RxJUCECollectResult(__observable, __resultName) var __resultName; (__observable).subscribe([&__resultName](var v){ __resultName = v; })
-
 #define RxJUCECollectResults(__observable, __arrayName) const RAIISubscription JUCE_JOIN_MACRO(__arrayName, JUCE_JOIN_MACRO(Subscription_, __LINE__))((__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); }))
 
 #define RxJUCERequireResults(__arrayName, ...) REQUIRE(__arrayName == Array<var>({__VA_ARGS__}))

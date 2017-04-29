@@ -11,6 +11,52 @@
 #include "rxjuce_TestPrefix.h"
 #include "rxjuce_LifetimeWatcherPoolFixture.h"
 
+TEST_CASE("Observable::just",
+		  "[Observable][Observable::just]")
+{
+	Array<var> results;
+	
+	IT("emits a single value on subscribe") {
+		RxJUCECollectResults(Observable::just(18.3), results);
+		
+		RxJUCERequireResults(results, 18.3);
+	}
+	
+	IT("notifies multiple subscriptions") {
+		Observable o = Observable::just("Hello");
+		RxJUCECollectResults(o, results);
+		RxJUCECollectResults(o, results);
+		
+		RxJUCERequireResults(results, "Hello", "Hello");
+	}
+}
+
+TEST_CASE("Observable::range",
+		  "[Observable][Observable::range]")
+{
+	Array<var> results;
+	
+	IT("throws if first has an invalid type") {
+		std::string error = "first has invalid type.";
+		REQUIRE_THROWS_WITH(Observable::range("Hello", "Hello", 1), error);
+		REQUIRE_THROWS_WITH(Observable::range(true, false, 1), error);
+		REQUIRE_THROWS_WITH(Observable::range(Array<var>(), Array<var>(), 1), error);
+		REQUIRE_THROWS_WITH(Observable::range(StringArray(), StringArray(), 1), error);
+	}
+	
+	IT("throws if first and last have different types") {
+		int _int = 3;
+		int64 _int64 = 4;
+		double _double = 5.66;
+		
+		std::string error = "first and last must have the same type.";
+		REQUIRE_THROWS_WITH(Observable::range(_int, _int64, 1), error);
+		REQUIRE_THROWS_WITH(Observable::range(_int, _double, 1), error);
+		REQUIRE_THROWS_WITH(Observable::range(_int64, _double, 1), error);
+	}
+}
+
+
 TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 				 "Value and ValueSource lifetime",
 				 "[Observable][Observable::fromValue]")
@@ -19,6 +65,7 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 	auto value = std::make_shared<Value>("Initial");
 	Array<var> results;
 	RxJUCECollectResults(Observable::fromValue(*value), results);
+	
 	RxJUCERequireResults(results, "Initial");
 	
 	IT("still receives an item if the Value is destroyed immediately after calling setValue") {
@@ -40,9 +87,11 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 	}
 }
 
+
 TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 				 "A Value notifies asynchronously",
-				 "[Observable][Observable::fromValue]") {
+				 "[Observable][Observable::fromValue]")
+{
 	Value value("Initial Value");
 	Array<var> results;
 	RxJUCECollectResults(Observable::fromValue(value), results);
@@ -50,14 +99,15 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 	RxJUCERequireResults(results, "Initial Value");
 	
 	IT("emites only one item if the Value is set multiple times synchronously") {
-		value.setValue("2");
-		value.setValue("3");
-		value.setValue("4");
+		value = "2";
+		value = "3";
+		value = "4";
 		RxJUCERunDispatchLoop();
 		
 		RxJUCERequireResults(results, "Initial Value", "4");
 	}
 }
+
 
 TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 				 "A Value can have multiple Subscriptions or Observables",
@@ -91,10 +141,10 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 			results.add(newValue.toUpperCase());
 		});
 		
-		value.setValue("Bar");
+		value = "Bar";
 		RxJUCERunDispatchLoop();
 		
-		value.setValue("Baz");
+		value = "Baz";
 		RxJUCERunDispatchLoop();
 		
 		REQUIRE(results.size() == 6);
@@ -103,6 +153,7 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 			REQUIRE(results.contains(s));
 	}
 }
+
 
 TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 				 "A Slider Value can be observed",
