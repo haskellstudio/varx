@@ -24,49 +24,7 @@ RXJUCE_NAMESPACE_BEGIN
 
 Observable Observable::fromValue(Value value)
 {
-	/** Watches the lifetime of a ValueSource. Notifies a given subscriber whenever the ValueSource has set a new value. */
-	class ValueSourceListener : public LifetimeWatcher, private Value::Listener
-	{
-	public:
-		ValueSourceListener(Value::ValueSource& source, Subscriber subscriber)
-		:	source(&source),
-			value(&source),
-			subscriber(subscriber)
-		{
-			value.addListener(this);
-		}
-		
-		const void* getAddress() const override
-		{
-			return source;
-		}
-		
-#warning TODO getReferenceCount, and let pool decide
-		bool isExpired(int numLifetimeWatchers) const override
-		{
-			return (source->getReferenceCount() <= numLifetimeWatchers);
-		}
-		
-	private:
-		void valueChanged(Value &) override
-		{
-			subscriber.onNext(value.getValue());
-		}
-		
-		const Value::ValueSource* source;
-		Value value;
-		Subscriber subscriber;
-		
-		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ValueSourceListener)
-	};
-	
-	return create([value](Subscriber subscriber) mutable {
-		// Send the current value
-		subscriber.onNext(value.getValue());
-		
-		// Add the listener to the pool, to keep getting updates from the value source
-		LifetimeWatcherPool::getInstance().add(std::make_unique<ValueSourceListener>(value.getValueSource(), subscriber));
-	});
+	return Internal::fromValue(value);
 }
 
 Observable::Observable(const shared_ptr<Internal>& internal)
@@ -89,11 +47,15 @@ Observable Observable::just(var value)
 
 Observable Observable::range(juce::Range<int> range, int step)
 {
-	return Internal::fromRxCpp(rxcpp::observable<>::range<int>(range.getStart(), range.getEnd(), step).map(juce::VariantConverter<int>::toVar));
+	auto o = rxcpp::observable<>::range<int>(range.getStart(), range.getEnd(), step);
+	
+	return Internal::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
 }
 Observable Observable::range(juce::Range<double> range, int step)
 {
-	return Internal::fromRxCpp(rxcpp::observable<>::range<double>(range.getStart(), range.getEnd(), step).map(juce::VariantConverter<double>::toVar));
+	auto o = rxcpp::observable<>::range<double>(range.getStart(), range.getEnd(), step);
+	
+	return Internal::fromRxCpp(o.map(juce::VariantConverter<double>::toVar));
 }
 
 Observable Observable::create(const std::function<void(Subscriber)>& onSubscribe)

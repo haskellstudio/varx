@@ -114,8 +114,8 @@ public:
 	
 private:
 	class Internal;
-	Observable(const std::shared_ptr<Internal> & internal);
-	std::shared_ptr<Internal>  internal;
+	Observable(const std::shared_ptr<Internal>& internal);
+	std::shared_ptr<Internal> internal;
 	
 	JUCE_LEAK_DETECTOR(Observable)
 };

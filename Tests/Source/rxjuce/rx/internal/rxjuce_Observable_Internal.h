@@ -21,20 +21,20 @@ using namespace juce;
 class Observable::Internal
 {
 public:
-	typedef Array<std::shared_ptr<void>> Sources;
-	typedef std::shared_ptr<Internal> Ptr;
+	Internal();
 	
-	Internal(const rxcpp::observable<var>& o);
+	static std::shared_ptr<Internal> fromRxCpp(const rxcpp::observable<var>& o);
 	
-	static Ptr fromRxCpp(const rxcpp::observable<var>& o);
+	static std::shared_ptr<Internal> fromValue(const Value& value);
 	
 	template<typename Transform, typename O, typename... Os>
-	static Ptr combineLatest(Transform&& transform, O&& observable, Os... observables)
+	static std::shared_ptr<Internal> combineLatest(Transform&& transform, O&& observable, Os... observables)
 	{
-		return fromRxCpp(observable.internal->o.combine_latest(transform, observables.internal->o...));
+		auto combined = observable.internal->o.combine_latest(transform, observables.internal->o...);
+		return fromRxCpp(combined);
 	}
 	
-	const rxcpp::observable<var> o;
+	rxcpp::observable<var> o;
 	
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Internal)
