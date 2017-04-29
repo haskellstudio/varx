@@ -40,9 +40,9 @@ void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 		// Add the watcher. Get the address before making the call, because the order of evaluation of arguments is unspecified.
 		const auto address = watcher->getAddress();
 		watchers.insert(std::make_pair(address, std::move(watcher)));
+		
+		startTimerHz(60);
 	}
-	
-	startTimerHz(60);
 }
 
 void LifetimeWatcherPool::timerCallback()
