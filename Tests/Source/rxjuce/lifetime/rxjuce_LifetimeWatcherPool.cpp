@@ -41,6 +41,8 @@ void LifetimeWatcherPool::add(std::unique_ptr<const LifetimeWatcher>&& watcher)
 		const auto address = watcher->getAddress();
 		watchers.insert(std::make_pair(address, std::move(watcher)));
 		
+		removeExpiredWatchers();
+		
 		startTimerHz(60);
 	}
 }
