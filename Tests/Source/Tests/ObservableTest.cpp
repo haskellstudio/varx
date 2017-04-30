@@ -11,6 +11,7 @@
 #include "rxjuce_TestPrefix.h"
 
 #include "rxjuce_Observable.h"
+#include "rxjuce_Observer.h"
 
 
 TEST_CASE("Observable::just",
@@ -204,5 +205,109 @@ TEST_CASE("Observable::fromValue with a Slider",
 		RxJUCERunDispatchLoop();
 		
 		RxJUCERequireResults(results, 7.6, 3.56);
+	}
+}
+
+
+TEST_CASE("Observable::create",
+		  "[Observable][Observable::create]") {
+	Array<var> results;
+	
+	IT("emits items when pushing items synchronously") {
+		auto observable = Observable::create([](Observer observer) {
+			observer.onNext("First");
+			observer.onNext("Second");
+		});
+		RxJUCECollectItems(observable, results);
+		
+		RxJUCERequireResults(results, "First", "Second");
+	}
+	
+	IT("emits items when pushing items asynchronously") {
+		auto observable = Observable::create([](Observer observer) {
+			MessageManager::getInstance()->callAsync([observer]() {
+				observer.onNext("First");
+				observer.onNext("Second");
+			});
+		});
+		RxJUCECollectItems(observable, results);
+		
+		// There shouldn't be any items until the async callback is executed
+		REQUIRE(results.isEmpty());
+		
+		// The items should be there after running the dispatch loop
+		RxJUCERunDispatchLoop();
+		RxJUCERequireResults(results, "First", "Second");
+	}
+	
+	IT("emits can emit items asynchronously after being destroyed") {
+		auto observable = std::make_shared<Observable>(Observable::create([](Observer observer) {
+			MessageManager::getInstance()->callAsync([observer]() {
+				observer.onNext("First");
+				observer.onNext("Second");
+			});
+		}));
+		
+		IT("emits when there's still a subscription") {
+			auto subscription = observable->subscribe([&](var next){ results.add(next); });
+			observable.reset();
+			RxJUCERunDispatchLoop();
+			
+			RxJUCERequireResults(results, "First", "Second");
+		}
+		
+		IT("doesn't emit when the subscription has unsubscribed") {
+			auto subscription = observable->subscribe([&](var next){ results.add(next); });
+			observable.reset();
+			subscription.unsubscribe();
+			RxJUCERunDispatchLoop();
+			
+			REQUIRE(results.isEmpty());
+		}
+		
+	}
+	
+	IT("calls onSubscribe again for each new subscription") {
+		auto observable = Observable::create([](Observer observer) {
+			observer.onNext("onSubscribe called");
+		});
+		RxJUCECollectItems(observable, results);
+		RxJUCECollectItems(observable, results);
+		RxJUCECollectItems(observable, results);
+		
+		RxJUCERequireResults(results, "onSubscribe called", "onSubscribe called", "onSubscribe called");
+	}
+	
+	IT("captures an object until the Observable is destroyed") {
+		// Create a ref counted object
+		class Dummy : public ReferenceCountedObject
+		{
+		public:
+			Dummy()
+			: ReferenceCountedObject() {}
+		};
+		ReferenceCountedObjectPtr<ReferenceCountedObject> pointer(new Dummy());
+		
+		// Capture it in the Observable
+		auto observable = std::make_shared<Observable>(Observable::create([pointer](Observer observer) {}));
+		
+		// There should be 2 references: From pointer and from the Observable
+		REQUIRE(pointer->getReferenceCount() == 2);
+		
+		// If a copy of the Observable is made, it should still be 2
+		auto copy = std::make_shared<Observable>(*observable);
+		REQUIRE(pointer->getReferenceCount() == 2);
+		
+		// After the first Observable is destroyed, there should still be 2
+		observable.reset();
+		REQUIRE(pointer->getReferenceCount() == 2);
+		
+		// Creating a copy should not increase the ref count
+		Subscription s = copy->subscribe([](var){});
+		REQUIRE(pointer->getReferenceCount() == 2);
+		
+		// After the copy is destroyed, there should be just 1 (from the pointer)
+		copy.reset();
+		REQUIRE(pointer->getReferenceCount() == 1);
 	}
 }
