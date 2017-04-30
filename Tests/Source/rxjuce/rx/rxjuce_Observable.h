@@ -18,11 +18,15 @@ RXJUCE_NAMESPACE_BEGIN
 
 class Observer;
 
+/**
+	An Observable is a value that changes over time.
+ */
 class Observable
 {
 public:
+	//! @cond Doxygen_Suppress
 	typedef juce::var var;
-	
+	//! @endcond
 	
 #pragma mark - Creation
 	/**
@@ -39,23 +43,26 @@ public:
 	 */
 	static Observable just(var value);
 	
+	/**	@name range
+		
+	 */
+	///@{
 	/**
 		Creates an Observable which emits values from a given range, starting at range.getStart() to (and including) range.getEnd().
 	 
 		For example:
 	 
-		```cpp
-		range(Range<int>(3, 7), 3) -> {3, 6, 7}
-		range(Range<double>(17.5, 22.8), 2) -> {17.5, 19.5, 21.5, 22.8}
-		```
+			 Observable::range(Range<int>(3, 7), 3) // {3, 6, 7}
+			 Observable::range(Range<double>(17.5, 22.8), 2) // {17.5, 19.5, 21.5, 22.8}
 	 */
 	static Observable range(const juce::Range<int>& range, int step);
 	static Observable range(const juce::Range<double>& range, int step);
+	///@}
 	
 	/**
 		Creates an Observable which emits values from a Subscriber on each subscription.
 	 
-		In your implementation of `onSubscribe`, you get a `Subscriber`. You can call `onNext` on it to emit values from the Observable.
+		In your implementation of onSubscribe, you get an Observer. You can call onNext on it to emit values from the Observable.
 	 */
 	static Observable create(const std::function<void(Observer)>& onSubscribe);
 	
@@ -66,13 +73,16 @@ public:
 	 
 		The onNext function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
 	 
-		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call unsubscribe**, or until the Observable source is destroyed. You can use a RAIISubscription, which automatically unsubscribes when it is destroyed.
+		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe**, or until the Observable source is destroyed. You can use a RAIISubscription, which automatically unsubscribes when it is destroyed.
 	 */
 	Subscription subscribe(const std::function<void(const var&)>& onNext) const;
 	
 	
 #pragma mark - Transform Functions
-	// Transformation functions with different arity.
+	///@{
+	/**
+		A function which takes one or more vars as input, and outputs a var.
+	 */
 	typedef const std::function<var(const var&)>& Transform1;
 	typedef const std::function<var(const var&, const var&)>& Transform2;
 	typedef const std::function<var(const var&, const var&, const var&)>& Transform3;
@@ -81,6 +91,7 @@ public:
 	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&)>& Transform6;
 	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform7;
 	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform8;
+	///@}
 	
 #pragma mark - Operators
 	/**
@@ -88,10 +99,16 @@ public:
 	 */
 	Observable map(Transform1 transform) const;
 	
+	/**
+		**Must only be called if this Observable emits Observables.**
+	 
+		Returns an Observable that emits the items emitted by the Observables which this Observable emits.
+	 */
 	Observable switchOnNext() const;
 	
+	///@{
 	/**
-		When an item is emitted by either this Observable or o1, combines the latest item emitted by each Observable via the given function and emits the result of this function.
+		When an item is emitted by either this Observable or o1, o2, …, combines the latest item emitted by each Observable via the given function and emits the result of this function.
 	 */
 	Observable combineLatest(Observable o1, Transform2 transform) const;
 	Observable combineLatest(Observable o1, Observable o2, Transform3 transform) const;
@@ -100,6 +117,7 @@ public:
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const;
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const;
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const;
+	///@}
 	
 #pragma mark - Misc
 	/**

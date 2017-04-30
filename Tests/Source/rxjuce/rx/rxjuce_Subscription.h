@@ -14,13 +14,26 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
+/**
+	Manages the lifetime of a subscription to an Observable.
+ 
+	@see Observable::subscribe
+ */
 class Subscription
 {
 public:
+	
 	Subscription(Subscription&&) = default;
 	Subscription& operator=(Subscription&&) = default;
 	
+	/**
+		Unsubuscribes from the Observable.
+	 */
 	void unsubscribe() const;
+	
+	/**
+		Returns true iff the Subscription is still subscribed to the source Observable.
+	 */
 	bool isSubscribed() const;
 	
 private:
@@ -32,6 +45,23 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Subscription)
 };
 
+/**
+	A Subscription that automatically unsubscribes when it is destroyed.
+ 
+	You can use this to prevent onNext from getting called after one of your objects is destroyed.
+ 
+	For example:
+		
+		class MyClass
+		{
+		public:
+			MyClass(Observable input)
+			: subscription(input.subscribe([](var newValue) { ... })) {}
+ 
+		private:
+			const RAIISubscription subscription;
+		};
+ */
 class RAIISubscription : public Subscription
 {
 public:

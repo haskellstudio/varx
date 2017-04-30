@@ -17,9 +17,9 @@
 RXJUCE_NAMESPACE_BEGIN
 
 /**
-	A BehaviorSubject is a bridge between an Observer side (onNext) and an Observable side (getObservable). It is constructed with an initial item.
+	A BehaviorSubject is a bridge between an Observer side (BehaviorSubject::onNext) and an Observable side (BehaviorSubject::getObservable). It is constructed with an initial item.
  
-	When you can call onNext with an item, the Observable side emits this item synchronously.
+	When you can call BehaviorSubject::onNext with an item, the Observable side emits this item synchronously.
  
 	On subscribe, it begins by emitting the most recently emitted item. It then continues to emit any items that are passed to onNext.
  

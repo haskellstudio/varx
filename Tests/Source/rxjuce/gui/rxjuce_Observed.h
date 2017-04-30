@@ -48,15 +48,16 @@ class Observed;
  
 	Usage:
  
-		```cpp
 		Observed<TextButton> myButton("My Button Text");
 		myButton.clickedObservable().subscribe([](var){ ... })
-		```
  */
 template<typename T>
 class Observed<T, typename std::enable_if<std::is_base_of<juce::Button, T>::value>::type> : public T
 {
 public:
+	/**
+		Creates a new instance. Takes the same parameters as your Button's constructor(s).
+	 */
 	template<typename... Args>
 	Observed(Args&&... args)
 	: T(std::forward<Args>(args)...),
@@ -91,6 +92,9 @@ template<>
 class Observed<juce::Value> : public juce::Value
 {
 public:
+	/**
+		Creates a new instance. Takes the same parameters as the juce::Value constructor(s).
+	 */
 	template<typename... Args>
 	Observed(Args&&... args)
 	: juce::Value(args...),
