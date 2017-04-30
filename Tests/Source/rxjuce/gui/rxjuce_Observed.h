@@ -15,13 +15,30 @@
 
 #include "rxjuce_BehaviorSubject.h"
 #include "rxjuce_Observable.h"
-#include "rxjuce_PublishSubject.h"
+#include "rxjuce_Subjects.h"
 
 RXJUCE_NAMESPACE_BEGIN
 
-/** If you get an error here, it means that you are trying to create an Observe<T> with an unsupported type T. */
+/** If you get an error here, it means that you are trying to create an Observed<T> with an unsupported type T. */
 template<typename Base, class Enable = void>
 class Observed;
+
+class ButtonForwarder : private juce::Button::Listener
+{
+public:
+	ButtonForwarder(juce::Button& button);
+	
+	Observable clickedObservable() const;
+	
+	Observable buttonStateObservable() const;
+	
+private:
+	PublishSubject clicked;
+	BehaviorSubject buttonState;
+	
+	void buttonClicked(juce::Button *) override;
+	void buttonStateChanged(juce::Button *button) override;
+};
 
 /**
 	Adds Observable methods to a juce::Button or Button subclass.
@@ -30,80 +47,57 @@ class Observed;
  
 		```cpp
 		Observed<TextButton> myButton("My Button Text");
-		myButton.clickedObservable().subscribe([](var){ ... })
+		myButton.clicked().subscribe([](var){ ... })
 		```
  */
 template<typename Base>
-class Observed<Base, typename std::enable_if<std::is_base_of<juce::Button, Base>::value>::type> : public Base, private juce::Button::Listener
+class Observed<Base, typename std::enable_if<std::is_base_of<juce::Button, Base>::value>::type> : public Base
 {
 public:
 	template<typename... Args>
 	Observed(Args&&... args)
 	: Base(std::forward<Args>(args)...),
-	  _stateChanged(Base::getState())
-	{
-		this->addListener(this);
-	}
+	  forwarder(*this)
+	{}
 	
 	/**
 		Returns an Observable that emits a value whenever the button is clicked. If you call triggerClick, the Observable emits asynchronously afterwards.
 	 
-		The emitted value is an empty var (and can be ignored).
+		The emitted value is a void var (and can be ignored).
 	 */
-	Observable clicked() const
+	Observable clickedObservable() const
 	{
-		return _clicked.getObservable();
+		return forwarder.clickedObservable();
 	}
 	
 	/**
-		Returns an Observable that emits a value whenever the button state changes.
+		Returns an Observable that emits a value synchronously whenever the button state changes.
 	 
-		The emitted value is a ButtonState.
+		The emitted value is a Button::ButtonState.
 	 */
-	Observable stateChanged() const
+	Observable buttonStateObservable() const
 	{
-		return _stateChanged.getObservable();
+		return forwarder.buttonStateObservable();
 	}
 	
 private:
-	PublishSubject _clicked;
-	BehaviorSubject _stateChanged;
-	
-	void buttonClicked(juce::Button *) override
-	{
-		_clicked.onNext(juce::var());
-	}
-	
-	void buttonStateChanged(juce::Button *) override
-	{
-		_stateChanged.onNext(juce::var(Base::getState()));
-	}
+	const ButtonForwarder forwarder;
 };
 
 template<>
-class Observed<juce::Value> : public juce::Value, private juce::Value::Listener
+class Observed<juce::Value> : public juce::Value
 {
 public:
 	template<typename... Args>
 	Observed(Args&&... args)
 	: juce::Value(args...),
-	  _value(juce::Value::getValue())
-	{
-		addListener(this);
-	}
+	  observable(Observable::fromValue(*this))
+	{}
 	
-	Observable getObservable() const
-	{
-		return _value.getObservable();
-	}
+	Observable getObservable() const;
 	
 private:
-	BehaviorSubject _value;
-	
-	void valueChanged(Value &value) override
-	{
-		_value.onNext(value);
-	}
+	const Observable observable;
 };
 
 

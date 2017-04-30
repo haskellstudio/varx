@@ -16,22 +16,6 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
-class BehaviorSubject
-{
-public:
-	BehaviorSubject(const juce::var& initial);
-	
-	void onNext(const juce::var& next);
-	
-	Observable getObservable() const;
-	
-	juce::var getValue() const;
-	
-private:
-	class Internal;
-	std::shared_ptr<Internal> internal;
-	
-	JUCE_LEAK_DETECTOR(BehaviorSubject)
-};
+
 
 RXJUCE_NAMESPACE_END

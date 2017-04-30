@@ -16,7 +16,7 @@ TEST_CASE("Observed<Button> stateChanged")
 {
 	Observed<TextButton> button("Click Here");
 	Array<var> results;
-	RxJUCECollectResults(button.stateChanged(), results);
+	RxJUCECollectResults(button.buttonStateObservable(), results);
 	
 	IT("emits the normal state on subscribe") {
 		RxJUCERequireResults(results, Button::ButtonState::buttonNormal);
@@ -44,7 +44,7 @@ TEST_CASE("Observed<Button> clicked")
 {
 	Observed<TextButton> button("Click Here");
 	Array<var> results;
-	RxJUCECollectResults(button.clicked(), results);
+	RxJUCECollectResults(button.clickedObservable(), results);
 	
 	IT("doesn't emit an item on subscribe") {
 		REQUIRE(results.isEmpty());
