@@ -97,18 +97,24 @@ public:
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
 	 */
-	Observable map(Transform1 transform);
+	Observable map(Transform1 transform) const;
+	
+	Observable map(const std::function<Observable(const var&)> transform) const;
+	
+	Observable flatMap(const std::function<Observable(const var&)>& collectionSelector) const;
+	
+	Observable switchOnNext() const;
 	
 	/**
 		When an item is emitted by either this Observable or o1, combines the latest item emitted by each Observable via the given function and emits the result of this function.
 	 */
-	Observable combineLatest(Observable o1, Transform2 transform);
-	Observable combineLatest(Observable o1, Observable o2, Transform3 transform);
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform);
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform);
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform);
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform);
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform);
+	Observable combineLatest(Observable o1, Transform2 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Transform3 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const;
 	
 private:
 	struct Impl;

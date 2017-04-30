@@ -18,6 +18,40 @@
 
 RXJUCE_SOURCE_PREFIX
 
+namespace {
+	using namespace juce;
+	
+	struct RxCppObservableVarWrapper : public ReferenceCountedObject
+	{
+		RxCppObservableVarWrapper(const rxcpp::observable<var>& observable)
+		: observable(observable) {}
+		
+		const rxcpp::observable<var> observable;
+	};
+}
+
+namespace juce {
+	template<>
+	struct VariantConverter<rxcpp::observable<var>>
+	{
+		static rxcpp::observable<var> fromVar(const var &v)
+		{
+			ReferenceCountedObjectPtr<ReferenceCountedObject> ptr(v.getObject());
+			
+			if (auto observableWrapper = dynamic_cast<RxCppObservableVarWrapper *>(ptr.get()))
+				return observableWrapper->observable;
+			
+			jassertfalse;
+			return rxcpp::observable<var>();
+		}
+		
+		static var toVar(const rxcpp::observable<var>& observable)
+		{
+			return new RxCppObservableVarWrapper(observable);
+		}
+	};
+}
+
 RXJUCE_NAMESPACE_BEGIN
 
 Observable Observable::fromValue(Value value)
@@ -50,6 +84,7 @@ Observable Observable::range(const juce::Range<int>& range, int step)
 	
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
 }
+
 Observable Observable::range(const juce::Range<double>& range, int step)
 {
 	auto o = rxcpp::observable<>::range<double>(range.getStart(), range.getEnd(), step);
@@ -66,42 +101,70 @@ Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
 	}));
 }
 
-Observable Observable::map(Transform1 transform)
+Observable Observable::map(Transform1 transform) const
 {
 	return Impl::fromRxCpp(impl->wrapped.map(transform));
 }
 
-Observable Observable::combineLatest(Observable o1, Transform2& transform)
+Observable Observable::map(const std::function<Observable(const var&)> transform) const
+{
+	rxcpp::observable<Observable> mapped = impl->wrapped.map(transform);
+	
+	return Impl::fromRxCpp(mapped.map([](const Observable& observable){
+		return VariantConverter<rxcpp::observable<var>>::toVar(observable.impl->wrapped);
+	}));
+}
+
+Observable Observable::flatMap(const std::function<Observable(const var&)>& inputCollectionSelector) const
+{
+	auto collectionSelector = [inputCollectionSelector](const var& value) {
+		rxcpp::observable<var> observable = inputCollectionSelector(value).impl->wrapped;
+		return observable;
+	};
+	
+	auto flatMapped = impl->wrapped.flat_map(collectionSelector);
+	
+	return Impl::fromRxCpp(flatMapped);
+}
+
+Observable Observable::switchOnNext() const
+{
+	rxcpp::observable<rxcpp::observable<var>> unwrapped = impl->wrapped.map(VariantConverter<rxcpp::observable<var>>::fromVar);
+	
+	return Impl::fromRxCpp(unwrapped.switch_on_next());
+}
+
+Observable Observable::combineLatest(Observable o1, Transform2& transform) const
 {
 	return impl->combineLatest(transform, o1);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Transform3 transform)
+Observable Observable::combineLatest(Observable o1, Observable o2, Transform3 transform) const
 {
 	return impl->combineLatest(transform, o1, o2);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform)
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform) const
 {
 	return impl->combineLatest(transform, o1, o2, o3);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform)
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform) const
 {
 	return impl->combineLatest(transform, o1, o2, o3, o4);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform)
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const
 {
 	return impl->combineLatest(transform, o1, o2, o3, o4, o5);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform)
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const
 {
 	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform)
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const
 {
 	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6, o7);
 }

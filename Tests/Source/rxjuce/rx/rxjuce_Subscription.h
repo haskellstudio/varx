@@ -26,7 +26,6 @@ public:
 private:
 	friend class Observable;
 	explicit Subscription(const std::function<bool()>&, const std::function<void()>&);
-	
 	const std::function<bool()> _isSubscribed;
 	const std::function<void()> _unsubscribe;
 	
@@ -41,7 +40,6 @@ public:
 	~RAIISubscription();
 	
 	RAIISubscription& operator=(RAIISubscription&&) = default;
-	
 	
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RAIISubscription)
