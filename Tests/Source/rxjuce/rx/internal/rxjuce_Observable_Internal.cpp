@@ -10,20 +10,18 @@
 
 #include "rxjuce_Observable_Internal.h"
 
-#include "rxjuce_Subscriber.h"
-
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-std::shared_ptr<Observable::Internal> Observable::Internal::fromRxCpp(const rxcpp::observable<var>& o)
+shared_ptr<Observable::Internal> Observable::Internal::fromRxCpp(const rxcpp::observable<var>& o)
 {
 	auto internal = std::make_shared<Internal>();
 	internal->o = o;
 	return internal;
 }
 
-std::shared_ptr<Observable::Internal> Observable::Internal::fromValue(const Value& value)
+shared_ptr<Observable::Internal> Observable::Internal::fromValue(const Value& value)
 {
 	class ValueObservableImpl : public Internal, private Value::Listener {
 	public:

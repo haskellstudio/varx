@@ -114,6 +114,7 @@ public:
 	
 private:
 	friend class BehaviorSubject;
+	friend class PublishSubject;
 	class Internal;
 	Observable(const std::shared_ptr<Internal>& internal);
 	std::shared_ptr<Internal> internal;

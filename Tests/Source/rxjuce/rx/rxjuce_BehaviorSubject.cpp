@@ -12,8 +12,6 @@
 
 #include "rxjuce_Observable_Internal.h"
 
-#include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
-
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
@@ -30,9 +28,7 @@ public:
 
 BehaviorSubject::BehaviorSubject(const juce::var& initial)
 : internal(std::make_shared<Internal>(initial))
-{
-	
-}
+{}
 
 void BehaviorSubject::onNext(const var& next)
 {
@@ -41,8 +37,7 @@ void BehaviorSubject::onNext(const var& next)
 
 Observable BehaviorSubject::getObservable() const
 {
-	auto observable = internal->subject.get_observable();
-	return Observable::Internal::fromRxCpp(observable);
+	return Observable::Internal::fromRxCpp(internal->subject.get_observable());
 }
 
 juce::var BehaviorSubject::getValue() const

@@ -26,6 +26,10 @@
                 file="Source/rxjuce/util/rxjuce_PrintFunctions.h"/>
         </GROUP>
         <GROUP id="{76338C3B-D82A-3F81-A964-2397D69B048B}" name="rx">
+          <FILE id="qwLWIX" name="rxjuce_PublishSubject.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_PublishSubject.cpp"/>
+          <FILE id="rvpqFg" name="rxjuce_PublishSubject.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_PublishSubject.h"/>
           <FILE id="KwdRUj" name="rxjuce_BehaviorSubject.cpp" compile="1" resource="0"
                 file="Source/rxjuce/rx/rxjuce_BehaviorSubject.cpp"/>
           <FILE id="FgVO5y" name="rxjuce_BehaviorSubject.h" compile="0" resource="0"

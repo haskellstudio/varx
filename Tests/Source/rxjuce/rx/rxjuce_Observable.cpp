@@ -6,15 +6,15 @@
     Author:  Martin Finke
 
   ==============================================================================
-*/
+ */
+
+#include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
 
 #include "rxjuce_Observable.h"
 
 #include "rxjuce_Observable_Internal.h"
 
 #include "rxjuce_Subscriber.h"
-
-#include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
 
 RXJUCE_SOURCE_PREFIX
 

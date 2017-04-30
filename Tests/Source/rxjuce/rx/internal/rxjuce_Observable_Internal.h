@@ -10,9 +10,11 @@
 
 #pragma once
 
+#include "rxjuce_Prefix.h"
+
 #include "rxjuce_Observable.h"
 
-#include "../../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
+#include "../../RxCpp/Rx/v2/src/rxcpp/rx-lite.hpp"
 
 RXJUCE_NAMESPACE_BEGIN
 
