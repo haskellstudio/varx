@@ -13,6 +13,8 @@
 #include "rxjuce_Observable.h"
 #include "rxjuce_Observer.h"
 
+using Catch::Contains;
+
 
 TEST_CASE("Observable::just",
 		  "[Observable][Observable::just]")
@@ -313,6 +315,7 @@ TEST_CASE("Observable::create",
 	}
 }
 
+
 TEST_CASE("Observable::map",
 		  "[Observable][Observable::map]")
 {
@@ -327,13 +330,29 @@ TEST_CASE("Observable::map",
 	}
 }
 
+
 TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		  "[Observable][Observable::map][Observable::switchOnNext]")
 {
 	Array<var> results;
-	auto source = std::make_shared<Observable>(Observable::just(17));
+	
+	IT("supports returning Observables in map, even nested twice") {
+		auto source = Observable::just(1);
+		auto nested = source.map([](int i) {
+			return Observable::just("Hello").map([i](String s) {
+				return Observable::just(String(i) + " " + s);
+			});
+		});
+		
+		// Unwrap twice
+		nested = nested.switchOnNext().switchOnNext();
+		RxJUCECollectItems(nested, results);
+		
+		RxJUCERequireResults(results, "1 Hello");
+	}
 	
 	IT("continues to emit items after the source Observable is gone") {
+		auto source = std::make_shared<Observable>(Observable::just(17));
 		auto mapped = source->map([](int next) {
 			return Observable::create([next](Observer observer) {
 				MessageManager::getInstance()->callAsync([observer, next]() {
@@ -352,5 +371,62 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		
 		// The item should be emitted, although there's no reference to the source anymore
 		RxJUCERequireResults(results, 17 * 3);
+	}
+}
+
+
+template<typename Var, typename... Vars>
+var transform(Var v, Vars... vars)
+{
+	return v.toString() + transform(vars...).toString();
+}
+
+template<>
+var transform<var>(var v)
+{
+	return v;
+}
+
+TEST_CASE("Observable::combineLatest",
+		  "[Observable][Observable::combineLatest]")
+{
+	Array<var> results;
+	OwnedArray<Observable> os;
+	for (int i = 0; i < 8; i++)
+		os.add(new Observable(Observable::just(String(i) + " ")));
+	
+	IT("works with arity 1") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], transform<var, var>), results);
+		RxJUCERequireResults(results, "0 1 ");
+	}
+	
+	IT("works with arity 2") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], transform<var, var, var>), results);
+		RxJUCERequireResults(results, "0 1 2 ");
+	}
+	
+	IT("works with arity 3") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], *os[3], transform<var, var, var, var>), results);
+		RxJUCERequireResults(results, "0 1 2 3 ");
+	}
+	
+	IT("works with arity 4") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], *os[3], *os[4], transform<var, var, var, var, var>), results);
+		RxJUCERequireResults(results, "0 1 2 3 4 ");
+	}
+	
+	IT("works with arity 5") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], *os[3], *os[4], *os[5], transform<var, var, var, var, var, var>), results);
+		RxJUCERequireResults(results, "0 1 2 3 4 5 ");
+	}
+	
+	IT("works with arity 6") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], *os[3], *os[4], *os[5], *os[6], transform<var, var, var, var, var, var, var>), results);
+		RxJUCERequireResults(results, "0 1 2 3 4 5 6 ");
+	}
+	
+	IT("works with arity 7") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], *os[3], *os[4], *os[5], *os[6], *os[7], transform<var, var, var, var, var, var, var, var>), results);
+		RxJUCERequireResults(results, "0 1 2 3 4 5 6 7 ");
 	}
 }
