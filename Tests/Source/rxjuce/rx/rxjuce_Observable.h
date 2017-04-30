@@ -16,7 +16,7 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
-class Subscriber;
+class Observer;
 
 class Observable
 {
@@ -60,7 +60,7 @@ public:
 	 
 		In your implementation of `onSubscribe`, you get a `Subscriber`. You can call `onNext` on it to emit values from the Observable.
 	 */
-	static Observable create(const std::function<void(Subscriber)>& onSubscribe);
+	static Observable create(const std::function<void(Observer)>& onSubscribe);
 	
 	
 	
@@ -111,7 +111,7 @@ public:
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform);
 	
 private:
-	class Impl;
+	struct Impl;
 	std::shared_ptr<Impl> impl;
 	
 	friend class BehaviorSubject;

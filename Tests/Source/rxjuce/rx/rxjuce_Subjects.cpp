@@ -16,44 +16,16 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-class PublishSubject::Impl
+struct BehaviorSubject::Impl
 {
-public:
-	rxcpp::subjects::subject<var> subject;
-};
-
-PublishSubject::PublishSubject()
-: impl(new Impl())
-{}
-
-PublishSubject::~PublishSubject() {}
-
-void PublishSubject::onNext(const var& next)
-{
-	impl->subject.get_subscriber().on_next(next);
-}
-
-Observable PublishSubject::getObservable() const
-{
-	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
-}
-
-
-
-
-class BehaviorSubject::Impl
-{
-public:
 	Impl(const var& initial)
-	: subject(initial)
-	{}
+	: subject(initial) {}
 	
 	rxcpp::subjects::behavior<var> subject;
 };
 
-BehaviorSubject::BehaviorSubject(const juce::var& initial)
-: impl(new Impl(initial))
-{}
+BehaviorSubject::BehaviorSubject(const var& initial)
+: impl(new Impl(initial)) {}
 
 BehaviorSubject::~BehaviorSubject() {}
 
@@ -67,9 +39,30 @@ Observable BehaviorSubject::getObservable() const
 	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
 }
 
-juce::var BehaviorSubject::getValue() const
+var BehaviorSubject::getValue() const
 {
 	return impl->subject.get_value();
+}
+
+
+struct PublishSubject::Impl
+{
+	rxcpp::subjects::subject<var> subject;
+};
+
+PublishSubject::PublishSubject()
+: impl(new Impl()) {}
+
+PublishSubject::~PublishSubject() {}
+
+void PublishSubject::onNext(const var& next)
+{
+	impl->subject.get_subscriber().on_next(next);
+}
+
+Observable PublishSubject::getObservable() const
+{
+	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
 }
 
 RXJUCE_NAMESPACE_END

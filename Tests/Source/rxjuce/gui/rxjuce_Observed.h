@@ -22,7 +22,7 @@ namespace detail {
 	class ButtonForwarder : private juce::Button::Listener
 	{
 	public:
-		ButtonForwarder(juce::Button& button);
+		explicit ButtonForwarder(juce::Button& button);
 		
 		Observable clickedObservable() const;
 		
@@ -37,27 +37,29 @@ namespace detail {
 	};
 }
 
-/** If you get an error here, it means that you are trying to create an Observed<T> with an unsupported type T. */
-template<typename Base, class Enable = void>
+// If you get an error here, it means that you are trying to create an Observed<T> with an unsupported type T.
+template<typename T, class Enable = void>
 class Observed;
 
 /**
-	Adds Observable methods to a juce::Button or Button subclass.
+	Adds Observables to a juce::Button or Button subclass.
+ 
+	The Observables emit items whenever the Button is clicked or changes its ButtonState.
  
 	Usage:
  
 		```cpp
 		Observed<TextButton> myButton("My Button Text");
-		myButton.clicked().subscribe([](var){ ... })
+		myButton.clickedObservable().subscribe([](var){ ... })
 		```
  */
-template<typename Base>
-class Observed<Base, typename std::enable_if<std::is_base_of<juce::Button, Base>::value>::type> : public Base
+template<typename T>
+class Observed<T, typename std::enable_if<std::is_base_of<juce::Button, T>::value>::type> : public T
 {
 public:
 	template<typename... Args>
 	Observed(Args&&... args)
-	: Base(std::forward<Args>(args)...),
+	: T(std::forward<Args>(args)...),
 	  forwarder(*this)
 	{}
 	
@@ -66,25 +68,25 @@ public:
 	 
 		The emitted value is a void var (and can be ignored).
 	 */
-	Observable clickedObservable() const
-	{
-		return forwarder.clickedObservable();
-	}
+	Observable clickedObservable() const { return forwarder.clickedObservable(); }
 	
 	/**
 		Returns an Observable that emits a value synchronously whenever the button state changes.
 	 
 		The emitted value is a Button::ButtonState.
 	 */
-	Observable buttonStateObservable() const
-	{
-		return forwarder.buttonStateObservable();
-	}
+	Observable buttonStateObservable() const { return forwarder.buttonStateObservable(); }
 	
 private:
 	const detail::ButtonForwarder forwarder;
 };
 
+
+/**
+	Adds an Observable to a juce::Value.
+ 
+	@see getObservable()
+ */
 template<>
 class Observed<juce::Value> : public juce::Value
 {
@@ -92,9 +94,11 @@ public:
 	template<typename... Args>
 	Observed(Args&&... args)
 	: juce::Value(args...),
-	  observable(Observable::fromValue(*this))
-	{}
+	  observable(Observable::fromValue(*this)) {}
 	
+	/**
+		Returns an Observable that emits an item asynchronously whenever the Value changes, until the Observed<Value> is destroyed.
+	 */
 	Observable getObservable() const;
 	
 private:

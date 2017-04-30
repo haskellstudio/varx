@@ -14,7 +14,7 @@
 
 #include "rxjuce_Observable_Impl.h"
 
-#include "rxjuce_Subscriber.h"
+#include "rxjuce_Observer.h"
 
 RXJUCE_SOURCE_PREFIX
 
@@ -56,10 +56,10 @@ Observable Observable::range(const juce::Range<double>& range, int step)
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<double>::toVar));
 }
 
-Observable Observable::create(const std::function<void(Subscriber)>& onSubscribe)
+Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::create<var>([onSubscribe](rxcpp::subscriber<var> s) {
-		onSubscribe(Subscriber([s](const var& next) {
+		onSubscribe(Observer([s](const var& next) {
 			s.on_next(next);
 		}));
 	}));

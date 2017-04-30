@@ -20,7 +20,7 @@ RXJUCE_NAMESPACE_BEGIN
 
 using namespace juce;
 
-class Observable::Impl
+struct Observable::Impl
 {
 public:
 	Impl(const rxcpp::observable<var>& wrapped = rxcpp::observable<var>());
@@ -39,6 +39,7 @@ public:
 	rxcpp::observable<var> wrapped;
 	
 private:
+	friend class PublishSubject;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Impl)
 };
 

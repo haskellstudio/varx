@@ -10,6 +10,9 @@
 
 #include "rxjuce_TestPrefix.h"
 
+#include "rxjuce_Observable.h"
+
+
 TEST_CASE("Observable::just",
 		  "[Observable][Observable::just]")
 {
