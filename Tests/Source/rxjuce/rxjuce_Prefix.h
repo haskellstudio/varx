@@ -7,8 +7,6 @@
 #include <type_traits>
 #include <utility>
 
-#include "rxjuce_MakeUnique.h"
-
 #define RXJUCE_NAMESPACE_BEGIN namespace rxjuce {
 #define RXJUCE_NAMESPACE_END }
 

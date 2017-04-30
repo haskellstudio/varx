@@ -20,8 +20,6 @@
                 file="Source/rxjuce/gui/rxjuce_Observed.h"/>
         </GROUP>
         <GROUP id="{AD8089E2-1815-3BBD-C046-CA92D277ED4D}" name="util">
-          <FILE id="oatrrS" name="rxjuce_MakeUnique.h" compile="0" resource="0"
-                file="Source/rxjuce/util/rxjuce_MakeUnique.h"/>
           <FILE id="mkwt56" name="rxjuce_PrintFunctions.h" compile="0" resource="0"
                 file="Source/rxjuce/util/rxjuce_PrintFunctions.h"/>
         </GROUP>
