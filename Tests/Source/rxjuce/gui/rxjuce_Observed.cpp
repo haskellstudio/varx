@@ -37,7 +37,7 @@ void detail::ButtonForwarder::buttonClicked(Button *)
 
 void detail::ButtonForwarder::buttonStateChanged(Button *button)
 {
-	buttonState.onNext(var(button->getState()));
+	buttonState.onNext(button->getState());
 }
 
 

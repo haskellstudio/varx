@@ -33,7 +33,7 @@ namespace detail {
 		BehaviorSubject buttonState;
 		
 		void buttonClicked(juce::Button *) override;
-		void buttonStateChanged(juce::Button *button) override;
+		void buttonStateChanged(juce::Button *) override;
 	};
 }
 
