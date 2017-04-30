@@ -23,8 +23,13 @@ class Subscription
 {
 public:
 	
+	///@{
+	/**
+		Transfers ownership from an existing Subscription.
+	 */
 	Subscription(Subscription&&) = default;
 	Subscription& operator=(Subscription&&) = default;
+	///@}
 	
 	/**
 		Unsubuscribes from the Observable.
@@ -65,11 +70,17 @@ private:
 class RAIISubscription : public Subscription
 {
 public:
+	///@{
+	/**
+		Transfers ownership from an existing Subscription.
+	 */
 	RAIISubscription(Subscription&& subscription);
 	RAIISubscription(RAIISubscription&&) = default;
-	~RAIISubscription();
-	
 	RAIISubscription& operator=(RAIISubscription&&) = default;
+	///@}
+	
+	/** Calls unsubscribe(). */
+	~RAIISubscription();
 	
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RAIISubscription)

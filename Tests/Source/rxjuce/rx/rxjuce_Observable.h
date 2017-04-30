@@ -30,14 +30,14 @@ public:
 	
 #pragma mark - Creation
 	/**
-		Creates an `Observable` from a given JUCE `Value`. The returned Observable ** only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this.
+		Creates an Observable from a given JUCE Value. The returned Observable **only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this.
 	 
-		**When calling Value::setValue, it notifies asynchronously. So the returned Observable will also emit asynchronously.** So if you call setValue immediately before destroying the returned Observable, the new item will not be emitted.
+		When calling Value::setValue, it notifies asynchronously. So **the returned Observable will emits the new value asynchronously.** So if you call setValue immediately before destroying the returned Observable, the new value will not be emitted.
 	 */
 	static Observable fromValue(juce::Value value);
 	
 	/**
-		Creates an Observable which emits just a single value.
+		Creates an Observable which emits just a single item.
 	 
 		The value is emitted immediately on each new subscription.
 	 */
@@ -62,7 +62,7 @@ public:
 	/**
 		Creates an Observable which emits values from a Subscriber on each subscription.
 	 
-		In your implementation of onSubscribe, you get an Observer. You can call onNext on it to emit values from the Observable.
+		In your implementation of onSubscribe, you get an Observer. You can call Observer::onNext on it to emit values from the Observable.
 	 */
 	static Observable create(const std::function<void(Observer)>& onSubscribe);
 	
@@ -73,7 +73,7 @@ public:
 	 
 		The onNext function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
 	 
-		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe**, or until the Observable source is destroyed. You can use a RAIISubscription, which automatically unsubscribes when it is destroyed.
+		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a RAIISubscription, which automatically unsubscribes when it is destroyed.
 	 */
 	Subscription subscribe(const std::function<void(const var&)>& onNext) const;
 	
@@ -96,11 +96,13 @@ public:
 #pragma mark - Operators
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
+	 
+		The transform function can return `Observable``s`. If it does, you can use Observable::switchOnNext.
 	 */
 	Observable map(Transform1 transform) const;
 	
 	/**
-		**Must only be called if this Observable emits Observables.**
+		This **must only be called if this Observable emits Observables**.
 	 
 		Returns an Observable that emits the items emitted by the Observables which this Observable emits.
 	 */

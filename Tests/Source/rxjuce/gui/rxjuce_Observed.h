@@ -84,7 +84,7 @@ private:
 
 
 /**
-	Adds an Observable to a juce::Value.
+	Adds an Observable to a juce::Value. The Observable emits whenever the Value is changed.
  
 	@see getObservable()
  */
