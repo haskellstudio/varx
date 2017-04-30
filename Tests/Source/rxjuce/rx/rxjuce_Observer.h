@@ -14,15 +14,20 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
+/**
+	Retrieves items. You can call onNext to notify the Observer with a new item.
+ 
+	@see BehaviorSubject, PublishSubject, Observable::create
+ */
 class Observer
 {
 public:
+	/** Notifies the Observer with a new item. */
 	void onNext(const juce::var& next) const;
 	
 private:
 	friend class Observable;
 	explicit Observer(const std::function<void(const juce::var&)>&);
-	
 	const std::function<void(const juce::var&)> _onNext;
 	
 	JUCE_LEAK_DETECTOR(Observer)

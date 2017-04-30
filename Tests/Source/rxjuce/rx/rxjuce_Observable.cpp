@@ -31,11 +31,12 @@ Observable::Observable(const shared_ptr<Impl>& impl)
 
 Subscription Observable::subscribe(const std::function<void(const var&)>& onNext) const
 {
-	const auto subscription = impl->wrapped.subscribe(onNext);
+	auto subscription = impl->wrapped.subscribe(onNext);
 	
-	return Subscription([subscription]() {
-		subscription.unsubscribe();
-	});
+	auto unsubscribe = [subscription]() { subscription.unsubscribe(); };
+	auto isSubscribed = [subscription]() { return subscription.is_subscribed(); };
+
+	return Subscription(isSubscribed, unsubscribe);
 }
 
 Observable Observable::just(var value)

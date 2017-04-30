@@ -14,28 +14,27 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-Subscription::Subscription(const std::function<void()>& unsubscribe)
-: _unsubscribe(unsubscribe)
-{}
+Subscription::Subscription(const std::function<bool()>& isSubscribed,
+						   const std::function<void()>& unsubscribe)
+: _isSubscribed(isSubscribed),
+  _unsubscribe(unsubscribe) {}
 
 void Subscription::unsubscribe() const
 {
 	_unsubscribe();
 }
 
+bool Subscription::isSubscribed() const
+{
+	return _isSubscribed();
+}
+
 RAIISubscription::RAIISubscription(Subscription&& subscription)
-: subscription(std::move(subscription))
-{}
+: Subscription(std::move(subscription)) {}
 
 RAIISubscription::~RAIISubscription()
 {
-	subscription.unsubscribe();
-}
-
-RAIISubscription& RAIISubscription::operator=(Subscription&& other)
-{
-	subscription = std::move(other);
-	return *this;
+	unsubscribe();
 }
 
 RXJUCE_NAMESPACE_END

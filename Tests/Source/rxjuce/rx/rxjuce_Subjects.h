@@ -51,7 +51,7 @@ public:
 private:
 	struct Impl;
 	const juce::ScopedPointer<Impl> impl;
-	
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BehaviorSubject)
 };
 
