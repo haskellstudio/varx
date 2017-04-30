@@ -29,6 +29,7 @@ bool Subscription::isSubscribed() const
 	return _isSubscribed();
 }
 
+
 ScopedSubscription::ScopedSubscription(Subscription&& subscription)
 : Subscription(std::move(subscription)) {}
 

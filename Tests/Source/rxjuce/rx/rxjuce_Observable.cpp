@@ -32,7 +32,7 @@ namespace {
 }
 
 namespace juce {
-	// Converts an Observable to a juce var, and vice versa
+	// Converts an Observable to a JUCE var, and vice versa
 	template<>
 	struct VariantConverter<rxjuce::Observable>
 	{
@@ -101,8 +101,8 @@ Subscription Observable::subscribe(const std::function<void(const var&)>& onNext
 {
 	auto subscription = impl->wrapped.subscribe(onNext);
 	
-	auto unsubscribe = [subscription]() { subscription.unsubscribe(); };
 	auto isSubscribed = [subscription]() { return subscription.is_subscribed(); };
+	auto unsubscribe = [subscription]() { subscription.unsubscribe(); };
 	
 	return Subscription(isSubscribed, unsubscribe);
 }
