@@ -24,7 +24,7 @@ public:
 	
 private:
 	friend class Observable;
-	explicit Subscription(const std::function<void()>& unsubscribe);
+	explicit Subscription(const std::function<void()>&);
 	
 	std::function<void()> _unsubscribe;
 	
@@ -41,6 +41,7 @@ public:
 	RAIISubscription& operator=(Subscription&&);
 	
 	~RAIISubscription();
+	
 private:
 	Subscription subscription;
 	

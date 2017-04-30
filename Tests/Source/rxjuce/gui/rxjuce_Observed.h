@@ -13,7 +13,6 @@
 
 #include "rxjuce_Prefix.h"
 
-#include "rxjuce_BehaviorSubject.h"
 #include "rxjuce_Observable.h"
 #include "rxjuce_Subjects.h"
 

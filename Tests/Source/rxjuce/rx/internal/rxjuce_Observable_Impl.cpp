@@ -1,36 +1,33 @@
 /*
   ==============================================================================
 
-    rxjuce_Observable_Internal.cpp
+    rxjuce_Observable_Impl.cpp
     Created: 27 Apr 2017 7:11:30am
     Author:  Martin Finke
 
   ==============================================================================
 */
 
-#include "rxjuce_Observable_Internal.h"
+#include "rxjuce_Observable_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-shared_ptr<Observable::Internal> Observable::Internal::fromRxCpp(const rxcpp::observable<var>& o)
+shared_ptr<Observable::Impl> Observable::Impl::fromRxCpp(const rxcpp::observable<var>& wrapped)
 {
-	auto internal = std::make_shared<Internal>();
-	internal->o = o;
-	return internal;
+	return std::make_shared<Impl>(wrapped);
 }
 
-shared_ptr<Observable::Internal> Observable::Internal::fromValue(const Value& value)
+shared_ptr<Observable::Impl> Observable::Impl::fromValue(const Value& value)
 {
-	class ValueObservableImpl : public Internal, private Value::Listener {
+	class ValueObservableImpl : public Impl, private Value::Listener {
 	public:
-		ValueObservableImpl(Value inputValue)
-		: Internal(),
-		  value(inputValue),
+		ValueObservableImpl(const Value& inputValue)
+		: value(inputValue),
 		  subject(inputValue.getValue())
 		{
-			o = this->subject.get_observable();
+			wrapped = subject.get_observable();
 			value.addListener(this);
 		}
 		
@@ -42,11 +39,12 @@ shared_ptr<Observable::Internal> Observable::Internal::fromValue(const Value& va
 		Value value;
 		rxcpp::subjects::behavior<var> subject;
 	};
-	
+
 	return std::make_shared<ValueObservableImpl>(value);
 }
 
-Observable::Internal::Internal()
+Observable::Impl::Impl(const rxcpp::observable<var>& wrapped)
+: wrapped(wrapped)
 {}
 
 RXJUCE_NAMESPACE_END

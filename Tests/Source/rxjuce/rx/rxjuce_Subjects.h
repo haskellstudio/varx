@@ -20,22 +20,24 @@ class PublishSubject
 {
 public:
 	PublishSubject();
+	~PublishSubject();
 	
 	void onNext(const juce::var& next);
 	
 	Observable getObservable() const;
 	
 private:
-	class Internal;
-	std::shared_ptr<Internal> internal;
+	class Impl;
+	const juce::ScopedPointer<Impl> impl;
 	
-	JUCE_LEAK_DETECTOR(PublishSubject)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PublishSubject)
 };
 
 class BehaviorSubject
 {
 public:
 	BehaviorSubject(const juce::var& initial);
+	~BehaviorSubject();
 	
 	void onNext(const juce::var& next);
 	
@@ -44,10 +46,10 @@ public:
 	juce::var getValue() const;
 	
 private:
-	class Internal;
-	std::shared_ptr<Internal> internal;
+	class Impl;
+	const juce::ScopedPointer<Impl> impl;
 	
-	JUCE_LEAK_DETECTOR(BehaviorSubject)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BehaviorSubject)
 };
 
 RXJUCE_NAMESPACE_END

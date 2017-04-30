@@ -29,9 +29,7 @@ public:
 	 */
 	
 	/**
-		Creates an `Observable` from a given JUCE `Value`'s **source**.
-	 
-		The observable refers to the value's underlying `ValueSource` and continues to emit values even after the passed `Value` is destroyed.
+		Creates an `Observable` from a given JUCE `Value`. The returned Observable emits items **as long as it is not destroyed**, so you are responsible for managing its lifetime. Or just use Observed<Value>, which will handle this for you.
 	 
 		**When calling setValue on a `Value`, the new value is emitted asynchronously.** If you call setValue immediately before destroying a Value, the new value will still be emitted.
 	 */
@@ -54,8 +52,8 @@ public:
 		range(Range<double>(17.5, 22.8), 2) -> {17.5, 19.5, 21.5, 22.8}
 		```
 	 */
-	static Observable range(juce::Range<int> range, int step);
-	static Observable range(juce::Range<double> range, int step);
+	static Observable range(const juce::Range<int>& range, int step);
+	static Observable range(const juce::Range<double>& range, int step);
 	
 	/**
 		Creates an Observable which emits values from a Subscriber on each subscription.
@@ -74,9 +72,9 @@ public:
 	/**
 		Subscribes to an Observable, to receive values it emits.
 	 
-		The onNext function is called whenever the Observable emits a new value.
+		The onNext function is called whenever the Observable a new value. It may be called synchronously before subscribe() returns.
 	 
-		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call unsubscribe**, so be careful.
+		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call unsubscribe**, so be careful. Or use a RAIISubscription, which automatically unsubscribes when it is destroyed.
 	 */
 	Subscription subscribe(const std::function<void(const var&)>& onNext) const;
 	
@@ -113,11 +111,12 @@ public:
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform);
 	
 private:
+	class Impl;
+	std::shared_ptr<Impl> impl;
+	
 	friend class BehaviorSubject;
 	friend class PublishSubject;
-	class Internal;
-	Observable(const std::shared_ptr<Internal>& internal);
-	std::shared_ptr<Internal> internal;
+	Observable(const std::shared_ptr<Impl>&);
 	
 	JUCE_LEAK_DETECTOR(Observable)
 };

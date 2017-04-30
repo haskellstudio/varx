@@ -10,43 +10,41 @@
 
 #include "rxjuce_Subjects.h"
 
-#include "rxjuce_Observable_Internal.h"
+#include "rxjuce_Observable_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-class PublishSubject::Internal
+class PublishSubject::Impl
 {
 public:
-	Internal()
-	: subject()
-	{}
-	
 	rxcpp::subjects::subject<var> subject;
 };
 
 PublishSubject::PublishSubject()
-: internal(std::make_shared<Internal>())
+: impl(new Impl())
 {}
+
+PublishSubject::~PublishSubject() {}
 
 void PublishSubject::onNext(const var& next)
 {
-	internal->subject.get_subscriber().on_next(next);
+	impl->subject.get_subscriber().on_next(next);
 }
 
 Observable PublishSubject::getObservable() const
 {
-	return Observable::Internal::fromRxCpp(internal->subject.get_observable());
+	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
 }
 
 
 
 
-class BehaviorSubject::Internal
+class BehaviorSubject::Impl
 {
 public:
-	Internal(const var& initial)
+	Impl(const var& initial)
 	: subject(initial)
 	{}
 	
@@ -54,22 +52,24 @@ public:
 };
 
 BehaviorSubject::BehaviorSubject(const juce::var& initial)
-: internal(std::make_shared<Internal>(initial))
+: impl(new Impl(initial))
 {}
+
+BehaviorSubject::~BehaviorSubject() {}
 
 void BehaviorSubject::onNext(const var& next)
 {
-	internal->subject.get_subscriber().on_next(next);
+	impl->subject.get_subscriber().on_next(next);
 }
 
 Observable BehaviorSubject::getObservable() const
 {
-	return Observable::Internal::fromRxCpp(internal->subject.get_observable());
+	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
 }
 
 juce::var BehaviorSubject::getValue() const
 {
-	return internal->subject.get_value();
+	return impl->subject.get_value();
 }
 
 RXJUCE_NAMESPACE_END
