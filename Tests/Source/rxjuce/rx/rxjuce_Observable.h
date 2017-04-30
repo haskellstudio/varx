@@ -23,11 +23,8 @@ class Observable
 public:
 	typedef juce::var var;
 	
-	//==============================================================================
-	/**
-	 Creation
-	 */
 	
+#pragma mark - Creation
 	/**
 		Creates an `Observable` from a given JUCE `Value`. The returned Observable ** only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this.
 	 
@@ -63,27 +60,18 @@ public:
 	static Observable create(const std::function<void(Observer)>& onSubscribe);
 	
 	
-	
-	//==============================================================================
-	/**
-	 Subscription
-	 */
-	
+#pragma mark - Subscription
 	/**
 		Subscribes to an Observable, to receive values it emits.
 	 
-		The onNext function is called whenever the Observable a new value. It may be called synchronously before subscribe() returns.
+		The onNext function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
 	 
-		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call unsubscribe**, so be careful. Or use a RAIISubscription, which automatically unsubscribes when it is destroyed.
+		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call unsubscribe**, or until the Observable source is destroyed. You can use a RAIISubscription, which automatically unsubscribes when it is destroyed.
 	 */
 	Subscription subscribe(const std::function<void(const var&)>& onNext) const;
 	
 	
-	//==============================================================================
-	/**
-	 Operators
-	 */
-	
+#pragma mark - Transform Functions
 	// Transformation functions with different arity.
 	typedef const std::function<var(const var&)>& Transform1;
 	typedef const std::function<var(const var&, const var&)>& Transform2;
@@ -94,14 +82,11 @@ public:
 	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform7;
 	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform8;
 	
+#pragma mark - Operators
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
 	 */
 	Observable map(Transform1 transform) const;
-	
-	Observable map(const std::function<Observable(const var&)> transform) const;
-	
-	Observable flatMap(const std::function<Observable(const var&)>& collectionSelector) const;
 	
 	Observable switchOnNext() const;
 	
@@ -115,6 +100,12 @@ public:
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const;
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const;
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const;
+	
+#pragma mark - Misc
+	/**
+		Wraps the Observable into a var. This allows you to return an Observable from a transform function.
+	 */
+	operator var() const;
 	
 private:
 	struct Impl;
