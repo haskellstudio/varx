@@ -113,6 +113,7 @@ public:
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform);
 	
 private:
+	friend class BehaviorSubject;
 	class Internal;
 	Observable(const std::shared_ptr<Internal>& internal);
 	std::shared_ptr<Internal> internal;

@@ -14,9 +14,7 @@
 #include "rxjuce_Prefix.h"
 
 #include "rxjuce_Observable.h"
-#include "rxjuce_Subscriber.h"
-#include "rxjuce_WeakReferenceLifetimeWatcher.h"
-#include "rxjuce_LifetimeWatcherPool.h"
+#include "rxjuce_BehaviorSubject.h"
 
 RXJUCE_NAMESPACE_BEGIN
 
@@ -35,14 +33,14 @@ class Observed;
 		```
  */
 template<typename Base>
-class Observed<Base, typename std::enable_if<std::is_base_of<juce::Button, Base>::value>::type> : public Base
+class Observed<Base, typename std::enable_if<std::is_base_of<juce::Button, Base>::value>::type> : public Base, private juce::Button::Listener
 {
 public:
-	using Base::Base;
-	
-	~Observed()
+	template<typename... Args>
+	Observed(Args&&... args)
+	: Base(std::forward<Args>(args)...)
 	{
-		masterReference.clear();
+		addListener(this);
 	}
 	
 	/**
@@ -50,20 +48,9 @@ public:
 	 
 		The emitted value is an empty var (and can be ignored).
 	 */
-	Observable clickedObservable()
+	Observable clickedObservable() const
 	{
-		class ClickedForwarder : public ButtonForwarder
-		{
-		public:
-			using ButtonForwarder::ButtonForwarder;
-			
-			void buttonClicked(juce::Button *) override
-			{
-				this->subscriber.onNext(juce::var());
-			}
-		};
-		
-		return createObservable<ClickedForwarder>();
+		return _clicked.getObservable();
 	}
 	
 	/**
@@ -71,58 +58,14 @@ public:
 	 
 		The emitted value is a ButtonState.
 	 */
-	Observable stateChangedObservable()
+	Observable stateChanged() const
 	{
-		class StateChangedForwarder : public ButtonForwarder
-		{
-		public:
-			using ButtonForwarder::ButtonForwarder;
-			
-			void buttonClicked(juce::Button *) override
-			{}
-			
-			void buttonStateChanged(juce::Button *button) override
-			{
-				this->subscriber.onNext(juce::var(button->getState()));
-			}
-		};
-		
-		return createObservable<StateChangedForwarder>();
+		return _stateChanged.getObservable();
 	}
 	
 private:
-	typedef Observed<Base> Self;
-	typedef juce::WeakReference<Self> WeakRef;
-	
-	class ButtonForwarder : public juce::Button::Listener, public WeakReferenceLifetimeWatcher<Self>
-	{
-	public:
-		ButtonForwarder(const WeakRef& ref, Subscriber subscriber)
-		: WeakReferenceLifetimeWatcher<Self>(ref),
-		  subscriber(subscriber)
-		{}
-		
-	protected:
-		const Subscriber subscriber;
-	};
-	
-	template<typename Forwarder>
-	Observable createObservable()
-	{
-		WeakRef weakSelf(this);
-		
-		return Observable::create([weakSelf](Subscriber subscriber) mutable {
-			if (weakSelf.wasObjectDeleted())
-				return;
-			
-			auto forwarder = std::make_unique<Forwarder>(weakSelf, subscriber);
-			weakSelf->addListener(forwarder.get());
-			LifetimeWatcherPool::getInstance().add(std::move(forwarder));
-		});
-	}
-	
-	typename WeakRef::Master masterReference;
-	friend class juce::WeakReference<Self>;
+	BehaviorSubject _clicked;
+	BehaviorSubject _stateChanged;
 };
 
 

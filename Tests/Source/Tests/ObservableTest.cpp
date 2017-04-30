@@ -9,7 +9,6 @@
 */
 
 #include "rxjuce_TestPrefix.h"
-#include "rxjuce_LifetimeWatcherPoolFixture.h"
 
 TEST_CASE("Observable::just",
 		  "[Observable][Observable::just]")
@@ -58,14 +57,14 @@ TEST_CASE("Observable::range",
 }
 
 
-TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
-				 "Value and ValueSource lifetime",
-				 "[Observable][Observable::fromValue]")
+TEST_CASE("Value and ValueSource lifetime",
+		  "[Observable][Observable::fromValue]")
 {
 	// Create Value and subscribe
 	auto value = std::make_shared<Value>("Initial");
+	const auto observable = Observable::fromValue(*value);
 	Array<var> results;
-	RxJUCECollectResults(Observable::fromValue(*value), results);
+	RxJUCECollectResults(observable, results);
 	
 	RxJUCERequireResults(results, "Initial");
 	
@@ -89,13 +88,13 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 }
 
 
-TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
-				 "A Value notifies asynchronously",
-				 "[Observable][Observable::fromValue]")
+TEST_CASE("A Value notifies asynchronously",
+		  "[Observable][Observable::fromValue]")
 {
 	Value value("Initial Value");
+	const auto observable = Observable::fromValue(value);
 	Array<var> results;
-	RxJUCECollectResults(Observable::fromValue(value), results);
+	RxJUCECollectResults(observable, results);
 	
 	RxJUCERequireResults(results, "Initial Value");
 	
@@ -110,9 +109,8 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 }
 
 
-TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
-				 "A Value can have multiple Subscriptions or Observables",
-				 "[Observable][Observable::fromValue]")
+TEST_CASE("A Value can have multiple Subscriptions or Observables",
+		  "[Observable][Observable::fromValue]")
 {
 	// Create Value and subscribe
 	Value value("Foo");
@@ -156,9 +154,8 @@ TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
 }
 
 
-TEST_CASE_METHOD(LifetimeWatcherPoolFixture,
-				 "A Slider Value can be observed",
-				 "[Observable][Observable::fromValue]")
+TEST_CASE("A Slider Value can be observed",
+		  "[Observable][Observable::fromValue]")
 {
 	Slider slider;
 	slider.setValue(7.6);

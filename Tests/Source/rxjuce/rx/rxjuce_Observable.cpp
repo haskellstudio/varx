@@ -13,8 +13,6 @@
 #include "rxjuce_Observable_Internal.h"
 
 #include "rxjuce_Subscriber.h"
-#include "rxjuce_LifetimeWatcher.h"
-#include "rxjuce_LifetimeWatcherPool.h"
 
 #include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
 

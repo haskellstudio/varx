@@ -6,12 +6,6 @@
               displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark">
   <MAINGROUP id="J6yVM5" name="RxJUCE-Tests">
     <GROUP id="{3E021249-15C8-F098-B5C0-2A3DBD19388C}" name="Source">
-      <GROUP id="{223D4D6C-6BF2-8081-F3BA-CA0EC7A26DD7}" name="Utility">
-        <FILE id="ZRxjji" name="rxjuce_LifetimeWatcherPoolFixture.cpp" compile="1"
-              resource="0" file="Source/Utility/rxjuce_LifetimeWatcherPoolFixture.cpp"/>
-        <FILE id="u7hpkG" name="rxjuce_LifetimeWatcherPoolFixture.h" compile="0"
-              resource="0" file="Source/Utility/rxjuce_LifetimeWatcherPoolFixture.h"/>
-      </GROUP>
       <GROUP id="{BBCE1761-6AF0-DAE7-65CD-AE0365C41BE7}" name="Other">
         <FILE id="Ct7vkg" name="catch.hpp" compile="0" resource="0" file="Source/Other/catch.hpp"/>
         <FILE id="PO03Yc" name="main.cpp" compile="1" resource="0" file="Source/Other/main.cpp"/>
@@ -31,17 +25,11 @@
           <FILE id="mkwt56" name="rxjuce_PrintFunctions.h" compile="0" resource="0"
                 file="Source/rxjuce/util/rxjuce_PrintFunctions.h"/>
         </GROUP>
-        <GROUP id="{8A964B62-959C-5836-105B-D4625A388316}" name="lifetime">
-          <FILE id="gB2NXF" name="rxjuce_LifetimeWatcher.h" compile="0" resource="0"
-                file="Source/rxjuce/lifetime/rxjuce_LifetimeWatcher.h"/>
-          <FILE id="yUTR1N" name="rxjuce_LifetimeWatcherPool.cpp" compile="1"
-                resource="0" file="Source/rxjuce/lifetime/rxjuce_LifetimeWatcherPool.cpp"/>
-          <FILE id="OPP2eu" name="rxjuce_LifetimeWatcherPool.h" compile="0" resource="0"
-                file="Source/rxjuce/lifetime/rxjuce_LifetimeWatcherPool.h"/>
-          <FILE id="dlVcSG" name="rxjuce_WeakReferenceLifetimeWatcher.h" compile="0"
-                resource="0" file="Source/rxjuce/lifetime/rxjuce_WeakReferenceLifetimeWatcher.h"/>
-        </GROUP>
         <GROUP id="{76338C3B-D82A-3F81-A964-2397D69B048B}" name="rx">
+          <FILE id="KwdRUj" name="rxjuce_BehaviorSubject.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_BehaviorSubject.cpp"/>
+          <FILE id="FgVO5y" name="rxjuce_BehaviorSubject.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_BehaviorSubject.h"/>
           <FILE id="JIhXEX" name="rxjuce_Observable.cpp" compile="1" resource="0"
                 file="Source/rxjuce/rx/rxjuce_Observable.cpp"/>
           <FILE id="Iif8lu" name="rxjuce_Observable.h" compile="0" resource="0"
@@ -233,8 +221,6 @@
         <FILE id="BNm3W1" name="rxjuce_Prefix.h" compile="0" resource="0" file="Source/rxjuce/rxjuce_Prefix.h"/>
       </GROUP>
       <GROUP id="{10CA88C8-F94B-695D-F44B-6A2C94F559D1}" name="Tests">
-        <FILE id="rrI8Xe" name="LifetimeWatcherPoolTest.cpp" compile="1" resource="0"
-              file="Source/Tests/LifetimeWatcherPoolTest.cpp"/>
         <FILE id="kXq69B" name="ObservableTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObservableTest.cpp"/>
         <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
