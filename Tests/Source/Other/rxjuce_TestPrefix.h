@@ -16,17 +16,18 @@
 #include "rxjuce_PrintFunctions.h"
 #include "catch.hpp"
 
+using namespace juce;
+using namespace rxjuce;
+
 #define CONTEXT( desc )     SECTION( std::string(" Context: ") + desc, "" )
 #define IT( desc )			SECTION( std::string("       It ") + desc, "" )
 
-#define RxJUCECollectResults(__observable, __arrayName) const RAIISubscription JUCE_JOIN_MACRO(__arrayName, JUCE_JOIN_MACRO(Subscription_, __LINE__))((__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); }))
+#define RxJUCECollectItems(__observable, __arrayName) const RAIISubscription JUCE_JOIN_MACRO(__arrayName, JUCE_JOIN_MACRO(Subscription_, __LINE__))((__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); }))
 
 #define RxJUCERequireResults(__arrayName, ...) REQUIRE(__arrayName == Array<var>({__VA_ARGS__}))
 
+
 inline void RxJUCERunDispatchLoop(int millisecondsToRunFor = 0)
 {
-	juce::MessageManager::getInstance()->runDispatchLoopUntil(millisecondsToRunFor);
+	MessageManager::getInstance()->runDispatchLoopUntil(millisecondsToRunFor);
 }
-
-using namespace juce;
-using namespace rxjuce;

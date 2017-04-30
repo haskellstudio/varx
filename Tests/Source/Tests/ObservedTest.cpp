@@ -12,11 +12,12 @@
 
 #include "rxjuce_Observed.h"
 
+
 TEST_CASE("Observed<Button> stateChanged")
 {
 	Observed<TextButton> button("Click Here");
 	Array<var> results;
-	RxJUCECollectResults(button.buttonStateObservable(), results);
+	RxJUCECollectItems(button.buttonStateObservable(), results);
 	
 	IT("emits the normal state on subscribe") {
 		RxJUCERequireResults(results, Button::ButtonState::buttonNormal);
@@ -40,11 +41,12 @@ TEST_CASE("Observed<Button> stateChanged")
 	}
 }
 
+
 TEST_CASE("Observed<Button> clicked")
 {
 	Observed<TextButton> button("Click Here");
 	Array<var> results;
-	RxJUCECollectResults(button.clickedObservable(), results);
+	RxJUCECollectItems(button.clickedObservable(), results);
 	
 	IT("doesn't emit an item on subscribe") {
 		REQUIRE(results.isEmpty());
@@ -64,11 +66,12 @@ TEST_CASE("Observed<Button> clicked")
 	}
 }
 
+
 TEST_CASE("Observed<Value>")
 {
 	Observed<Value> value("Initial");
 	Array<var> results;
-	RxJUCECollectResults(value.getObservable(), results);
+	RxJUCECollectItems(value.getObservable(), results);
 	
 	IT("emits items asynchronously when the Value changes") {
 		value.setValue("Second");

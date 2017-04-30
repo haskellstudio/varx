@@ -16,19 +16,20 @@ TEST_CASE("Observable::just",
 	Array<var> results;
 	
 	IT("emits a single value on subscribe") {
-		RxJUCECollectResults(Observable::just(18.3), results);
+		RxJUCECollectItems(Observable::just(18.3), results);
 		
 		RxJUCERequireResults(results, 18.3);
 	}
 	
 	IT("notifies multiple subscriptions") {
 		Observable o = Observable::just("Hello");
-		RxJUCECollectResults(o, results);
-		RxJUCECollectResults(o, results);
+		RxJUCECollectItems(o, results);
+		RxJUCECollectItems(o, results);
 		
 		RxJUCERequireResults(results, "Hello", "Hello");
 	}
 }
+
 
 TEST_CASE("Observable::range",
 		  "[Observable][Observable::range]")
@@ -36,67 +37,44 @@ TEST_CASE("Observable::range",
 	Array<var> results;
 	
 	IT("emits integer numbers with an integer range") {
-		RxJUCECollectResults(Observable::range(Range<int>(3, 7), 3), results);
+		RxJUCECollectItems(Observable::range(Range<int>(3, 7), 3), results);
 		RxJUCERequireResults(results, 3, 6, 7);
 	}
 	
 	IT("emits double numbers with a double range") {
-		RxJUCECollectResults(Observable::range(Range<double>(17.5, 22.8), 2), results);
+		RxJUCECollectItems(Observable::range(Range<double>(17.5, 22.8), 2), results);
 		RxJUCERequireResults(results, 17.5, 19.5, 21.5, 22.8);
 	}
 	
 	IT("emits just start if start == end") {
-		RxJUCECollectResults(Observable::range(Range<int>(10, 10), 1), results);
+		RxJUCECollectItems(Observable::range(Range<int>(10, 10), 1), results);
 		RxJUCERequireResults(results, 10);
 	}
 	
 	IT("emits just start if start > end") {
-		RxJUCECollectResults(Observable::range(Range<int>(10, 9), 1), results);
+		RxJUCECollectItems(Observable::range(Range<int>(10, 9), 1), results);
 		RxJUCERequireResults(results, 10);
 	}
 }
 
 
-TEST_CASE("Value and ValueSource lifetime",
-		  "[Observable][Observable::fromValue]")
-{
-	// Create Value and subscribe
-	auto value = std::make_shared<Value>("Initial");
-	const auto observable = Observable::fromValue(*value);
-	Array<var> results;
-	RxJUCECollectResults(observable, results);
-	
-	RxJUCERequireResults(results, "Initial");
-	
-	IT("still receives an item if the Value is destroyed immediately after calling setValue") {
-		value->setValue("New Value");
-		value.reset();
-		RxJUCERunDispatchLoop();
-		
-		RxJUCERequireResults(results, "Initial", "New Value");
-	}
-	
-	IT("still receives an item if the Value is copied, the original is destroyed, and the copy sets a new value") {
-		Value copy(*value);
-		value.reset();
-		RxJUCERunDispatchLoop();
-		copy.setValue("New");
-		RxJUCERunDispatchLoop();
-		
-		RxJUCERequireResults(results, "Initial", "New");
-	}
-}
-
-
-TEST_CASE("A Value notifies asynchronously",
+TEST_CASE("Observable::fromValue",
 		  "[Observable][Observable::fromValue]")
 {
 	Value value("Initial Value");
 	const auto observable = Observable::fromValue(value);
 	Array<var> results;
-	RxJUCECollectResults(observable, results);
+	RxJUCECollectItems(observable, results);
 	
 	RxJUCERequireResults(results, "Initial Value");
+	
+	IT("emits if a copy of the Value sets a new value") {
+		Value copy(value);
+		copy.setValue("Set by copy");
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireResults(results, "Initial Value", "Set by copy");
+	}
 	
 	IT("emites only one item if the Value is set multiple times synchronously") {
 		value = "2";
@@ -106,37 +84,24 @@ TEST_CASE("A Value notifies asynchronously",
 		
 		RxJUCERequireResults(results, "Initial Value", "4");
 	}
-}
-
-
-TEST_CASE("A Value can have multiple Subscriptions or Observables",
-		  "[Observable][Observable::fromValue]")
-{
-	// Create Value and subscribe
-	Value value("Foo");
-	Observable o = Observable::fromValue(value);
-	Array<var> results;
-	RxJUCECollectResults(o, results);
-	
-	RxJUCERequireResults(results, "Foo");
 	
 	IT("notifies multiple Subscriptions on subscribe") {
 		Observable another = Observable::fromValue(value);
-		RxJUCECollectResults(another, results);
-	
-		RxJUCERequireResults(results, "Foo", "Foo");
+		RxJUCECollectItems(another, results);
+		
+		RxJUCERequireResults(results, "Initial Value", "Initial Value");
 	}
 	
 	IT("notifies multiple Values referring to the same ValueSource") {
 		Value anotherValue(value);
 		Observable anotherObservable = Observable::fromValue(anotherValue);
-		RxJUCECollectResults(anotherObservable, results);
+		RxJUCECollectItems(anotherObservable, results);
 		
-		RxJUCERequireResults(results, "Foo", "Foo");
+		RxJUCERequireResults(results, "Initial Value", "Initial Value");
 	}
 	
 	IT("notifies multiple Subscriptions if a Value is set multiple times") {
-		RAIISubscription another = o.subscribe([&](String newValue) {
+		RAIISubscription another = observable.subscribe([&](String newValue) {
 			results.add(newValue.toUpperCase());
 		});
 		
@@ -148,20 +113,78 @@ TEST_CASE("A Value can have multiple Subscriptions or Observables",
 		
 		REQUIRE(results.size() == 6);
 		
-		for (auto s : {"Foo", "FOO", "BAR", "Bar", "BAZ", "Baz"})
+		// Subscribers are notified in no particular order
+		for (auto s : {"Initial Value", "INITIAL VALUE", "BAR", "Bar", "BAZ", "Baz"})
 			REQUIRE(results.contains(s));
 	}
 }
 
 
-TEST_CASE("A Slider Value can be observed",
+TEST_CASE("Observable::fromValue lifetime",
+		  "[Observable][Observable::fromValue]")
+{
+	// Create an Observable from a Value
+	Value value("Initial");
+	auto source = std::make_shared<Observable>(Observable::fromValue(value));
+	
+	// Create another Observable from the source Observable
+	auto mapped = source->map([](String s){ return s; });
+	
+	// Collect items from the mapped Observable
+	Array<var> results;
+	RxJUCECollectItems(mapped, results);
+	
+	RxJUCERequireResults(results, "Initial");
+	
+	IT("emits items when the source Observable is alive") {
+		value.setValue("New Value");
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireResults(results, "Initial", "New Value");
+	}
+	
+	IT("stops emitting items as soon as the source Observable is destroyed") {
+		source.reset();
+		value.setValue("Two");
+		value.setValue("Three");
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireResults(results, "Initial");
+	}
+	
+	IT("does not emit an item if the Observable is destroyed immediately after calling setValue") {
+		value.setValue("New Value");
+		source.reset();
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireResults(results, "Initial");
+	}
+	
+	IT("continues to emit items if the source Observable is copied and then destroyed") {
+		auto copy = std::make_shared<Observable>(*source);
+		Array<var> copyResults;
+		RxJUCECollectItems(*copy, copyResults);
+		
+		RxJUCERequireResults(copyResults, "Initial");
+		
+		source.reset();
+		RxJUCERunDispatchLoop();
+		value.setValue("New");
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireResults(copyResults, "Initial", "New");
+	}
+}
+
+
+TEST_CASE("Observable::fromValue with a Slider",
 		  "[Observable][Observable::fromValue]")
 {
 	Slider slider;
 	slider.setValue(7.6);
 	Observable o = Observable::fromValue(slider.getValueObject());
 	Array<var> results;
-	RxJUCECollectResults(o, results);
+	RxJUCECollectItems(o, results);
 	RxJUCERequireResults(results, 7.6);
 	
 	IT("emits once if the Slider is changed once") {

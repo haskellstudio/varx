@@ -29,9 +29,9 @@ public:
 	 */
 	
 	/**
-		Creates an `Observable` from a given JUCE `Value`. The returned Observable emits items **as long as it is not destroyed**, so you are responsible for managing its lifetime. Or just use Observed<Value>, which will handle this for you.
+		Creates an `Observable` from a given JUCE `Value`. The returned Observable ** only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this for you.
 	 
-		**When calling setValue on a `Value`, the new value is emitted asynchronously.** If you call setValue immediately before destroying a Value, the new value will still be emitted.
+		**When calling Value::setValue, it notifies asynchronously. So the returned Observable will also emit asynchronously.** If you call setValue immediately before destroying a the returned Observable, the new item will not be emitted.
 	 */
 	static Observable fromValue(juce::Value value);
 	
