@@ -29,10 +29,10 @@ bool Subscription::isSubscribed() const
 	return _isSubscribed();
 }
 
-RAIISubscription::RAIISubscription(Subscription&& subscription)
+ScopedSubscription::ScopedSubscription(Subscription&& subscription)
 : Subscription(std::move(subscription)) {}
 
-RAIISubscription::~RAIISubscription()
+ScopedSubscription::~ScopedSubscription()
 {
 	unsubscribe();
 }

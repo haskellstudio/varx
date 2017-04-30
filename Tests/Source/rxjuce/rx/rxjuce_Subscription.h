@@ -61,29 +61,29 @@ private:
 		{
 		public:
 			MyClass(Observable input)
-			: subscription(input.subscribe([](var newValue) { ... })) {}
+			: subscription(input.subscribe([this](var newValue) { this->doSomething(newValue); })) {}
  
 		private:
-			const RAIISubscription subscription;
+			const ScopedSubscription subscription;
 		};
  */
-class RAIISubscription : public Subscription
+class ScopedSubscription : public Subscription
 {
 public:
 	///@{
 	/**
 		Transfers ownership from an existing Subscription.
 	 */
-	RAIISubscription(Subscription&& subscription);
-	RAIISubscription(RAIISubscription&&) = default;
-	RAIISubscription& operator=(RAIISubscription&&) = default;
+	ScopedSubscription(Subscription&& subscription);
+	ScopedSubscription(ScopedSubscription&&) = default;
+	ScopedSubscription& operator=(ScopedSubscription&&) = default;
 	///@}
 	
 	/** Calls unsubscribe(). */
-	~RAIISubscription();
+	~ScopedSubscription();
 	
 private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RAIISubscription)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ScopedSubscription)
 };
 
 RXJUCE_NAMESPACE_END

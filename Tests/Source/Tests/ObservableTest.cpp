@@ -104,7 +104,7 @@ TEST_CASE("Observable::fromValue",
 	}
 	
 	IT("notifies multiple Subscriptions if a Value is set multiple times") {
-		RAIISubscription another = observable.subscribe([&](String newValue) {
+		ScopedSubscription another = observable.subscribe([&](String newValue) {
 			results.add(newValue.toUpperCase());
 		});
 		
