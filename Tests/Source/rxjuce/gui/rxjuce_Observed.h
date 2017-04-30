@@ -18,26 +18,28 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
+namespace detail {
+	class ButtonForwarder : private juce::Button::Listener
+	{
+	public:
+		ButtonForwarder(juce::Button& button);
+		
+		Observable clickedObservable() const;
+		
+		Observable buttonStateObservable() const;
+		
+	private:
+		PublishSubject clicked;
+		BehaviorSubject buttonState;
+		
+		void buttonClicked(juce::Button *) override;
+		void buttonStateChanged(juce::Button *button) override;
+	};
+}
+
 /** If you get an error here, it means that you are trying to create an Observed<T> with an unsupported type T. */
 template<typename Base, class Enable = void>
 class Observed;
-
-class ButtonForwarder : private juce::Button::Listener
-{
-public:
-	ButtonForwarder(juce::Button& button);
-	
-	Observable clickedObservable() const;
-	
-	Observable buttonStateObservable() const;
-	
-private:
-	PublishSubject clicked;
-	BehaviorSubject buttonState;
-	
-	void buttonClicked(juce::Button *) override;
-	void buttonStateChanged(juce::Button *button) override;
-};
 
 /**
 	Adds Observable methods to a juce::Button or Button subclass.
@@ -80,7 +82,7 @@ public:
 	}
 	
 private:
-	const ButtonForwarder forwarder;
+	const detail::ButtonForwarder forwarder;
 };
 
 template<>

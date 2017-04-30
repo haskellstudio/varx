@@ -14,28 +14,28 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-ButtonForwarder::ButtonForwarder(Button& button)
+detail::ButtonForwarder::ButtonForwarder(Button& button)
 : buttonState(button.getState())
 {
 	button.addListener(this);
 }
 
-Observable ButtonForwarder::clickedObservable() const
+Observable detail::ButtonForwarder::clickedObservable() const
 {
 	return clicked.getObservable();
 }
 
-Observable ButtonForwarder::buttonStateObservable() const
+Observable detail::ButtonForwarder::buttonStateObservable() const
 {
 	return buttonState.getObservable();
 }
 
-void ButtonForwarder::buttonClicked(Button *)
+void detail::ButtonForwarder::buttonClicked(Button *)
 {
 	clicked.onNext(var());
 }
 
-void ButtonForwarder::buttonStateChanged(Button *button)
+void detail::ButtonForwarder::buttonStateChanged(Button *button)
 {
 	buttonState.onNext(var(button->getState()));
 }
