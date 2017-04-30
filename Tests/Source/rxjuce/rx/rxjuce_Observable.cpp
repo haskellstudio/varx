@@ -28,6 +28,8 @@ namespace {
 		
 		const rxcpp::observable<var> observable;
 	};
+	
+	const std::string ObservableUnwrappingError("Error unwrapping Observable. This is likely because you called switchOnNext on an Observable that doesn't emit Observable items.");
 }
 
 namespace juce {
@@ -36,13 +38,15 @@ namespace juce {
 	{
 		static rxcpp::observable<var> fromVar(const var &v)
 		{
+			if (!v.isObject())
+				throw std::runtime_error(ObservableUnwrappingError);
+			
 			ReferenceCountedObjectPtr<ReferenceCountedObject> ptr(v.getObject());
 			
 			if (auto observableWrapper = dynamic_cast<RxCppObservableVarWrapper *>(ptr.get()))
 				return observableWrapper->observable;
 			
-			jassertfalse;
-			return rxcpp::observable<var>();
+			throw std::runtime_error(ObservableUnwrappingError);
 		}
 		
 		static var toVar(const rxcpp::observable<var>& observable)
