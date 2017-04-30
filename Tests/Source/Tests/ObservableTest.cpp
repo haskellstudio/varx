@@ -210,7 +210,8 @@ TEST_CASE("Observable::fromValue with a Slider",
 
 
 TEST_CASE("Observable::create",
-		  "[Observable][Observable::create]") {
+		  "[Observable][Observable::create]")
+{
 	Array<var> results;
 	
 	IT("emits items when pushing items synchronously") {
@@ -309,5 +310,47 @@ TEST_CASE("Observable::create",
 		// After the copy is destroyed, there should be just 1 (from the pointer)
 		copy.reset();
 		REQUIRE(pointer->getReferenceCount() == 1);
+	}
+}
+
+TEST_CASE("Observable::map",
+		  "[Observable][Observable::map]")
+{
+	Array<var> results;
+	auto source = Observable::range(Range<double>(4, 7), 2);
+	
+	IT("emits values synchronously") {
+		auto mapped = source.map([](int i) { return i * 1.5; });
+		RxJUCECollectItems(mapped, results);
+		
+		RxJUCERequireResults(results, 6.0, 9.0, 10.5);
+	}
+}
+
+TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
+		  "[Observable][Observable::map][Observable::switchOnNext]")
+{
+	Array<var> results;
+	auto source = std::make_shared<Observable>(Observable::just(17));
+	
+	IT("continues to emit items after the source Observable is gone") {
+		auto mapped = source->map([](int next) {
+			return Observable::create([next](Observer observer) {
+				MessageManager::getInstance()->callAsync([observer, next]() {
+					observer.onNext(next * 3);
+				});
+			});
+		});
+		mapped = mapped.switchOnNext();
+		RxJUCECollectItems(mapped, results);
+		
+		// There should be no items before running dispatch loop
+		REQUIRE(results.isEmpty());
+		
+		source.reset();
+		RxJUCERunDispatchLoop();
+		
+		// The item should be emitted, although there's no reference to the source anymore
+		RxJUCERequireResults(results, 17 * 3);
 	}
 }
