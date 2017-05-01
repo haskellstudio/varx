@@ -10,18 +10,22 @@
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 <link href="$relpath^tabs.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="$relpath^highlight-github.css">
-<script type="text/javascript" src="$relpath^jquery.js"></script>
+<link rel="stylesheet" href="$relpath^bootstrap.min.css">
+<link rel="stylesheet" href="$relpath^bootstrap-theme.min.css">
+<script type="text/javascript" src="$relpath^jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="$relpath^jquery.smartmenus.min.js"></script>
 <script type="text/javascript" src="$relpath^dynsections.js"></script>
 <script type="text/javascript" src="$relpath^highlight.min.js"></script>
+<script type="text/javascript" src="$relpath^bootstrap.min.js"></script>
+<script type="text/javascript" src="$relpath^doxygen-bootstrap.js"></script>
 <script>
 $(function() {
-    $(".fragment").each(function(i,node) {
-        var $node = $(node);
-        $node.html("<pre><code class='" +
-                   $node.attr("class")+"'>" + 
-                   $node.text()+"</code></pre>");
-        hljs.highlightBlock(node);
-    });
+	// $('pre').each(function(i, node) {
+	// 	$(node).replaceWith('<pre><code>' + $(node).html() + '</code></pre>')
+	// });
+	$('pre, .memproto').each(function(i, block) {
+    	hljs.highlightBlock(block);
+  	});
 });
 </script>
 

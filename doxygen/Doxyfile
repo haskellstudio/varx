@@ -1097,7 +1097,7 @@ HTML_FOOTER            = footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        =
+HTML_STYLESHEET        = customdoxygen.css
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1121,7 +1121,36 @@ HTML_EXTRA_STYLESHEET  =
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_EXTRA_FILES       = highlight.min.js \
-						 highlight-github.css
+						 highlight-github.css \
+						 jquery-3.2.1.min.js \
+						 jquery-3.2.1.min.map \
+						 jquery.smartmenus.min.js \
+						 bootstrap/css/bootstrap.min.css \
+						 bootstrap/css/bootstrap.min.css.map \
+						 bootstrap/css/bootstrap-theme.min.css \
+						 bootstrap/css/bootstrap-theme.min.css.map \
+						 bootstrap/fonts/glyphicons-halflings-regular.eot \
+						 bootstrap/fonts/glyphicons-halflings-regular.svg \
+						 bootstrap/fonts/glyphicons-halflings-regular.ttf \
+						 bootstrap/fonts/glyphicons-halflings-regular.woff \
+						 bootstrap/fonts/glyphicons-halflings-regular.woff2 \
+						 open-sans/open-sans-v13-latin-ext_latin-300.eot \
+						 open-sans/open-sans-v13-latin-ext_latin-300.svg \
+						 open-sans/open-sans-v13-latin-ext_latin-300.ttf \
+						 open-sans/open-sans-v13-latin-ext_latin-300.woff \
+						 open-sans/open-sans-v13-latin-ext_latin-300.woff2 \
+						 open-sans/open-sans-v13-latin-ext_latin-700.eot \
+						 open-sans/open-sans-v13-latin-ext_latin-700.svg \
+						 open-sans/open-sans-v13-latin-ext_latin-700.ttf \
+						 open-sans/open-sans-v13-latin-ext_latin-700.woff \
+						 open-sans/open-sans-v13-latin-ext_latin-700.woff2 \
+						 open-sans/open-sans-v13-latin-ext_latin-regular.eot \
+						 open-sans/open-sans-v13-latin-ext_latin-regular.svg \
+						 open-sans/open-sans-v13-latin-ext_latin-regular.ttf \
+						 open-sans/open-sans-v13-latin-ext_latin-regular.woff \
+						 open-sans/open-sans-v13-latin-ext_latin-regular.woff2 \
+						 bootstrap/js/bootstrap.min.js \
+						 doxygen-bootstrap.js
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
