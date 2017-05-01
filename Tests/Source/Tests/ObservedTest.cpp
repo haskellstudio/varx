@@ -16,28 +16,28 @@
 TEST_CASE("Observed<Button> stateChanged")
 {
 	Observed<TextButton> button("Click Here");
-	Array<var> results;
-	RxJUCECollectItems(button.buttonStateObservable(), results);
+	Array<var> items;
+	RxJUCECollectItems(button.buttonStateObservable(), items);
 	
 	IT("emits the normal state on subscribe") {
-		RxJUCERequireResults(results, Button::ButtonState::buttonNormal);
+		RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
 	}
 	
 	IT("emits items synchronously when the Button state changes") {
 		button.setState(Button::ButtonState::buttonDown);
 		
-		RxJUCECheckResults(results,
-						   Button::ButtonState::buttonNormal,
-						   Button::ButtonState::buttonDown);
+		RxJUCECheckItems(items,
+						 Button::ButtonState::buttonNormal,
+						 Button::ButtonState::buttonDown);
 		
 		button.setState(Button::ButtonState::buttonNormal);
 		button.setState(Button::ButtonState::buttonOver);
 		
-		RxJUCERequireResults(results,
-							 Button::ButtonState::buttonNormal,
-							 Button::ButtonState::buttonDown,
-							 Button::ButtonState::buttonNormal,
-							 Button::ButtonState::buttonOver);
+		RxJUCERequireItems(items,
+						   Button::ButtonState::buttonNormal,
+						   Button::ButtonState::buttonDown,
+						   Button::ButtonState::buttonNormal,
+						   Button::ButtonState::buttonOver);
 	}
 }
 
@@ -45,24 +45,24 @@ TEST_CASE("Observed<Button> stateChanged")
 TEST_CASE("Observed<Button> clicked")
 {
 	Observed<TextButton> button("Click Here");
-	Array<var> results;
-	RxJUCECollectItems(button.clickedObservable(), results);
+	Array<var> items;
+	RxJUCECollectItems(button.clickedObservable(), items);
 	
 	IT("doesn't emit an item on subscribe") {
-		REQUIRE(results.isEmpty());
+		REQUIRE(items.isEmpty());
 	}
 	
 	IT("emits void vars asynchronously when the Button is clicked") {
 		button.triggerClick();
 		RxJUCERunDispatchLoop();
 		
-		RxJUCECheckResults(results, var());
+		RxJUCECheckItems(items, var());
 		
 		button.triggerClick();
 		button.triggerClick();
 		RxJUCERunDispatchLoop();
 		
-		RxJUCERequireResults(results, var(), var(), var());
+		RxJUCERequireItems(items, var(), var(), var());
 	}
 }
 
@@ -70,8 +70,8 @@ TEST_CASE("Observed<Button> clicked")
 TEST_CASE("Observed<Value>")
 {
 	Observed<Value> value("Initial");
-	Array<var> results;
-	RxJUCECollectItems(value.getObservable(), results);
+	Array<var> items;
+	RxJUCECollectItems(value.getObservable(), items);
 	
 	IT("emits items asynchronously when the Value changes") {
 		value.setValue("Second");
@@ -79,6 +79,6 @@ TEST_CASE("Observed<Value>")
 		value.setValue("Third");
 		RxJUCERunDispatchLoop();
 		
-		RxJUCERequireResults(results, "Initial", "Second", "Third");
+		RxJUCERequireItems(items, "Initial", "Second", "Third");
 	}
 }
