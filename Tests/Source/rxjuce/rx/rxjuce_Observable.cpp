@@ -32,7 +32,7 @@ namespace {
 }
 
 namespace juce {
-	// Converts an Observable to a JUCE var, and vice versa
+	// Converts an Observable to a JUCE var, and back
 	template<>
 	struct VariantConverter<rxjuce::Observable>
 	{
@@ -55,6 +55,9 @@ namespace juce {
 
 
 RXJUCE_NAMESPACE_BEGIN
+
+const std::function<void(std::exception_ptr)> Observable::EmptyOnError = [](std::exception_ptr){};
+const std::function<void()> Observable::EmptyOnCompleted = [](){};
 
 #pragma mark - Creation
 
@@ -97,14 +100,23 @@ Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
 
 #pragma mark - Subscription
 
-Subscription Observable::subscribe(const std::function<void(const var&)>& onNext) const
+Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
+								   const std::function<void(std::exception_ptr)>& onError,
+								   const std::function<void()>& onCompleted) const
 {
-	auto subscription = impl->wrapped.subscribe(onNext);
+	auto subscription = impl->wrapped.subscribe(onNext, onError, onCompleted);
 	
 	auto isSubscribed = [subscription]() { return subscription.is_subscribed(); };
 	auto unsubscribe = [subscription]() { subscription.unsubscribe(); };
 	
 	return Subscription(isSubscribed, unsubscribe);
+}
+
+Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
+								   const std::function<void()>& onCompleted,
+								   const std::function<void(std::exception_ptr)>& onError) const
+{
+	return subscribe(onNext, onError, onCompleted);
 }
 
 

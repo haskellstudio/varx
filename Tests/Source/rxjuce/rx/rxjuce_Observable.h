@@ -68,14 +68,26 @@ public:
 	
 	
 #pragma mark - Subscription
+	///@{
 	/**
 		Subscribes to an Observable, to receive values it emits.
 	 
 		The onNext function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
 	 
+		The onError function is called when the Observable has failed to generate the expected data, or has encountered some other error. If onError is called, the Observable will not make any more calls. **If you don't pass an onError handler, an exception terminates your app.**
+	 
+		The onCompleted function is called exactly once to notify that the Observable has generated all data and will not emit any more items.
+	 
 		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
 	 */
-	Subscription subscribe(const std::function<void(const var&)>& onNext) const;
+	Subscription subscribe(const std::function<void(const var&)>& onNext,
+						   const std::function<void(std::exception_ptr)>& onError = EmptyOnError,
+						   const std::function<void()>& onCompleted = EmptyOnCompleted) const;
+	
+	Subscription subscribe(const std::function<void(const var&)>& onNext,
+						   const std::function<void()>& onCompleted,
+						   const std::function<void(std::exception_ptr)>& onError = EmptyOnError) const;
+	///@}
 	
 	
 #pragma mark - Transform Functions
@@ -135,6 +147,8 @@ private:
 	friend class PublishSubject;
 	Observable(const std::shared_ptr<Impl>&);
 	
+	static const std::function<void(std::exception_ptr)> EmptyOnError;
+	static const std::function<void()> EmptyOnCompleted;
 	JUCE_LEAK_DETECTOR(Observable)
 };
 
