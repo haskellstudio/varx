@@ -68,20 +68,67 @@ TEST_CASE("Observed<Button> clicked",
 	}
 }
 
+TEST_CASE("Observed<Button> with custom TextButton subclass",
+		  "[Observed<Button>]")
+{
+	class MyButton : public TextButton
+	{
+	public:
+		void hoverAcrossButton()
+		{
+			setState(buttonOver);
+			MessageManager::getInstance()->callAsync([this]() {
+				setState(buttonNormal);
+			});
+		}
+	};
+	
+	Observed<MyButton> button;
+	Array<var> items;
+	RxJUCECollectItems(button.buttonStateObservable(), items);
+	
+	IT("initially has the normal state") {
+		RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
+	}
+	
+	IT("changes states when calling the method in the custom subclass") {
+		button.hoverAcrossButton();
+		RxJUCECheckItems(items,
+						 Button::ButtonState::buttonNormal,
+						 Button::ButtonState::buttonOver);
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireItems(items,
+						   Button::ButtonState::buttonNormal,
+						   Button::ButtonState::buttonOver,
+						   Button::ButtonState::buttonNormal);
+	}
+}
+
 
 TEST_CASE("Observed<Value>",
 		  "[Observed<Value>]")
 {
-	Observed<Value> value("Initial");
+	auto value = std::make_shared<Observed<Value>>("Initial");
 	Array<var> items;
-	RxJUCECollectItems(value.getObservable(), items);
+	RxJUCECollectItems(value->getObservable(), items);
 	
 	IT("emits items asynchronously when the Value changes") {
-		value.setValue("Second");
+		value->setValue("Second");
+		RxJUCECheckItems(items, "Initial");
 		RxJUCERunDispatchLoop();
-		value.setValue("Third");
+		RxJUCECheckItems(items, "Initial", "Second");
+		value->setValue("Third");
 		RxJUCERunDispatchLoop();
 		
 		RxJUCERequireItems(items, "Initial", "Second", "Third");
+	}
+	
+	IT("stops emitting items immediately when being destroyed") {
+		value->setValue("Should not arrive");
+		value.reset();
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireItems(items, "Initial");
 	}
 }
