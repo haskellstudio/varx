@@ -73,7 +73,7 @@ Observable Observable::fromValue(Value value)
 	return Impl::fromValue(value);
 }
 
-Observable Observable::just(var value)
+Observable Observable::just(const var& value)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::just(value));
 }

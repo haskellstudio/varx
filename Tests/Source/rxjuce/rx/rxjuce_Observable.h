@@ -43,7 +43,7 @@ public:
 	 
 		The value is emitted immediately on each new subscription.
 	 */
-	static Observable just(var value);
+	static Observable just(const var& value);
 	
 	///@{
 	/**
