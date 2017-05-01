@@ -108,7 +108,7 @@ public:
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
 	 
-		The transform function can return `Observable``s`. If it does, you can use Observable::switchOnNext.
+		The transform function can return an Observable. If it does, you can use Observable::switchOnNext.
 	 */
 	Observable map(Transform1 transform) const;
 	
@@ -134,7 +134,9 @@ public:
 	
 #pragma mark - Misc
 	/**
-		Wraps the Observable into a var. This allows you to return an Observable from a transform function.
+		Wraps the Observable into a var.
+	 
+		This allows you to return an Observable from a transform function, e.g. when using Observable::map.
 	 */
 	operator var() const;
 	
