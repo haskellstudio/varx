@@ -34,8 +34,8 @@
       <interfaces title=""/>
       <publicslots title=""/>
       <signals title=""/>
-      <publicmethods title=""/>
-      <publicstaticmethods title=""/>
+      <publicmethods title="Member Functions"/>
+      <publicstaticmethods title="Static Member Functions"/>
       <publicattributes title=""/>
       <publicstaticattributes title=""/>
       <protectedtypes title=""/>
@@ -60,7 +60,7 @@
       <friends title=""/>
       <related title="" subtitle=""/>
       <membergroups visible="yes"/>
-      <publictypes title=""/>
+      <publictypes title="Types"/>
     </memberdecl>
     <detaileddescription title=""/>
     <memberdef>
