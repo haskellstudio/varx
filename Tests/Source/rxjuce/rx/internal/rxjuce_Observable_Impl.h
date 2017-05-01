@@ -32,8 +32,7 @@ public:
 	template<typename Transform, typename... Os>
 	std::shared_ptr<Impl> combineLatest(Transform&& transform, Os... observables)
 	{
-		auto combined = wrapped.combine_latest(transform, observables.impl->wrapped...);
-		return fromRxCpp(combined);
+		return fromRxCpp(wrapped.combine_latest(transform, observables.impl->wrapped...));
 	}
 	
 	rxcpp::observable<var> wrapped;

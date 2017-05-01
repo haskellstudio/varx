@@ -13,7 +13,8 @@
 #include "rxjuce_Observed.h"
 
 
-TEST_CASE("Observed<Button> stateChanged")
+TEST_CASE("Observed<Button> stateChanged",
+		  "[Observed<Button>]")
 {
 	Observed<TextButton> button("Click Here");
 	Array<var> items;
@@ -42,7 +43,8 @@ TEST_CASE("Observed<Button> stateChanged")
 }
 
 
-TEST_CASE("Observed<Button> clicked")
+TEST_CASE("Observed<Button> clicked",
+		  "[Observed<Button>]")
 {
 	Observed<TextButton> button("Click Here");
 	Array<var> items;
@@ -67,7 +69,8 @@ TEST_CASE("Observed<Button> clicked")
 }
 
 
-TEST_CASE("Observed<Value>")
+TEST_CASE("Observed<Value>",
+		  "[Observed<Value>]")
 {
 	Observed<Value> value("Initial");
 	Array<var> items;

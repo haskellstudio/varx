@@ -67,19 +67,19 @@ TEST_CASE("Observable::range",
 TEST_CASE("Observable::fromValue",
 		  "[Observable][Observable::fromValue]")
 {
-	Value value("Initial Value");
+	Value value("Initial Item");
 	const auto observable = Observable::fromValue(value);
 	Array<var> items;
 	RxJUCECollectItems(observable, items);
 	
-	RxJUCECheckItems(items, "Initial Value");
+	RxJUCECheckItems(items, "Initial Item");
 	
 	IT("emits if a copy of the Value sets a new value") {
 		Value copy(value);
 		copy.setValue("Set by copy");
 		RxJUCERunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial Value", "Set by copy");
+		RxJUCERequireItems(items, "Initial Item", "Set by copy");
 	}
 	
 	IT("emites only one item if the Value is set multiple times synchronously") {
@@ -88,14 +88,14 @@ TEST_CASE("Observable::fromValue",
 		value = "4";
 		RxJUCERunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial Value", "4");
+		RxJUCERequireItems(items, "Initial Item", "4");
 	}
 	
 	IT("notifies multiple Subscriptions on subscribe") {
 		Observable another = Observable::fromValue(value);
 		RxJUCECollectItems(another, items);
 		
-		RxJUCERequireItems(items, "Initial Value", "Initial Value");
+		RxJUCERequireItems(items, "Initial Item", "Initial Item");
 	}
 	
 	IT("notifies multiple Values referring to the same ValueSource") {
@@ -103,7 +103,7 @@ TEST_CASE("Observable::fromValue",
 		Observable anotherObservable = Observable::fromValue(anotherValue);
 		RxJUCECollectItems(anotherObservable, items);
 		
-		RxJUCERequireItems(items, "Initial Value", "Initial Value");
+		RxJUCERequireItems(items, "Initial Item", "Initial Item");
 	}
 	
 	IT("notifies multiple Subscriptions if a Value is set multiple times") {
@@ -120,7 +120,7 @@ TEST_CASE("Observable::fromValue",
 		CHECK(items.size() == 6);
 		
 		// Subscribers are notified in no particular order
-		for (auto s : {"Initial Value", "INITIAL VALUE", "BAR", "Bar", "BAZ", "Baz"})
+		for (auto s : {"Initial Item", "INITIAL ITEM", "BAR", "Bar", "BAZ", "Baz"})
 			REQUIRE(items.contains(s));
 	}
 }
