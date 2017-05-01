@@ -56,7 +56,11 @@ namespace juce {
 
 RXJUCE_NAMESPACE_BEGIN
 
-const std::function<void(std::exception_ptr)> Observable::EmptyOnError = [](std::exception_ptr){};
+const std::function<void(std::exception_ptr)> Observable::TerminateOnError = [](std::exception_ptr) {
+	// error implicitly ignored, abort
+	std::terminate();
+};
+
 const std::function<void()> Observable::EmptyOnCompleted = [](){};
 
 #pragma mark - Creation

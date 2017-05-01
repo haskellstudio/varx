@@ -32,13 +32,20 @@ shared_ptr<Observable::Impl> Observable::Impl::fromValue(const Value& value)
 			value.addListener(this);
 		}
 		
+		~ValueObservableImpl()
+		{
+			value.removeListener(this);
+			subject.get_subscriber().on_completed();
+		}
+		
 		void valueChanged(Value &newValue) override
 		{
 			subject.get_subscriber().on_next(newValue);
 		}
+		
 	private:
 		Value value;
-		rxcpp::subjects::behavior<var> subject;
+		const rxcpp::subjects::behavior<var> subject;
 	};
 
 	return std::make_shared<ValueObservableImpl>(value);

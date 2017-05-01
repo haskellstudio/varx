@@ -32,6 +32,8 @@ public:
 	/**
 		Creates an Observable from a given JUCE Value. The returned Observable **only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this.
 	 
+		The returned Observable notifies the onComplete handler when it's destroyed. @see Observable::subscribe
+	 
 		When calling Value::setValue, it notifies asynchronously. So **the returned Observable will emits the new value asynchronously.** So if you call setValue immediately before destroying the returned Observable, the new value will not be emitted.
 	 */
 	static Observable fromValue(juce::Value value);
@@ -43,9 +45,6 @@ public:
 	 */
 	static Observable just(var value);
 	
-	/**	@name range
-		
-	 */
 	///@{
 	/**
 		Creates an Observable which emits values from a given range, starting at range.getStart() to (and including) range.getEnd().
@@ -74,19 +73,19 @@ public:
 	 
 		The onNext function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
 	 
-		The onError function is called when the Observable has failed to generate the expected data, or has encountered some other error. If onError is called, the Observable will not make any more calls. **If you don't pass an onError handler, an exception terminates your app.**
+		The onError function is called when the Observable has failed to generate the expected data, or has encountered some other error. If onError is called, the Observable will not make any more calls. **If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
 	 
 		The onCompleted function is called exactly once to notify that the Observable has generated all data and will not emit any more items.
 	 
 		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
 	 */
 	Subscription subscribe(const std::function<void(const var&)>& onNext,
-						   const std::function<void(std::exception_ptr)>& onError = EmptyOnError,
+						   const std::function<void(std::exception_ptr)>& onError = TerminateOnError,
 						   const std::function<void()>& onCompleted = EmptyOnCompleted) const;
 	
 	Subscription subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void()>& onCompleted,
-						   const std::function<void(std::exception_ptr)>& onError = EmptyOnError) const;
+						   const std::function<void(std::exception_ptr)>& onError = TerminateOnError) const;
 	///@}
 	
 	
@@ -147,7 +146,7 @@ private:
 	friend class PublishSubject;
 	Observable(const std::shared_ptr<Impl>&);
 	
-	static const std::function<void(std::exception_ptr)> EmptyOnError;
+	static const std::function<void(std::exception_ptr)> TerminateOnError;
 	static const std::function<void()> EmptyOnCompleted;
 	JUCE_LEAK_DETECTOR(Observable)
 };

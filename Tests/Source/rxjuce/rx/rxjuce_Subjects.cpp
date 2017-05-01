@@ -21,13 +21,16 @@ struct BehaviorSubject::Impl
 	Impl(const var& initial)
 	: subject(initial) {}
 	
-	rxcpp::subjects::behavior<var> subject;
+	const rxcpp::subjects::behavior<var> subject;
 };
 
 BehaviorSubject::BehaviorSubject(const var& initial)
 : impl(new Impl(initial)) {}
 
-BehaviorSubject::~BehaviorSubject() {}
+BehaviorSubject::~BehaviorSubject()
+{
+	impl->subject.get_subscriber().on_completed();
+}
 
 void BehaviorSubject::onNext(const var& next)
 {
@@ -47,13 +50,16 @@ var BehaviorSubject::getValue() const
 
 struct PublishSubject::Impl
 {
-	rxcpp::subjects::subject<var> subject;
+	const rxcpp::subjects::subject<var> subject;
 };
 
 PublishSubject::PublishSubject()
 : impl(new Impl()) {}
 
-PublishSubject::~PublishSubject() {}
+PublishSubject::~PublishSubject()
+{
+	impl->subject.get_subscriber().on_completed();
+}
 
 void PublishSubject::onNext(const var& next)
 {
