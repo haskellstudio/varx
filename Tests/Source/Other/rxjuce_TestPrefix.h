@@ -27,6 +27,9 @@ using namespace rxjuce;
 /** REQUIREs that a given Array is equal to the list of passed items. */
 #define RxJUCERequireResults(__arrayName, ...) REQUIRE(__arrayName == Array<var>({__VA_ARGS__}))
 
+/** CHECKs that a given Array is equal to the list of passed items. */
+#define RxJUCECheckResults(__arrayName, ...) CHECK(__arrayName == Array<var>({__VA_ARGS__}))
+
 
 /** Runs the JUCE dispatch loop for a given time, to process async callbacks. */
 inline void RxJUCERunDispatchLoop(int millisecondsToRunFor = 0)

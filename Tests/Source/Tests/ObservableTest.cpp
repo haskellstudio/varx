@@ -72,7 +72,7 @@ TEST_CASE("Observable::fromValue",
 	Array<var> results;
 	RxJUCECollectItems(observable, results);
 	
-	RxJUCERequireResults(results, "Initial Value");
+	RxJUCECheckResults(results, "Initial Value");
 	
 	IT("emits if a copy of the Value sets a new value") {
 		Value copy(value);
@@ -117,7 +117,7 @@ TEST_CASE("Observable::fromValue",
 		value = "Baz";
 		RxJUCERunDispatchLoop();
 		
-		REQUIRE(results.size() == 6);
+		CHECK(results.size() == 6);
 		
 		// Subscribers are notified in no particular order
 		for (auto s : {"Initial Value", "INITIAL VALUE", "BAR", "Bar", "BAZ", "Baz"})
@@ -140,7 +140,7 @@ TEST_CASE("Observable::fromValue lifetime",
 	Array<var> results;
 	RxJUCECollectItems(mapped, results);
 	
-	RxJUCERequireResults(results, "Initial");
+	RxJUCECheckResults(results, "Initial");
 	
 	IT("emits items when the source Observable is alive") {
 		value.setValue("New Value");
@@ -171,7 +171,7 @@ TEST_CASE("Observable::fromValue lifetime",
 		Array<var> copyResults;
 		RxJUCECollectItems(*copy, copyResults);
 		
-		RxJUCERequireResults(copyResults, "Initial");
+		RxJUCECheckResults(copyResults, "Initial");
 		
 		source.reset();
 		RxJUCERunDispatchLoop();
@@ -191,7 +191,7 @@ TEST_CASE("Observable::fromValue with a Slider",
 	Observable o = Observable::fromValue(slider.getValueObject());
 	Array<var> results;
 	RxJUCECollectItems(o, results);
-	RxJUCERequireResults(results, 7.6);
+	RxJUCECheckResults(results, 7.6);
 	
 	IT("emits once if the Slider is changed once") {
 		slider.setValue(0.45);
@@ -236,7 +236,7 @@ TEST_CASE("Observable::create",
 		RxJUCECollectItems(observable, results);
 		
 		// There shouldn't be any items until the async callback is executed
-		REQUIRE(results.isEmpty());
+		CHECK(results.isEmpty());
 		
 		// The items should be there after running the dispatch loop
 		RxJUCERunDispatchLoop();
@@ -295,19 +295,19 @@ TEST_CASE("Observable::create",
 		auto observable = std::make_shared<Observable>(Observable::create([pointer](Observer observer) {}));
 		
 		// There should be 2 references: From pointer and from the Observable
-		REQUIRE(pointer->getReferenceCount() == 2);
+		CHECK(pointer->getReferenceCount() == 2);
 		
 		// If a copy of the Observable is made, it should still be 2
 		auto copy = std::make_shared<Observable>(*observable);
-		REQUIRE(pointer->getReferenceCount() == 2);
+		CHECK(pointer->getReferenceCount() == 2);
 		
 		// After the first Observable is destroyed, there should still be 2
 		observable.reset();
-		REQUIRE(pointer->getReferenceCount() == 2);
+		CHECK(pointer->getReferenceCount() == 2);
 		
 		// Creating a copy should not increase the ref count
 		Subscription s = copy->subscribe([](var){});
-		REQUIRE(pointer->getReferenceCount() == 2);
+		CHECK(pointer->getReferenceCount() == 2);
 		
 		// After the copy is destroyed, there should be just 1 (from the pointer)
 		copy.reset();
@@ -364,7 +364,7 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		RxJUCECollectItems(mapped, results);
 		
 		// There should be no items before running dispatch loop
-		REQUIRE(results.isEmpty());
+		CHECK(results.isEmpty());
 		
 		source.reset();
 		RxJUCERunDispatchLoop();

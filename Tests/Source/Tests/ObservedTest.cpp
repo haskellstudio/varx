@@ -26,9 +26,9 @@ TEST_CASE("Observed<Button> stateChanged")
 	IT("emits items synchronously when the Button state changes") {
 		button.setState(Button::ButtonState::buttonDown);
 		
-		RxJUCERequireResults(results,
-							 Button::ButtonState::buttonNormal,
-							 Button::ButtonState::buttonDown);
+		RxJUCECheckResults(results,
+						   Button::ButtonState::buttonNormal,
+						   Button::ButtonState::buttonDown);
 		
 		button.setState(Button::ButtonState::buttonNormal);
 		button.setState(Button::ButtonState::buttonOver);
@@ -56,7 +56,7 @@ TEST_CASE("Observed<Button> clicked")
 		button.triggerClick();
 		RxJUCERunDispatchLoop();
 		
-		RxJUCERequireResults(results, var());
+		RxJUCECheckResults(results, var());
 		
 		button.triggerClick();
 		button.triggerClick();
