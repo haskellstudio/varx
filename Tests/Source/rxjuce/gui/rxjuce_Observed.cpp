@@ -59,7 +59,7 @@ Observed<Value>::operator var() const
 
 Observed<Value>& Observed<Value>::operator=(const var& newValue)
 {
-	Value::operator=(newValue);
+	Value::operator=(newValue); // Causes Observable to emit
 	return *this;
 }
 

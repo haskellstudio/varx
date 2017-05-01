@@ -68,6 +68,7 @@ TEST_CASE("Observed<Button> clicked",
 	}
 }
 
+
 TEST_CASE("Observed<Button> with custom TextButton subclass",
 		  "[Observed<Button>]")
 {
@@ -104,6 +105,7 @@ TEST_CASE("Observed<Button> with custom TextButton subclass",
 						   Button::ButtonState::buttonNormal);
 	}
 }
+
 
 TEST_CASE("Observed<Value> conversion",
 		  "[Observed<Value>]")
