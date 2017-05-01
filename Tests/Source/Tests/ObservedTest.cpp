@@ -105,8 +105,35 @@ TEST_CASE("Observed<Button> with custom TextButton subclass",
 	}
 }
 
+TEST_CASE("Observed<Value> conversion",
+		  "[Observed<Value>]")
+{
+	Observed<Value> value;
+	
+	IT("supports copy assignment from var-compatible types") {
+		value = 3;
+		value = Array<var>({6, 7, 5});
+		value = "Some String";
+		REQUIRE(value.getValue() == "Some String");
+	}
+	
+	IT("can be implicitly converted to var") {
+		value.setValue("Testing");
+		var v = value;
+		REQUIRE(v == "Testing");
+	}
+	
+	IT("supports == and != with var-compatible types") {
+		value.setValue("Hello!");
+		REQUIRE(value == "Hello!");
+		REQUIRE(value != "World");
+		REQUIRE(value != 3.45);
+		REQUIRE(value != 2);
+	}
+}
 
-TEST_CASE("Observed<Value>",
+
+TEST_CASE("Observed<Value> Observable",
 		  "[Observed<Value>]")
 {
 	auto value = std::make_shared<Observed<Value>>("Initial");

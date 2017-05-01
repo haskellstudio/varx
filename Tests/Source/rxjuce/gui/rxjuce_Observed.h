@@ -92,13 +92,18 @@ template<>
 class Observed<juce::Value> : public juce::Value
 {
 public:
-	/**
-		Creates a new instance. Takes the same parameters as the juce::Value constructor(s).
-	 */
-	template<typename... Args>
-	Observed(Args&&... args)
-	: juce::Value(args...),
-	  observable(Observable::fromValue(*this)) {}
+	/** Creates a new instance. Has the same behavior as the juce::Value equivalent. */
+	///@{
+	Observed();
+	Observed(const Value& other);
+	explicit Observed(const juce::var& initialValue);
+	///@}
+	
+	/** Returns the current value. Has the same behavior as the juce::Value equivalent. */
+	operator juce::var() const;
+	
+	/** Sets a new value. This is the same as calling Observed<Value>::setValue. */
+	Observed& operator=(const juce::var& newValue);
 	
 	/**
 		Returns an Observable that emits an item asynchronously whenever the Value changes, until the Observed<Value> is destroyed.
@@ -107,6 +112,8 @@ public:
 	
 private:
 	const Observable observable;
+	
+	Observed& operator=(const Observed&) = delete;
 };
 
 

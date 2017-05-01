@@ -41,6 +41,28 @@ void detail::ButtonForwarder::buttonStateChanged(Button *button)
 }
 
 
+Observed<Value>::Observed()
+: observable(Observable::fromValue(*this)) {}
+
+Observed<Value>::Observed(const Value& other)
+: Value(other),
+  observable(Observable::fromValue(*this)) {}
+
+Observed<Value>::Observed(const var& initialValue)
+: Value(initialValue),
+  observable(Observable::fromValue(*this)) {}
+
+Observed<Value>::operator var() const
+{
+	return Value::operator var();
+}
+
+Observed<Value>& Observed<Value>::operator=(const var& newValue)
+{
+	Value::operator=(newValue);
+	return *this;
+}
+
 Observable Observed<Value>::getObservable() const
 {
 	return observable;
