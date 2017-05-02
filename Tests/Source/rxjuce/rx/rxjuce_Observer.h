@@ -26,9 +26,12 @@ public:
 	void onNext(const juce::var& next) const;
 	
 private:
+	struct Impl;
+	std::shared_ptr<Impl> impl;
+	
 	friend class Observable;
-	explicit Observer(const std::function<void(const juce::var&)>&);
-	const std::function<void(const juce::var&)> _onNext;
+	Observer(const std::shared_ptr<Impl>&);
+	
 	
 	JUCE_LEAK_DETECTOR(Observer)
 };
