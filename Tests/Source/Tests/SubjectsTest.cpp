@@ -44,6 +44,14 @@ TEST_CASE("BehaviorSubject",
 		REQUIRE(onErrorCalled);
 	}
 	
+	IT("notifies onCompleted when calling onCompleted") {
+		bool completed = false;
+		subject.getObservable().subscribe([](var){}, [&](){ completed = true; });
+		subject.onCompleted();
+		
+		REQUIRE(completed);
+	}
+	
 	IT("calls onCompleted when destroying the subject") {
 		auto subject = std::make_shared<BehaviorSubject>(3);
 		bool completed = false;
@@ -98,6 +106,13 @@ TEST_CASE("PublishSubject",
 	CONTEXT("onCompleted") {
 		auto subject = std::make_shared<PublishSubject>();
 		bool completed = false;
+		
+		IT("notifies onCompleted when calling onCompleted") {
+			subject->onCompleted();
+			subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
+			
+			REQUIRE(completed);
+		}
 		
 		IT("calls onCompleted when destroying the subject") {
 			subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
