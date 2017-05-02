@@ -430,3 +430,61 @@ TEST_CASE("Observable::combineLatest",
 		RxJUCERequireItems(items, "0 1 2 3 4 5 6 7 ");
 	}
 }
+
+
+TEST_CASE("Observable onError",
+		  "[Observable][onError]")
+{
+	// Create an Observable that throws on subscribe
+	auto syncThrow = Observable::create([](Observer){ throw std::runtime_error("Error!"); });
+	
+	IT("calls onError on subscribe") {
+		REQUIRE_THROWS_WITH(syncThrow.subscribe([](var){}, std::rethrow_exception), "Error!");
+	}
+	
+	IT("takes an onError handler and calls it without throwing") {
+		bool called = false;
+		syncThrow.subscribe([](var){}, [&](std::exception_ptr) {
+			called = true;
+		});
+		
+		REQUIRE(called);
+	}
+	
+	// Create an Observable that throws asynchronously
+	auto asyncThrow = Observable::create([](Observer observer) {
+		MessageManager::getInstance()->callAsync([observer]() {
+			observer.onNext(3);
+		});
+	});
+	asyncThrow = asyncThrow.map([](var v) {
+		throw std::runtime_error("Async Error!");
+		return v;
+	});
+	
+	IT("calls onError asynchronously") {
+		bool called = false;
+		asyncThrow.subscribe([](var){}, [&](std::exception_ptr) {
+			called = true;
+		});
+		
+		CHECK_FALSE(called);
+		RxJUCERunDispatchLoop();
+		REQUIRE(called);
+	}
+}
+
+
+TEST_CASE("Observable onComplete",
+		  "[Observable][onComplete]")
+{
+	bool called = false;
+	auto onComplete = [&]() {
+		called = true;
+	};
+	
+	IT("calls onComplete synchronously") {
+		Observable::just(2).subscribe([](var){}, onComplete);
+		REQUIRE(called);
+	}
+}
