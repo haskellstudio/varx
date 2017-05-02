@@ -68,6 +68,11 @@ const std::function<void()> Observable::EmptyOnCompleted = [](){};
 Observable::Observable(const shared_ptr<Impl>& impl)
 :	impl(impl) {}
 
+Observable Observable::from(const Array<var>& array)
+{
+	return Impl::fromRxCpp(rxcpp::observable<>::iterate(array));
+}
+
 Observable Observable::fromValue(Value value)
 {
 	return Impl::fromValue(value);
@@ -121,20 +126,6 @@ Subscription Observable::subscribe(const std::function<void(const var&)>& onNext
 
 #pragma mark - Operators
 
-Observable Observable::map(Transform1 transform) const
-{
-	return Impl::fromRxCpp(impl->wrapped.map(transform));
-}
-
-Observable Observable::switchOnNext() const
-{
-	rxcpp::observable<rxcpp::observable<var>> unwrapped = impl->wrapped.map([](var observable) {
-		return VariantConverter<Observable>::fromVar(observable).impl->wrapped;
-	});
-	
-	return Impl::fromRxCpp(unwrapped.switch_on_next());
-}
-
 Observable Observable::combineLatest(Observable o1, Transform2& transform) const
 {
 	return impl->combineLatest(transform, o1);
@@ -168,6 +159,25 @@ Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const
 {
 	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6, o7);
+}
+
+Observable Observable::filter(const std::function<bool(const var&)>& predicate)
+{
+	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
+}
+
+Observable Observable::map(Transform1 transform) const
+{
+	return Impl::fromRxCpp(impl->wrapped.map(transform));
+}
+
+Observable Observable::switchOnNext() const
+{
+	rxcpp::observable<rxcpp::observable<var>> unwrapped = impl->wrapped.map([](var observable) {
+		return VariantConverter<Observable>::fromVar(observable).impl->wrapped;
+	});
+	
+	return Impl::fromRxCpp(unwrapped.switch_on_next());
 }
 
 

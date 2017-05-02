@@ -62,6 +62,38 @@ TEST_CASE("Observable::range",
 }
 
 
+TEST_CASE("Observable::from",
+		  "[Observable][Observable::from]")
+{
+	Array<var> items;
+	
+	IT("can be created from an Array<var>") {
+		RxJUCECollectItems(Observable::from(Array<var>({3, 6, 8})), items);
+		
+		RxJUCERequireItems(items, 3, 6, 8);
+	}
+	
+	IT("can be created from a std::initializer_list<var>") {
+		RxJUCECollectItems(Observable::from({var("Hello"), var(15.5)}), items);
+		
+		RxJUCERequireItems(items, var("Hello"), var(15.5));
+	}
+	
+	IT("can be created from a std::initializer_list<int>") {
+		RxJUCECollectItems(Observable::from({1, 4}), items);
+		
+		RxJUCERequireItems(items, 1, 4);
+	}
+	
+	IT("can be created from a std::initializer_list<String>") {
+		RxJUCECollectItems(Observable::from({"Hello", "Test"}), items);
+		
+		RxJUCERequireItems(items, "Hello", "Test");
+	}
+	
+}
+
+
 TEST_CASE("Observable::fromValue",
 		  "[Observable][Observable::fromValue]")
 {

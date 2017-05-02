@@ -30,6 +30,17 @@ public:
 	
 #pragma mark - Creation
 	/**
+		Creates an Observable that immediately emits the items from the given Array to each subscriber.
+	 
+		Note that you can also pass a std::initializer_list here, like this:
+	 
+			Observable::from({"Hello", "Test"})
+	 
+			Observable::from({var(3), var("four")})
+	 */
+	static Observable from(const juce::Array<var>& array);
+	
+	/**
 		Creates an Observable from a given JUCE Value. The returned Observable **only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this.
 	 
 		The returned Observable notifies the onComplete handler when it's destroyed. @see Observable::subscribe
@@ -105,6 +116,24 @@ public:
 	///@}
 	
 #pragma mark - Operators
+	///@{
+	/**
+		When an item is emitted by either this Observable or o1, o2, …, combines the latest item emitted by each Observable via the given function and emits the result of this function.
+	 */
+	Observable combineLatest(Observable o1, Transform2 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Transform3 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const;
+	///@}
+	
+	/**
+		Returns an Observable which emits only those items from this Observable that pass a predicate function.
+	 */
+	Observable filter(const std::function<bool(const var&)>& predicate);
+	
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
 	 
@@ -118,19 +147,6 @@ public:
 		Returns an Observable that emits the items emitted by the Observables which this Observable emits.
 	 */
 	Observable switchOnNext() const;
-	
-	///@{
-	/**
-		When an item is emitted by either this Observable or o1, o2, …, combines the latest item emitted by each Observable via the given function and emits the result of this function.
-	 */
-	Observable combineLatest(Observable o1, Transform2 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Transform3 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const;
-	///@}
 	
 #pragma mark - Misc
 	/**
