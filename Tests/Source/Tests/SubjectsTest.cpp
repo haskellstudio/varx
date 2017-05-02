@@ -35,6 +35,23 @@ TEST_CASE("BehaviorSubject",
 		CHECK(subject.getValue() == "New Item");
 		RxJUCERequireItems(items, "Initial Item", "New Item");
 	}
+	
+	IT("emits an error when calling onError") {
+		BehaviorSubject subject(17);
+		bool onErrorCalled = false;
+		subject.onError(Error());
+		subject.getObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; });
+		REQUIRE(onErrorCalled);
+	}
+	
+	IT("calls onCompleted when destroying the subject") {
+		auto subject = std::make_shared<BehaviorSubject>(3);
+		bool completed = false;
+		subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
+		subject.reset();
+		
+		REQUIRE(completed);
+	}
 }
 
 
@@ -69,4 +86,33 @@ TEST_CASE("PublishSubject",
 		
 		REQUIRE(laterItems.isEmpty());
 	}
+	
+	IT("emits an error when calling onError") {
+		PublishSubject subject;
+		bool onErrorCalled = false;
+		subject.onError(Error());
+		subject.getObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; });
+		REQUIRE(onErrorCalled);
+	}
+	
+	CONTEXT("onCompleted") {
+		auto subject = std::make_shared<PublishSubject>();
+		bool completed = false;
+		
+		IT("calls onCompleted when destroying the subject") {
+			subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
+			subject.reset();
+			
+			REQUIRE(completed);
+		}
+		
+		IT("calls onCompleted when the subject is already destroyed") {
+			auto o = subject->getObservable();
+			subject.reset();
+			o.subscribe([](var){}, [&](){ completed = true; });
+			
+			REQUIRE(completed);
+		}
+	}
+	
 }

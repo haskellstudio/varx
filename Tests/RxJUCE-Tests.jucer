@@ -231,6 +231,8 @@
               file="Source/Tests/ObservableTest.cpp"/>
         <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObservedTest.cpp"/>
+        <FILE id="vc7e2E" name="ObserverTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ObserverTest.cpp"/>
         <FILE id="qEsfze" name="SubjectsTest.cpp" compile="1" resource="0"
               file="Source/Tests/SubjectsTest.cpp"/>
         <FILE id="K3FGg8" name="SubscriptionTest.cpp" compile="1" resource="0"
