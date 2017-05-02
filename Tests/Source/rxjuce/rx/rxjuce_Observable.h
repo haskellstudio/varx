@@ -71,13 +71,13 @@ public:
 	/**
 		Subscribes to an Observable, to receive values it emits.
 	 
-		The onNext function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
+		The **onNext** function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
 	 
-		The onError function is called when the Observable has failed to generate the expected data, or has encountered some other error. If onError is called, the Observable will not make any more calls. **If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
+		The **onError** function is called when the Observable has failed to generate the expected data, or has encountered some other error. If onError is called, the Observable will not make any more calls. **If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
 	 
-		The onCompleted function is called exactly once to notify that the Observable has generated all data and will not emit any more items.
+		The **onCompleted** function is called exactly once to notify that the Observable has generated all data and will not emit any more items.
 	 
-		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
+		The returned Subscription can be used to unsubscribe from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
 	 */
 	Subscription subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void(Error)>& onError = TerminateOnError,
@@ -108,7 +108,7 @@ public:
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
 	 
-		The transform function can return an Observable. If it does, you can use Observable::switchOnNext.
+		You can return an Observable from the transform function. If you do, you can use Observable::switchOnNext.
 	 */
 	Observable map(Transform1 transform) const;
 	

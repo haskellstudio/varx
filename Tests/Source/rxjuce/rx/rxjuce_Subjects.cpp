@@ -29,7 +29,7 @@ BehaviorSubject::BehaviorSubject(const var& initial)
 
 BehaviorSubject::~BehaviorSubject()
 {
-	impl->subject.get_subscriber().on_completed();
+	onCompleted();
 }
 
 void BehaviorSubject::onNext(const var& next)
@@ -68,7 +68,7 @@ PublishSubject::PublishSubject()
 
 PublishSubject::~PublishSubject()
 {
-	impl->subject.get_subscriber().on_completed();
+	onCompleted();
 }
 
 void PublishSubject::onNext(const var& next)

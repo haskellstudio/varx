@@ -472,18 +472,18 @@ TEST_CASE("Observable onError",
 		REQUIRE(called);
 	}
 	
-	// Create an Observable that throws asynchronously
-	auto asyncThrow = Observable::create([](Observer observer) {
-		MessageManager::getInstance()->callAsync([observer]() mutable {
-			observer.onNext(3);
-		});
-	});
-	asyncThrow = asyncThrow.map([](var v) {
-		throw std::runtime_error("Async Error!");
-		return v;
-	});
-	
 	IT("calls onError asynchronously") {
+		// Create an Observable that throws asynchronously
+		auto asyncThrow = Observable::create([](Observer observer) {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
+				observer.onNext(3);
+			});
+		});
+		asyncThrow = asyncThrow.map([](var v) {
+			throw std::runtime_error("Async Error!");
+			return v;
+		});
+		
 		bool called = false;
 		asyncThrow.subscribe([](var){}, [&](Error) {
 			called = true;
