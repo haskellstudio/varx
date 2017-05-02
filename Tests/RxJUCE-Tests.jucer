@@ -227,8 +227,14 @@
         <FILE id="BNm3W1" name="rxjuce_Prefix.h" compile="0" resource="0" file="Source/rxjuce/rxjuce_Prefix.h"/>
       </GROUP>
       <GROUP id="{10CA88C8-F94B-695D-F44B-6A2C94F559D1}" name="Tests">
-        <FILE id="kXq69B" name="ObservableTest.cpp" compile="1" resource="0"
-              file="Source/Tests/ObservableTest.cpp"/>
+        <GROUP id="{70CE7456-91AD-546D-22A0-047F436E7D5A}" name="Observable">
+          <FILE id="xFwXZV" name="CreationTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/CreationTest.cpp"/>
+          <FILE id="Eb0bDA" name="OnErrorOnCompleteTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/OnErrorOnCompleteTest.cpp"/>
+          <FILE id="yKdbQK" name="OperatorsTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/OperatorsTest.cpp"/>
+        </GROUP>
         <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObservedTest.cpp"/>
         <FILE id="vc7e2E" name="ObserverTest.cpp" compile="1" resource="0"
