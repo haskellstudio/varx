@@ -180,6 +180,16 @@ TEST_CASE("Observable::fromValue lifetime",
 		
 		RxJUCERequireItems(copyItems, "Initial", "New");
 	}
+	
+	IT("notified onComplete when the Observable is destroyed") {
+		bool completed = false;
+		source->subscribe([](var){}, [&]() { completed = true; });
+		CHECK(!completed);
+		
+		source.reset();
+		
+		REQUIRE(completed);
+	}
 }
 
 

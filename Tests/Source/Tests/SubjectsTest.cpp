@@ -116,6 +116,7 @@ TEST_CASE("PublishSubject",
 		
 		IT("calls onCompleted when destroying the subject") {
 			subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
+			CHECK(!completed);
 			subject.reset();
 			
 			REQUIRE(completed);
