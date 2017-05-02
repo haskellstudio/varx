@@ -10,23 +10,23 @@
 
 #include "rxjuce_Subscription.h"
 
+#include "rxjuce_Subscription_Impl.h"
+
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-Subscription::Subscription(const std::function<bool()>& isSubscribed,
-						   const std::function<void()>& unsubscribe)
-: _isSubscribed(isSubscribed),
-  _unsubscribe(unsubscribe) {}
+Subscription::Subscription(const std::shared_ptr<Impl>& impl)
+: impl(impl) {}
 
 void Subscription::unsubscribe() const
 {
-	_unsubscribe();
+	impl->wrapped.unsubscribe();
 }
 
 bool Subscription::isSubscribed() const
 {
-	return _isSubscribed();
+	return impl->wrapped.is_subscribed();
 }
 
 

@@ -13,8 +13,8 @@
 #include "rxjuce_Observable.h"
 
 #include "rxjuce_Observable_Impl.h"
-
-#include "rxjuce_Observer.h"
+#include "rxjuce_Observer_Impl.h"
+#include "rxjuce_Subscription_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
 
@@ -32,7 +32,7 @@ namespace {
 }
 
 namespace juce {
-	// Converts an Observable to a JUCE var, and vice versa
+	// Converts an Observable to a JUCE var, and back
 	template<>
 	struct VariantConverter<rxjuce::Observable>
 	{
@@ -56,6 +56,13 @@ namespace juce {
 
 RXJUCE_NAMESPACE_BEGIN
 
+const std::function<void(Error)> Observable::TerminateOnError = [](Error) {
+	// error implicitly ignored, abort
+	std::terminate();
+};
+
+const std::function<void()> Observable::EmptyOnCompleted = [](){};
+
 #pragma mark - Creation
 
 Observable::Observable(const shared_ptr<Impl>& impl)
@@ -66,7 +73,7 @@ Observable Observable::fromValue(Value value)
 	return Impl::fromValue(value);
 }
 
-Observable Observable::just(var value)
+Observable Observable::just(const var& value)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::just(value));
 }
@@ -88,23 +95,27 @@ Observable Observable::range(const juce::Range<double>& range, int step)
 Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::create<var>([onSubscribe](rxcpp::subscriber<var> s) {
-		onSubscribe(Observer([s](const var& next) {
-			s.on_next(next);
-		}));
+		onSubscribe(Observer(std::make_shared<Observer::Impl>(s)));
 	}));
 }
 
 
 #pragma mark - Subscription
 
-Subscription Observable::subscribe(const std::function<void(const var&)>& onNext) const
+Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
+								   const std::function<void(Error)>& onError,
+								   const std::function<void()>& onCompleted) const
 {
-	auto subscription = impl->wrapped.subscribe(onNext);
+	auto subscription = impl->wrapped.subscribe(onNext, onError, onCompleted);
 	
-	auto isSubscribed = [subscription]() { return subscription.is_subscribed(); };
-	auto unsubscribe = [subscription]() { subscription.unsubscribe(); };
-	
-	return Subscription(isSubscribed, unsubscribe);
+	return Subscription(std::make_shared<Subscription::Impl>(subscription));
+}
+
+Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
+								   const std::function<void()>& onCompleted,
+								   const std::function<void(Error)>& onError) const
+{
+	return subscribe(onNext, onError, onCompleted);
 }
 
 

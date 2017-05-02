@@ -180,6 +180,16 @@ TEST_CASE("Observable::fromValue lifetime",
 		
 		RxJUCERequireItems(copyItems, "Initial", "New");
 	}
+	
+	IT("notified onComplete when the Observable is destroyed") {
+		bool completed = false;
+		source->subscribe([](var){}, [&]() { completed = true; });
+		CHECK(!completed);
+		
+		source.reset();
+		
+		REQUIRE(completed);
+	}
 }
 
 
@@ -228,7 +238,7 @@ TEST_CASE("Observable::create",
 	
 	IT("emits items when pushing items asynchronously") {
 		auto observable = Observable::create([](Observer observer) {
-			MessageManager::getInstance()->callAsync([observer]() {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
 				observer.onNext("First");
 				observer.onNext("Second");
 			});
@@ -245,7 +255,7 @@ TEST_CASE("Observable::create",
 	
 	IT("emits can emit items asynchronously after being destroyed") {
 		auto observable = std::make_shared<Observable>(Observable::create([](Observer observer) {
-			MessageManager::getInstance()->callAsync([observer]() {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
 				observer.onNext("First");
 				observer.onNext("Second");
 			});
@@ -355,7 +365,7 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		auto source = std::make_shared<Observable>(Observable::just(17));
 		auto mapped = source->map([](int next) {
 			return Observable::create([next](Observer observer) {
-				MessageManager::getInstance()->callAsync([observer, next]() {
+				MessageManager::getInstance()->callAsync([observer, next]() mutable {
 					observer.onNext(next * 3);
 				});
 			});
@@ -371,6 +381,17 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		
 		// The item should be emitted, although there's no reference to the source anymore
 		RxJUCERequireItems(items, 17 * 3);
+	}
+	
+	IT("emits an error when trying to unwrap a first-order Observable") {
+		auto o = Observable::just(1).switchOnNext();
+		bool onErrorCalled = false;
+		auto onError = [&](Error) {
+			onErrorCalled = true;
+		};
+		auto subscription = o.subscribe([](var) {}, onError);
+		
+		REQUIRE(onErrorCalled);
 	}
 }
 
@@ -428,5 +449,63 @@ TEST_CASE("Observable::combineLatest",
 	IT("works with arity 7") {
 		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], *os[3], *os[4], *os[5], *os[6], *os[7], transform<var, var, var, var, var, var, var, var>), items);
 		RxJUCERequireItems(items, "0 1 2 3 4 5 6 7 ");
+	}
+}
+
+
+TEST_CASE("Observable onError",
+		  "[Observable][onError]")
+{
+	// Create an Observable that throws on subscribe
+	auto syncThrow = Observable::create([](Observer){ throw std::runtime_error("Error!"); });
+	
+	IT("calls onError on subscribe") {
+		REQUIRE_THROWS_WITH(syncThrow.subscribe([](var){}, std::rethrow_exception), "Error!");
+	}
+	
+	IT("takes an onError handler and calls it without throwing") {
+		bool called = false;
+		syncThrow.subscribe([](var){}, [&](Error) {
+			called = true;
+		});
+		
+		REQUIRE(called);
+	}
+	
+	IT("calls onError asynchronously") {
+		// Create an Observable that throws asynchronously
+		auto asyncThrow = Observable::create([](Observer observer) {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
+				observer.onNext(3);
+			});
+		});
+		asyncThrow = asyncThrow.map([](var v) {
+			throw std::runtime_error("Async Error!");
+			return v;
+		});
+		
+		bool called = false;
+		asyncThrow.subscribe([](var){}, [&](Error) {
+			called = true;
+		});
+		
+		CHECK_FALSE(called);
+		RxJUCERunDispatchLoop();
+		REQUIRE(called);
+	}
+}
+
+
+TEST_CASE("Observable onComplete",
+		  "[Observable][onComplete]")
+{
+	bool called = false;
+	auto onComplete = [&]() {
+		called = true;
+	};
+	
+	IT("calls onComplete synchronously") {
+		Observable::just(2).subscribe([](var){}, onComplete);
+		REQUIRE(called);
 	}
 }

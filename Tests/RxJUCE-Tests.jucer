@@ -45,6 +45,14 @@
                   file="Source/rxjuce/rx/internal/rxjuce_Observable_Impl.cpp"/>
             <FILE id="tnH33O" name="rxjuce_Observable_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Observable_Impl.h"/>
+            <FILE id="b2FBfh" name="rxjuce_Observer_Impl.cpp" compile="1" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Observer_Impl.cpp"/>
+            <FILE id="fxt0uS" name="rxjuce_Observer_Impl.h" compile="0" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Observer_Impl.h"/>
+            <FILE id="uYDYsm" name="rxjuce_Subscription_Impl.cpp" compile="1" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Subscription_Impl.cpp"/>
+            <FILE id="eesXtB" name="rxjuce_Subscription_Impl.h" compile="0" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Subscription_Impl.h"/>
           </GROUP>
         </GROUP>
         <GROUP id="{D5AF6A28-2E79-73AD-8BF3-FEC0F6AF1AB8}" name="RxCpp">
@@ -223,6 +231,8 @@
               file="Source/Tests/ObservableTest.cpp"/>
         <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObservedTest.cpp"/>
+        <FILE id="vc7e2E" name="ObserverTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ObserverTest.cpp"/>
         <FILE id="qEsfze" name="SubjectsTest.cpp" compile="1" resource="0"
               file="Source/Tests/SubjectsTest.cpp"/>
         <FILE id="K3FGg8" name="SubscriptionTest.cpp" compile="1" resource="0"

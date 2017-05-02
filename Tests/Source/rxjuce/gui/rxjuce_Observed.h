@@ -19,6 +19,9 @@
 RXJUCE_NAMESPACE_BEGIN
 
 namespace detail {
+	template<typename T>
+	using IsJUCEButton = typename std::enable_if<std::is_base_of<juce::Button, T>::value>::type;
+	
 	class ButtonForwarder : private juce::Button::Listener
 	{
 	public:
@@ -52,7 +55,7 @@ class Observed;
 		myButton.clickedObservable().subscribe([](var){ ... })
  */
 template<typename T>
-class Observed<T, typename std::enable_if<std::is_base_of<juce::Button, T>::value>::type> : public T
+class Observed<T, detail::IsJUCEButton<T>> : public T
 {
 public:
 	/**

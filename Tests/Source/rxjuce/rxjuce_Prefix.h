@@ -18,3 +18,5 @@ using shared_ptr = std::shared_ptr<T>; \
 template<typename T, typename D = std::default_delete<T>> \
 using unique_ptr = std::unique_ptr<T, D>; \
 }
+
+typedef std::exception_ptr Error;

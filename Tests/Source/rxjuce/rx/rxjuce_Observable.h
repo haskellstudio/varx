@@ -32,6 +32,8 @@ public:
 	/**
 		Creates an Observable from a given JUCE Value. The returned Observable **only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this.
 	 
+		The returned Observable notifies the onComplete handler when it's destroyed. @see Observable::subscribe
+	 
 		When calling Value::setValue, it notifies asynchronously. So **the returned Observable will emits the new value asynchronously.** So if you call setValue immediately before destroying the returned Observable, the new value will not be emitted.
 	 */
 	static Observable fromValue(juce::Value value);
@@ -41,11 +43,8 @@ public:
 	 
 		The value is emitted immediately on each new subscription.
 	 */
-	static Observable just(var value);
+	static Observable just(const var& value);
 	
-	/**	@name range
-		
-	 */
 	///@{
 	/**
 		Creates an Observable which emits values from a given range, starting at range.getStart() to (and including) range.getEnd().
@@ -68,14 +67,26 @@ public:
 	
 	
 #pragma mark - Subscription
+	///@{
 	/**
 		Subscribes to an Observable, to receive values it emits.
 	 
-		The onNext function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
+		The **onNext** function is called whenever the Observable emits a new item. It may be called synchronously before subscribe() returns.
 	 
-		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
+		The **onError** function is called when the Observable has failed to generate the expected data, or has encountered some other error. If onError is called, the Observable will not make any more calls. **If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
+	 
+		The **onCompleted** function is called exactly once to notify that the Observable has generated all data and will not emit any more items.
+	 
+		The returned Subscription can be used to unsubscribe from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
 	 */
-	Subscription subscribe(const std::function<void(const var&)>& onNext) const;
+	Subscription subscribe(const std::function<void(const var&)>& onNext,
+						   const std::function<void(Error)>& onError = TerminateOnError,
+						   const std::function<void()>& onCompleted = EmptyOnCompleted) const;
+	
+	Subscription subscribe(const std::function<void(const var&)>& onNext,
+						   const std::function<void()>& onCompleted,
+						   const std::function<void(Error)>& onError = TerminateOnError) const;
+	///@}
 	
 	
 #pragma mark - Transform Functions
@@ -97,7 +108,7 @@ public:
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
 	 
-		The transform function can return `Observable``s`. If it does, you can use Observable::switchOnNext.
+		You can return an Observable from the transform function. If you do, you can use Observable::switchOnNext.
 	 */
 	Observable map(Transform1 transform) const;
 	
@@ -123,7 +134,9 @@ public:
 	
 #pragma mark - Misc
 	/**
-		Wraps the Observable into a var. This allows you to return an Observable from a transform function.
+		Wraps the Observable into a var.
+	 
+		This allows you to return an Observable from a transform function, e.g. when using Observable::map.
 	 */
 	operator var() const;
 	
@@ -135,6 +148,8 @@ private:
 	friend class PublishSubject;
 	Observable(const std::shared_ptr<Impl>&);
 	
+	static const std::function<void(Error)> TerminateOnError;
+	static const std::function<void()> EmptyOnCompleted;
 	JUCE_LEAK_DETECTOR(Observable)
 };
 
