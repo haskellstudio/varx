@@ -49,6 +49,10 @@
                   file="Source/rxjuce/rx/internal/rxjuce_Observer_Impl.cpp"/>
             <FILE id="fxt0uS" name="rxjuce_Observer_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Observer_Impl.h"/>
+            <FILE id="zCGLu0" name="rxjuce_Scheduling.cpp" compile="1" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Scheduling.cpp"/>
+            <FILE id="uh4iiO" name="rxjuce_Scheduling.h" compile="0" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Scheduling.h"/>
             <FILE id="uYDYsm" name="rxjuce_Subscription_Impl.cpp" compile="1" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Subscription_Impl.cpp"/>
             <FILE id="eesXtB" name="rxjuce_Subscription_Impl.h" compile="0" resource="0"

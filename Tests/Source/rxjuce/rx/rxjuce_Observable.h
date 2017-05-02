@@ -149,6 +149,17 @@ public:
 	Observable switchOnNext() const;
 	
 	
+#pragma mark - Scheduling
+	enum Scheduler
+	{
+		messageThread = 0,
+		backgroundThread,
+		newThread
+	};
+	
+	Observable observeOn(Scheduler scheduler) const;
+	
+	
 #pragma mark - Misc
 	/**
 		Wraps the Observable into a var.

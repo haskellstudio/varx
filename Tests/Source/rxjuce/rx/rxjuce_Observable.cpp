@@ -14,6 +14,7 @@
 
 #include "rxjuce_Observable_Impl.h"
 #include "rxjuce_Observer_Impl.h"
+#include "rxjuce_Scheduling.h"
 #include "rxjuce_Subscription_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
@@ -178,6 +179,21 @@ Observable Observable::switchOnNext() const
 	});
 	
 	return Impl::fromRxCpp(unwrapped.switch_on_next());
+}
+
+
+#pragma mark - Scheduling
+
+Observable Observable::observeOn(Scheduler scheduler) const
+{
+	switch (scheduler) {
+		case messageThread:
+			return Impl::fromRxCpp(impl->wrapped.observe_on(scheduling::juceMessageThread()));
+		case backgroundThread:
+			return Impl::fromRxCpp(impl->wrapped.observe_on(scheduling::rxcppEventLoop()));
+		case newThread:
+			return Impl::fromRxCpp(impl->wrapped.observe_on(scheduling::newThread()));
+	}
 }
 
 
