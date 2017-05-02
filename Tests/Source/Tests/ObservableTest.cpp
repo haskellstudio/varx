@@ -228,7 +228,7 @@ TEST_CASE("Observable::create",
 	
 	IT("emits items when pushing items asynchronously") {
 		auto observable = Observable::create([](Observer observer) {
-			MessageManager::getInstance()->callAsync([observer]() {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
 				observer.onNext("First");
 				observer.onNext("Second");
 			});
@@ -245,7 +245,7 @@ TEST_CASE("Observable::create",
 	
 	IT("emits can emit items asynchronously after being destroyed") {
 		auto observable = std::make_shared<Observable>(Observable::create([](Observer observer) {
-			MessageManager::getInstance()->callAsync([observer]() {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
 				observer.onNext("First");
 				observer.onNext("Second");
 			});
@@ -355,7 +355,7 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		auto source = std::make_shared<Observable>(Observable::just(17));
 		auto mapped = source->map([](int next) {
 			return Observable::create([next](Observer observer) {
-				MessageManager::getInstance()->callAsync([observer, next]() {
+				MessageManager::getInstance()->callAsync([observer, next]() mutable {
 					observer.onNext(next * 3);
 				});
 			});
@@ -444,7 +444,7 @@ TEST_CASE("Observable onError",
 	
 	IT("takes an onError handler and calls it without throwing") {
 		bool called = false;
-		syncThrow.subscribe([](var){}, [&](std::exception_ptr) {
+		syncThrow.subscribe([](var){}, [&](Error) {
 			called = true;
 		});
 		
@@ -453,7 +453,7 @@ TEST_CASE("Observable onError",
 	
 	// Create an Observable that throws asynchronously
 	auto asyncThrow = Observable::create([](Observer observer) {
-		MessageManager::getInstance()->callAsync([observer]() {
+		MessageManager::getInstance()->callAsync([observer]() mutable {
 			observer.onNext(3);
 		});
 	});
@@ -464,7 +464,7 @@ TEST_CASE("Observable onError",
 	
 	IT("calls onError asynchronously") {
 		bool called = false;
-		asyncThrow.subscribe([](var){}, [&](std::exception_ptr) {
+		asyncThrow.subscribe([](var){}, [&](Error) {
 			called = true;
 		});
 		

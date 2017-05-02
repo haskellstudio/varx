@@ -33,13 +33,23 @@ public:
 	/** Creates a new instance with a given initial item */
 	explicit BehaviorSubject(const juce::var& initial);
 	
-	/** Notifies onCompleted. */
+	/** Calls BehaviorSubject::onCompleted. */
 	~BehaviorSubject();
 	
 	/**
 		Emits a new item. The Observable side emits this item synchronously.
 	 */
 	void onNext(const juce::var& next);
+	
+	/**
+		Emits an error. The Observable side emits the error to all subscribers.
+	 */
+	void onError(Error error);
+	
+	/**
+		Notifies that the subject has finished generating values. **It's illegal to call BehaviorSubject::onNext or BehaviorSubject::onError after calling this.**
+	 */
+	void onCompleted();
 	
 	/** Returns the most recently emitted item. If no items have been emitted, it returns the initial item. */
 	juce::var getValue() const;
@@ -69,13 +79,23 @@ public:
 	/** Creates a new instance. */
 	PublishSubject();
 	
-	/** Notifies onCompleted. */
+	/** Calls PublishSubject::onCompleted. */
 	~PublishSubject();
 	
 	/**
 		Emits a new item. The Observable side emits this item synchronously.
 	 */
 	void onNext(const juce::var& next);
+	
+	/**
+		Emits an error. The Observable side emits the error to all subscribers.
+	 */
+	void onError(Error error);
+	
+	/**
+		Notifies that the subject has finished generating values. **It's illegal to call PublishSubject::onNext or PublishSubject::onError after calling this.**
+	 */
+	void onCompleted();
 	
 	/**
 		Returns an Observable that emits an item whenever onNext is called on this subject.

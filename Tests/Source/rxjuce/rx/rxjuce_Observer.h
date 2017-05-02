@@ -23,7 +23,15 @@ class Observer
 {
 public:
 	/** Notifies the Observer with a new item. */
-	void onNext(const juce::var& next) const;
+	void onNext(const juce::var& next);
+	
+	/** Notifies the Observer that an error has occurred. */
+	void onError(Error error);
+	
+	/**
+		Notifies the Observer that no more values will be pushed. **It's illegal to call Observer::onNext or Observer::onError after calling this.**
+	 */
+	void onCompleted();
 	
 private:
 	struct Impl;

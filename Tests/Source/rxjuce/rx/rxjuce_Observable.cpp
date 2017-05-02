@@ -56,7 +56,7 @@ namespace juce {
 
 RXJUCE_NAMESPACE_BEGIN
 
-const std::function<void(std::exception_ptr)> Observable::TerminateOnError = [](std::exception_ptr) {
+const std::function<void(Error)> Observable::TerminateOnError = [](Error) {
 	// error implicitly ignored, abort
 	std::terminate();
 };
@@ -103,7 +103,7 @@ Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
 #pragma mark - Subscription
 
 Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
-								   const std::function<void(std::exception_ptr)>& onError,
+								   const std::function<void(Error)>& onError,
 								   const std::function<void()>& onCompleted) const
 {
 	auto subscription = impl->wrapped.subscribe(onNext, onError, onCompleted);
@@ -113,7 +113,7 @@ Subscription Observable::subscribe(const std::function<void(const var&)>& onNext
 
 Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
 								   const std::function<void()>& onCompleted,
-								   const std::function<void(std::exception_ptr)>& onError) const
+								   const std::function<void(Error)>& onError) const
 {
 	return subscribe(onNext, onError, onCompleted);
 }

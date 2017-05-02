@@ -80,12 +80,12 @@ public:
 		The returned Subscription can be used to unsubscribe() from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
 	 */
 	Subscription subscribe(const std::function<void(const var&)>& onNext,
-						   const std::function<void(std::exception_ptr)>& onError = TerminateOnError,
+						   const std::function<void(Error)>& onError = TerminateOnError,
 						   const std::function<void()>& onCompleted = EmptyOnCompleted) const;
 	
 	Subscription subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void()>& onCompleted,
-						   const std::function<void(std::exception_ptr)>& onError = TerminateOnError) const;
+						   const std::function<void(Error)>& onError = TerminateOnError) const;
 	///@}
 	
 	
@@ -148,7 +148,7 @@ private:
 	friend class PublishSubject;
 	Observable(const std::shared_ptr<Impl>&);
 	
-	static const std::function<void(std::exception_ptr)> TerminateOnError;
+	static const std::function<void(Error)> TerminateOnError;
 	static const std::function<void()> EmptyOnCompleted;
 	JUCE_LEAK_DETECTOR(Observable)
 };

@@ -20,7 +20,7 @@ TEST_CASE("Subscription",
 {
 	// Create Observable which emits a single item asynchronously
 	auto observable = std::make_shared<Observable>(Observable::create([](Observer observer) {
-		MessageManager::getInstance()->callAsync([observer]() {
+		MessageManager::getInstance()->callAsync([observer]() mutable {
 			observer.onNext("Item");
 		});
 	}));
@@ -87,7 +87,7 @@ TEST_CASE("ScopedSubscription",
 {
 	// Create Observable which emits a single item asynchronously
 	auto observable = Observable::create([](Observer observer) {
-		MessageManager::getInstance()->callAsync([observer]() {
+		MessageManager::getInstance()->callAsync([observer]() mutable {
 			observer.onNext("Item");
 		});
 	});
