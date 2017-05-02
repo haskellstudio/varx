@@ -372,6 +372,17 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		// The item should be emitted, although there's no reference to the source anymore
 		RxJUCERequireItems(items, 17 * 3);
 	}
+	
+	IT("emits an error when trying to unwrap a first-order Observable") {
+		auto o = Observable::just(1).switchOnNext();
+		bool onErrorCalled = false;
+		auto onError = [&](Error) {
+			onErrorCalled = true;
+		};
+		auto subscription = o.subscribe([](var) {}, onError);
+		
+		REQUIRE(onErrorCalled);
+	}
 }
 
 
