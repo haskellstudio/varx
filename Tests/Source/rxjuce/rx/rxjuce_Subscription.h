@@ -42,10 +42,11 @@ public:
 	bool isSubscribed() const;
 	
 private:
+	struct Impl;
+	const std::shared_ptr<Impl> impl;
+	
 	friend class Observable;
-	explicit Subscription(const std::function<bool()>&, const std::function<void()>&);
-	const std::function<bool()> _isSubscribed;
-	const std::function<void()> _unsubscribe;
+	explicit Subscription(const std::shared_ptr<Impl>&);
 	
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Subscription)
 };

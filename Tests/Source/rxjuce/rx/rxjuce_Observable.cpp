@@ -13,8 +13,8 @@
 #include "rxjuce_Observable.h"
 
 #include "rxjuce_Observable_Impl.h"
-
 #include "rxjuce_Observer_Impl.h"
+#include "rxjuce_Subscription_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
 
@@ -108,10 +108,7 @@ Subscription Observable::subscribe(const std::function<void(const var&)>& onNext
 {
 	auto subscription = impl->wrapped.subscribe(onNext, onError, onCompleted);
 	
-	auto isSubscribed = [subscription]() { return subscription.is_subscribed(); };
-	auto unsubscribe = [subscription]() { subscription.unsubscribe(); };
-	
-	return Subscription(isSubscribed, unsubscribe);
+	return Subscription(std::make_shared<Subscription::Impl>(subscription));
 }
 
 Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
