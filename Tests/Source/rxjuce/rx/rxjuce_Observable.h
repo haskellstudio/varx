@@ -132,7 +132,7 @@ public:
 	/**
 		Returns an Observable which emits only those items from this Observable that pass a predicate function.
 	 */
-	Observable filter(const std::function<bool(const var&)>& predicate);
+	Observable filter(const std::function<bool(const var&)>& predicate) const;
 	
 	/**
 		Transforms the items emitted by this Observable by applying a given function to each emitted item.
@@ -147,6 +147,7 @@ public:
 		Returns an Observable that emits the items emitted by the Observables which this Observable emits.
 	 */
 	Observable switchOnNext() const;
+	
 	
 #pragma mark - Misc
 	/**

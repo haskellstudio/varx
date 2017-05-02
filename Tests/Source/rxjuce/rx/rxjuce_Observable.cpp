@@ -161,7 +161,7 @@ Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3
 	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6, o7);
 }
 
-Observable Observable::filter(const std::function<bool(const var&)>& predicate)
+Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
 {
 	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
 }
