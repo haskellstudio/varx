@@ -24,22 +24,6 @@
                 file="Source/rxjuce/util/rxjuce_PrintFunctions.h"/>
         </GROUP>
         <GROUP id="{76338C3B-D82A-3F81-A964-2397D69B048B}" name="rx">
-          <FILE id="qwLWIX" name="rxjuce_Subjects.cpp" compile="1" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subjects.cpp"/>
-          <FILE id="rvpqFg" name="rxjuce_Subjects.h" compile="0" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subjects.h"/>
-          <FILE id="JIhXEX" name="rxjuce_Observable.cpp" compile="1" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Observable.cpp"/>
-          <FILE id="Iif8lu" name="rxjuce_Observable.h" compile="0" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Observable.h"/>
-          <FILE id="xg7RFM" name="rxjuce_Observer.cpp" compile="1" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Observer.cpp"/>
-          <FILE id="iXH4Hq" name="rxjuce_Observer.h" compile="0" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Observer.h"/>
-          <FILE id="Mm9AB1" name="rxjuce_Subscription.cpp" compile="1" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subscription.cpp"/>
-          <FILE id="yo6GHG" name="rxjuce_Subscription.h" compile="0" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subscription.h"/>
           <GROUP id="{75278435-1220-7549-B806-8FE1D21BB583}" name="internal">
             <FILE id="SDUXlA" name="rxjuce_Observable_Impl.cpp" compile="1" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Observable_Impl.cpp"/>
@@ -49,15 +33,35 @@
                   file="Source/rxjuce/rx/internal/rxjuce_Observer_Impl.cpp"/>
             <FILE id="fxt0uS" name="rxjuce_Observer_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Observer_Impl.h"/>
-            <FILE id="zCGLu0" name="rxjuce_Scheduling.cpp" compile="1" resource="0"
-                  file="Source/rxjuce/rx/internal/rxjuce_Scheduling.cpp"/>
-            <FILE id="uh4iiO" name="rxjuce_Scheduling.h" compile="0" resource="0"
-                  file="Source/rxjuce/rx/internal/rxjuce_Scheduling.h"/>
+            <FILE id="zCGLu0" name="rxjuce_Scheduler_Impl.cpp" compile="1" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Scheduler_Impl.cpp"/>
+            <FILE id="uh4iiO" name="rxjuce_Scheduler_Impl.h" compile="0" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Scheduler_Impl.h"/>
             <FILE id="uYDYsm" name="rxjuce_Subscription_Impl.cpp" compile="1" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Subscription_Impl.cpp"/>
             <FILE id="eesXtB" name="rxjuce_Subscription_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Subscription_Impl.h"/>
           </GROUP>
+          <FILE id="JIhXEX" name="rxjuce_Observable.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Observable.cpp"/>
+          <FILE id="Iif8lu" name="rxjuce_Observable.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Observable.h"/>
+          <FILE id="xg7RFM" name="rxjuce_Observer.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Observer.cpp"/>
+          <FILE id="iXH4Hq" name="rxjuce_Observer.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Observer.h"/>
+          <FILE id="Biml1q" name="rxjuce_Scheduler.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Scheduler.cpp"/>
+          <FILE id="Jxbh7a" name="rxjuce_Scheduler.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Scheduler.h"/>
+          <FILE id="qwLWIX" name="rxjuce_Subjects.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Subjects.cpp"/>
+          <FILE id="rvpqFg" name="rxjuce_Subjects.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Subjects.h"/>
+          <FILE id="Mm9AB1" name="rxjuce_Subscription.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Subscription.cpp"/>
+          <FILE id="yo6GHG" name="rxjuce_Subscription.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Subscription.h"/>
         </GROUP>
         <GROUP id="{D5AF6A28-2E79-73AD-8BF3-FEC0F6AF1AB8}" name="RxCpp">
           <GROUP id="{8112CCFB-011C-5F92-BED5-3A4B39870F81}" name="Rx">

@@ -40,7 +40,6 @@ private:
 	friend class Observable;
 	Observer(const std::shared_ptr<Impl>&);
 	
-	
 	JUCE_LEAK_DETECTOR(Observer)
 };
 

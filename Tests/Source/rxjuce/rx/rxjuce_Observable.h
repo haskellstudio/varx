@@ -17,6 +17,7 @@
 RXJUCE_NAMESPACE_BEGIN
 
 class Observer;
+class Scheduler;
 
 /**
 	An Observable is a value that changes over time.
@@ -150,14 +151,12 @@ public:
 	
 	
 #pragma mark - Scheduling
-	enum Scheduler
-	{
-		messageThread = 0,
-		backgroundThread,
-		newThread
-	};
-	
-	Observable observeOn(Scheduler scheduler) const;
+	/**
+		Returns an Observable that will be observed on a specified scheduler, e.g. the JUCE Message Thread, or a background thread.
+	 
+		For example: When you apply Observable::map to the returned Observable, the map transform function will run on the specified scheduler.
+	 */
+	Observable observeOn(const Scheduler& scheduler) const;
 	
 	
 #pragma mark - Misc
@@ -167,6 +166,15 @@ public:
 		This allows you to return an Observable from a transform function, e.g. when using Observable::map.
 	 */
 	operator var() const;
+	
+	/**
+		Blocks until the Observable has completed, then returns an Array of all emitted items.
+	 
+		When calling this, make sure that the current thread 
+	 
+		**If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
+	 */
+	juce::Array<var> toArray(const std::function<void(Error)>& onError = TerminateOnError) const;
 	
 private:
 	struct Impl;

@@ -1,20 +1,23 @@
 /*
   ==============================================================================
 
-    rxjuce_Scheduling.cpp
-    Created: 2 May 2017 11:12:37pm
+    rxjuce_Scheduler.cpp
+    Created: 3 May 2017 10:18:06pm
     Author:  Martin Finke
 
   ==============================================================================
 */
 
-#include "rxjuce_Scheduling.h"
+#include "rxjuce_Scheduler.h"
+
+#include "rxjuce_Scheduler_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
 
-RXJUCE_NAMESPACE_BEGIN
 
 namespace {
+	using namespace juce;
+	
 	class JUCEDispatcher : private Timer {
 	public:
 		JUCEDispatcher()
@@ -61,22 +64,32 @@ namespace {
 	};
 }
 
-namespace scheduling {
-	rxcpp::observe_on_one_worker juceMessageThread()
-	{
-		static const JUCEDispatcher dispatcher;
-		return dispatcher.createWorker();
-	}
-	
-	rxcpp::synchronize_in_one_worker rxcppEventLoop()
-	{
-		return rxcpp::synchronize_event_loop();
-	}
-	
-	rxcpp::synchronize_in_one_worker newThread()
-	{
-		return rxcpp::synchronize_new_thread();
-	}
+RXJUCE_NAMESPACE_BEGIN
+
+Scheduler::Scheduler(const std::shared_ptr<Impl>& impl)
+: impl(impl) {}
+
+Scheduler Scheduler::messageThread()
+{
+	static const JUCEDispatcher dispatcher;
+	const auto worker = dispatcher.createWorker();
+	return std::make_shared<Scheduler::Impl>([worker](const rxcpp::observable<juce::var>& observable) {
+		return observable.observe_on(worker);
+	});
+}
+
+Scheduler Scheduler::backgroundThread()
+{
+	return std::make_shared<Scheduler::Impl>([](const rxcpp::observable<juce::var>& observable) {
+		return observable.observe_on(rxcpp::serialize_event_loop());
+	});
+}
+
+Scheduler Scheduler::newThread()
+{
+	return std::make_shared<Scheduler::Impl>([](const rxcpp::observable<juce::var>& observable) {
+		return observable.observe_on(rxcpp::serialize_new_thread());
+	});
 }
 
 RXJUCE_NAMESPACE_END

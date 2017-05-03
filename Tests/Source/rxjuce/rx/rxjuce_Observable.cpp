@@ -14,7 +14,7 @@
 
 #include "rxjuce_Observable_Impl.h"
 #include "rxjuce_Observer_Impl.h"
-#include "rxjuce_Scheduling.h"
+#include "rxjuce_Scheduler_Impl.h"
 #include "rxjuce_Subscription_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
@@ -184,16 +184,9 @@ Observable Observable::switchOnNext() const
 
 #pragma mark - Scheduling
 
-Observable Observable::observeOn(Scheduler scheduler) const
+Observable Observable::observeOn(const Scheduler& scheduler) const
 {
-	switch (scheduler) {
-		case messageThread:
-			return Impl::fromRxCpp(impl->wrapped.observe_on(scheduling::juceMessageThread()));
-		case backgroundThread:
-			return Impl::fromRxCpp(impl->wrapped.observe_on(scheduling::rxcppEventLoop()));
-		case newThread:
-			return Impl::fromRxCpp(impl->wrapped.observe_on(scheduling::newThread()));
-	}
+	return Impl::fromRxCpp(scheduler.impl->schedule(impl->wrapped));
 }
 
 
@@ -202,6 +195,15 @@ Observable Observable::observeOn(Scheduler scheduler) const
 Observable::operator var() const
 {
 	return VariantConverter<Observable>::toVar(*this);
+}
+
+juce::Array<var> Observable::toArray(const std::function<void(Error)>& onError) const
+{
+	Array<var> items;
+	impl->wrapped.as_blocking().subscribe([&](const var& item) {
+		items.add(item);
+	}, onError);
+	return items;
 }
 
 RXJUCE_NAMESPACE_END
