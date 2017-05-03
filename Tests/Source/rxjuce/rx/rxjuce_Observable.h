@@ -155,6 +155,8 @@ public:
 		Returns an Observable that will be observed on a specified scheduler, e.g. the JUCE Message Thread, or a background thread.
 	 
 		For example: When you apply Observable::map to the returned Observable, the map transform function will run on the specified scheduler.
+	 
+		@see Scheduler::messageThread, Scheduler::backgroundThread and Scheduler::newThread
 	 */
 	Observable observeOn(const Scheduler& scheduler) const;
 	
@@ -169,8 +171,6 @@ public:
 	
 	/**
 		Blocks until the Observable has completed, then returns an Array of all emitted items.
-	 
-		When calling this, make sure that the current thread 
 	 
 		**If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
 	 */

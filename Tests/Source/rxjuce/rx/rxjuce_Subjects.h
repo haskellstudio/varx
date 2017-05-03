@@ -51,9 +51,6 @@ public:
 	 */
 	void onCompleted();
 	
-	/** Returns the most recently emitted item. If no items have been emitted, it returns the initial item. */
-	juce::var getValue() const;
-	
 	/**
 		Returns an Observable that emits an item whenever onNext is called on this subject.
 	 
@@ -61,11 +58,19 @@ public:
 	 */
 	Observable getObservable() const;
 	
+	/**
+		Returns the Observer side. If you call onNext on the Observer, this subject's Observable side will emit an item.
+	 */
+	Observer getObserver();
+	
+	/** Returns the most recently emitted item. If no items have been emitted, it returns the initial item. */
+	juce::var getValue() const;
+	
 private:
 	struct Impl;
-	const juce::ScopedPointer<Impl> impl;
+	std::shared_ptr<Impl> impl;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BehaviorSubject)
+	JUCE_LEAK_DETECTOR(BehaviorSubject)
 };
 
 /**
@@ -104,11 +109,16 @@ public:
 	 */
 	Observable getObservable() const;
 	
+	/**
+		Returns the Observer side. If you call onNext on the Observer, this subject's Observable side will emit an item.
+	 */
+	Observer getObserver();
+	
 private:
 	struct Impl;
-	const juce::ScopedPointer<Impl> impl;
+	std::shared_ptr<Impl> impl;
 	
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PublishSubject)
+	JUCE_LEAK_DETECTOR(PublishSubject)
 };
 
 RXJUCE_NAMESPACE_END

@@ -8,12 +8,13 @@
   ==============================================================================
 */
 
+#include "../RxCpp/Rx/v2/src/rxcpp/rx.hpp"
+
 #include "rxjuce_Scheduler.h"
 
 #include "rxjuce_Scheduler_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
-
 
 namespace {
 	using namespace juce;

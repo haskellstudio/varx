@@ -10,6 +10,7 @@
 
 #include "rxjuce_TestPrefix.h"
 
+#include "rxjuce_Observer.h"
 #include "rxjuce_Subjects.h"
 
 
@@ -21,6 +22,13 @@ TEST_CASE("BehaviorSubject",
 	// Subscribe to the subject's Observable
 	Array<var> items;
 	RxJUCECollectItems(subject.getObservable(), items);
+	
+	IT("changes value when changing the Observer") {
+		CHECK(subject.getValue() == "Initial Item");
+		subject.getObserver().onNext(32.55);
+		
+		REQUIRE(subject.getValue() == var(32.55));
+	}
 	
 	IT("has the initial item after being created") {
 		CHECK(subject.getValue() == "Initial Item");
@@ -60,6 +68,12 @@ TEST_CASE("BehaviorSubject",
 		
 		REQUIRE(completed);
 	}
+	
+	IT("can call onCompleted multiple times") {
+		subject.onCompleted();
+		subject.onCompleted();
+		subject.onCompleted();
+	}
 }
 
 
@@ -95,11 +109,29 @@ TEST_CASE("PublishSubject",
 		REQUIRE(laterItems.isEmpty());
 	}
 	
+	IT("changes value when changing the Observer") {
+		subject.getObserver().onNext(32.51);
+		subject.getObserver().onNext(3.0);
+		
+		RxJUCERequireItems(items, 32.51, 3.0);
+	}
+	
+	IT("does not emit after destruction, even if there's still an Observer") {
+		auto subject = std::make_shared<PublishSubject>();
+		auto observer = subject->getObserver();
+		
+		RxJUCECollectItems(subject->getObservable(), items);
+		subject.reset();
+		observer.onNext(12345);
+		
+		REQUIRE(items.isEmpty());
+	}
+	
 	IT("emits an error when calling onError") {
 		PublishSubject subject;
 		bool onErrorCalled = false;
 		subject.onError(Error());
-		subject.getObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; });
+		ScopedSubscription s = subject.getObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; });
 		REQUIRE(onErrorCalled);
 	}
 	
@@ -109,13 +141,13 @@ TEST_CASE("PublishSubject",
 		
 		IT("notifies onCompleted when calling onCompleted") {
 			subject->onCompleted();
-			subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
+			ScopedSubscription s = subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
 			
 			REQUIRE(completed);
 		}
 		
 		IT("calls onCompleted when destroying the subject") {
-			subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
+			ScopedSubscription s = subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
 			CHECK(!completed);
 			subject.reset();
 			
@@ -125,9 +157,16 @@ TEST_CASE("PublishSubject",
 		IT("calls onCompleted when the subject is already destroyed") {
 			auto o = subject->getObservable();
 			subject.reset();
-			o.subscribe([](var){}, [&](){ completed = true; });
+			ScopedSubscription s = o.subscribe([](var){}, [&](){ completed = true; });
 			
 			REQUIRE(completed);
+		}
+		
+		IT("can call onCompleted multiple times") {
+			subject->onCompleted();
+			subject->onCompleted();
+			subject->onCompleted();
+			subject.reset();
 		}
 	}
 	
