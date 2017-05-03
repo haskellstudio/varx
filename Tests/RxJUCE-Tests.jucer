@@ -238,6 +238,8 @@
                 file="Source/Tests/Observable/OnErrorOnCompleteTest.cpp"/>
           <FILE id="yKdbQK" name="OperatorsTest.cpp" compile="1" resource="0"
                 file="Source/Tests/Observable/OperatorsTest.cpp"/>
+          <FILE id="ShEoW4" name="SchedulingTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/SchedulingTest.cpp"/>
         </GROUP>
         <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObservedTest.cpp"/>
