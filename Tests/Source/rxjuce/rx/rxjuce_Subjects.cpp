@@ -11,6 +11,7 @@
 #include "rxjuce_Subjects.h"
 
 #include "rxjuce_Observable_Impl.h"
+#include "rxjuce_Observer_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
 
@@ -25,12 +26,7 @@ struct BehaviorSubject::Impl
 };
 
 BehaviorSubject::BehaviorSubject(const var& initial)
-: impl(new Impl(initial)) {}
-
-BehaviorSubject::~BehaviorSubject()
-{
-	onCompleted();
-}
+: impl(std::make_shared<Impl>(initial)) {}
 
 void BehaviorSubject::onNext(const var& next)
 {
@@ -52,6 +48,11 @@ Observable BehaviorSubject::getObservable() const
 	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
 }
 
+Observer BehaviorSubject::getObserver()
+{
+	return std::make_shared<Observer::Impl>(impl->subject.get_subscriber());
+}
+
 var BehaviorSubject::getValue() const
 {
 	return impl->subject.get_value();
@@ -64,12 +65,7 @@ struct PublishSubject::Impl
 };
 
 PublishSubject::PublishSubject()
-: impl(new Impl()) {}
-
-PublishSubject::~PublishSubject()
-{
-	onCompleted();
-}
+: impl(std::make_shared<Impl>()) {}
 
 void PublishSubject::onNext(const var& next)
 {
@@ -89,6 +85,11 @@ void PublishSubject::onCompleted()
 Observable PublishSubject::getObservable() const
 {
 	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
+}
+
+Observer PublishSubject::getObserver()
+{
+	return std::make_shared<Observer::Impl>(impl->subject.get_subscriber());
 }
 
 RXJUCE_NAMESPACE_END

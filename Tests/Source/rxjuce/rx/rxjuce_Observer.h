@@ -38,8 +38,9 @@ private:
 	std::shared_ptr<Impl> impl;
 	
 	friend class Observable;
+	friend class BehaviorSubject;
+	friend class PublishSubject;
 	Observer(const std::shared_ptr<Impl>&);
-	
 	
 	JUCE_LEAK_DETECTOR(Observer)
 };

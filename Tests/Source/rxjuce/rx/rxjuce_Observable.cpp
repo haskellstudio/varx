@@ -14,6 +14,7 @@
 
 #include "rxjuce_Observable_Impl.h"
 #include "rxjuce_Observer_Impl.h"
+#include "rxjuce_Scheduler_Impl.h"
 #include "rxjuce_Subscription_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
@@ -161,7 +162,7 @@ Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3
 	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6, o7);
 }
 
-Observable Observable::filter(const std::function<bool(const var&)>& predicate)
+Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
 {
 	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
 }
@@ -181,11 +182,28 @@ Observable Observable::switchOnNext() const
 }
 
 
+#pragma mark - Scheduling
+
+Observable Observable::observeOn(const Scheduler& scheduler) const
+{
+	return Impl::fromRxCpp(scheduler.impl->schedule(impl->wrapped));
+}
+
+
 #pragma mark - Misc
 
 Observable::operator var() const
 {
 	return VariantConverter<Observable>::toVar(*this);
+}
+
+juce::Array<var> Observable::toArray(const std::function<void(Error)>& onError) const
+{
+	Array<var> items;
+	impl->wrapped.as_blocking().subscribe([&](const var& item) {
+		items.add(item);
+	}, onError);
+	return items;
 }
 
 RXJUCE_NAMESPACE_END
