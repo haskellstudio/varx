@@ -46,7 +46,7 @@ namespace {
 			static const auto create = [](void* rl) {
 				// Not called from the JUCE message thread! Please report this as a bug.
 				jassert(MessageManager::getInstance()->isThisTheMessageThread());
-				static_cast<RunLoop_ptr*>(rl)->reset(new rxcpp::schedulers::run_loop);
+				static_cast<RunLoop_ptr*>(rl)->reset(new rxcpp::schedulers::run_loop());
 				return static_cast<void*>(nullptr);
 			};
 			

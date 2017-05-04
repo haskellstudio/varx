@@ -60,13 +60,13 @@ TEST_CASE("BehaviorSubject",
 		REQUIRE(completed);
 	}
 	
-	IT("calls onCompleted when destroying the subject") {
+	IT("does not call onCompleted when destroying the subject") {
 		auto subject = std::make_shared<BehaviorSubject>(3);
 		bool completed = false;
 		subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
 		subject.reset();
 		
-		REQUIRE(completed);
+		REQUIRE(!completed);
 	}
 	
 	IT("can call onCompleted multiple times") {
@@ -116,7 +116,7 @@ TEST_CASE("PublishSubject",
 		RxJUCERequireItems(items, 32.51, 3.0);
 	}
 	
-	IT("does not emit after destruction, even if there's still an Observer") {
+	IT("emits after destruction, if there's still an Observer pushing items") {
 		auto subject = std::make_shared<PublishSubject>();
 		auto observer = subject->getObserver();
 		
@@ -124,7 +124,7 @@ TEST_CASE("PublishSubject",
 		subject.reset();
 		observer.onNext(12345);
 		
-		REQUIRE(items.isEmpty());
+		RxJUCERequireItems(items, 12345);
 	}
 	
 	IT("emits an error when calling onError") {
@@ -146,27 +146,18 @@ TEST_CASE("PublishSubject",
 			REQUIRE(completed);
 		}
 		
-		IT("calls onCompleted when destroying the subject") {
+		IT("does not call onCompleted when destroying the subject") {
 			ScopedSubscription s = subject->getObservable().subscribe([](var){}, [&](){ completed = true; });
 			CHECK(!completed);
 			subject.reset();
 			
-			REQUIRE(completed);
-		}
-		
-		IT("calls onCompleted when the subject is already destroyed") {
-			auto o = subject->getObservable();
-			subject.reset();
-			ScopedSubscription s = o.subscribe([](var){}, [&](){ completed = true; });
-			
-			REQUIRE(completed);
+			REQUIRE(!completed);
 		}
 		
 		IT("can call onCompleted multiple times") {
 			subject->onCompleted();
 			subject->onCompleted();
 			subject->onCompleted();
-			subject.reset();
 		}
 	}
 	

@@ -23,8 +23,6 @@ RXJUCE_NAMESPACE_BEGIN
  
 	On subscribe, it begins by emitting the most recently emitted item. It then continues to emit any items that are passed to onNext.
  
-	The subject notifies onCompleted when it's destroyed.
- 
 	The BehaviorSubject can be a model value of your app: Initialize it to some default value when the app starts, use the subject's Observable to update the corresponding GUI components, and call getValue when you need to serialize the app state.
  */
 class BehaviorSubject
@@ -32,9 +30,6 @@ class BehaviorSubject
 public:
 	/** Creates a new instance with a given initial item */
 	explicit BehaviorSubject(const juce::var& initial);
-	
-	/** Calls BehaviorSubject::onCompleted. */
-	~BehaviorSubject();
 	
 	/**
 		Emits a new item. The Observable side emits this item synchronously.
@@ -75,17 +70,12 @@ private:
 
 /**
 	A subject that emits only those items that are passed to onNext *after the time of the subscription*.
- 
-	It notifies onCompleted when it's destroyed.
  */
 class PublishSubject
 {
 public:
 	/** Creates a new instance. */
 	PublishSubject();
-	
-	/** Calls PublishSubject::onCompleted. */
-	~PublishSubject();
 	
 	/**
 		Emits a new item. The Observable side emits this item synchronously.

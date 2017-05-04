@@ -46,7 +46,7 @@ public:
 	 
 		The returned Observable notifies the onComplete handler when it's destroyed. @see Observable::subscribe
 	 
-		When calling Value::setValue, it notifies asynchronously. So **the returned Observable will emits the new value asynchronously.** So if you call setValue immediately before destroying the returned Observable, the new value will not be emitted.
+		When calling Value::setValue, it notifies asynchronously. So **the returned Observable emits the new value asynchronously.** If you call setValue immediately before destroying the returned Observable, the new value will not be emitted.
 	 */
 	static Observable fromValue(juce::Value value);
 	
@@ -136,14 +136,14 @@ public:
 	Observable filter(const std::function<bool(const var&)>& predicate) const;
 	
 	/**
-		Transforms the items emitted by this Observable by applying a given function to each emitted item.
+		For each item emitted by this Observable, call the transform function with that item and emit the result.
 	 
 		You can return an Observable from the transform function. If you do, you can use Observable::switchOnNext.
 	 */
 	Observable map(Transform1 transform) const;
 	
 	/**
-		This **must only be called if this Observable emits Observables**.
+		​ **This must only be called if this Observable emits Observables**.
 	 
 		Returns an Observable that emits the items emitted by the Observables which this Observable emits.
 	 */
@@ -152,9 +152,17 @@ public:
 	
 #pragma mark - Scheduling
 	/**
-		Returns an Observable that will be observed on a specified scheduler, e.g. the JUCE Message Thread, or a background thread.
+		Returns an Observable that will be observed on a specified scheduler, for example the JUCE Message Thread or a background thread.
 	 
-		For example: When you apply Observable::map to the returned Observable, the map transform function will run on the specified scheduler.
+		When you apply Observable::map to the returned Observable, the map transform function will run on the specified scheduler.
+	 
+		For example:
+	 
+			Observable::range(Range<double>(1, 1000), 1)
+				.observeOn(Scheduler::newThread())
+				.map([](double d){ return std::sqrt(d); }) // Will run on a new thread
+				.observeOn(Scheduler::messageThread())
+				.subscribe([&](double squareRoot) { }); // Will be called on the message thread
 	 
 		@see Scheduler::messageThread, Scheduler::backgroundThread and Scheduler::newThread
 	 */
@@ -172,7 +180,9 @@ public:
 	/**
 		Blocks until the Observable has completed, then returns an Array of all emitted items.
 	 
-		**If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
+		Be careful when you use this on the message thread: If the Observable needs to process something *asynchronously* on the message thread, calling this will deadlock.
+	 
+		​ **If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
 	 */
 	juce::Array<var> toArray(const std::function<void(Error)>& onError = TerminateOnError) const;
 	

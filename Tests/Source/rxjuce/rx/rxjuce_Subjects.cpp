@@ -28,11 +28,6 @@ struct BehaviorSubject::Impl
 BehaviorSubject::BehaviorSubject(const var& initial)
 : impl(std::make_shared<Impl>(initial)) {}
 
-BehaviorSubject::~BehaviorSubject()
-{
-	onCompleted();
-}
-
 void BehaviorSubject::onNext(const var& next)
 {
 	impl->subject.get_subscriber().on_next(next);
@@ -71,11 +66,6 @@ struct PublishSubject::Impl
 
 PublishSubject::PublishSubject()
 : impl(std::make_shared<Impl>()) {}
-
-PublishSubject::~PublishSubject()
-{
-	onCompleted();
-}
 
 void PublishSubject::onNext(const var& next)
 {
