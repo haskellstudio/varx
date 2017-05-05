@@ -29,7 +29,14 @@ namespace {
 		const rxjuce::Observable observable;
 	};
 	
-	const std::string ObservableUnwrappingError("Error unwrapping Observable. This is likely because you called switchOnNext on an Observable that doesn't emit Observable items.");
+	const std::runtime_error ObservableUnwrappingError("Error unwrapping Observable. This is likely because you called switchOnNext on an Observable that doesn't emit Observable items.");
+	
+	const std::runtime_error InvalidRangeError("Invalid range.");
+	
+	std::chrono::milliseconds durationFromRelativeTime(const juce::RelativeTime& relativeTime)
+	{
+		return std::chrono::milliseconds(relativeTime.inMilliseconds());
+	}
 }
 
 namespace juce {
@@ -44,7 +51,7 @@ namespace juce {
 			if (auto wrapper = dynamic_cast<ReferenceCountedWrapper *>(ptr.get()))
 				return wrapper->observable;
 			else
-				throw std::runtime_error(ObservableUnwrappingError);
+				throw ObservableUnwrappingError;
 		}
 		
 		static var toVar(const rxjuce::Observable& observable)
@@ -79,21 +86,33 @@ Observable Observable::fromValue(Value value)
 	return Impl::fromValue(value);
 }
 
+Observable Observable::interval(const juce::RelativeTime& period)
+{
+	auto o = rxcpp::observable<>::interval(durationFromRelativeTime(period));
+	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
+}
+
 Observable Observable::just(const var& value)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::just(value));
 }
 
-Observable Observable::range(const juce::Range<int>& range, int step)
+Observable Observable::range(int first, int last, unsigned int step)
 {
-	auto o = rxcpp::observable<>::range<int>(range.getStart(), range.getEnd(), step);
+	if (first > last)
+		throw InvalidRangeError;
+	
+	auto o = rxcpp::observable<>::range<int>(first, last, step);
 	
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
 }
 
-Observable Observable::range(const juce::Range<double>& range, int step)
+Observable Observable::range(double first, double last, unsigned int step)
 {
-	auto o = rxcpp::observable<>::range<double>(range.getStart(), range.getEnd(), step);
+	if (first > last)
+		throw InvalidRangeError;
+	
+	auto o = rxcpp::observable<>::range<double>(first, last, step);
 	
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<double>::toVar));
 }
@@ -127,39 +146,67 @@ Subscription Observable::subscribe(const std::function<void(const var&)>& onNext
 
 #pragma mark - Operators
 
-Observable Observable::combineLatest(Observable o1, Transform2& transform) const
+Observable Observable::combineLatest(Observable o1, Function2& f) const
 {
-	return impl->combineLatest(transform, o1);
+	return impl->combineLatest(f, o1);
+}
+Observable Observable::combineLatest(Observable o1, Observable o2, Function3 f) const
+{
+	return impl->combineLatest(f, o1, o2);
+}
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Function4 f) const
+{
+	return impl->combineLatest(f, o1, o2, o3);
+}
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const
+{
+	return impl->combineLatest(f, o1, o2, o3, o4);
+}
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const
+{
+	return impl->combineLatest(f, o1, o2, o3, o4, o5);
+}
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const
+{
+	return impl->combineLatest(f, o1, o2, o3, o4, o5, o6);
+}
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const
+{
+	return impl->combineLatest(f, o1, o2, o3, o4, o5, o6, o7);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Transform3 transform) const
+Observable Observable::concat(Observable o1) const
 {
-	return impl->combineLatest(transform, o1, o2);
+	return impl->concat(o1);
+}
+Observable Observable::concat(Observable o1, Observable o2) const
+{
+	return impl->concat(o1, o2);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3) const
+{
+	return impl->concat(o1, o2, o3);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4) const
+{
+	return impl->concat(o1, o2, o3, o4);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const
+{
+	return impl->concat(o1, o2, o3, o4, o5);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const
+{
+	return impl->concat(o1, o2, o3, o4, o5, o6);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const
+{
+	return impl->concat(o1, o2, o3, o4, o5, o6, o7);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform) const
+Observable Observable::debounce(const juce::RelativeTime& period) const
 {
-	return impl->combineLatest(transform, o1, o2, o3);
-}
-
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform) const
-{
-	return impl->combineLatest(transform, o1, o2, o3, o4);
-}
-
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const
-{
-	return impl->combineLatest(transform, o1, o2, o3, o4, o5);
-}
-
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const
-{
-	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6);
-}
-
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const
-{
-	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6, o7);
+	return Impl::fromRxCpp(impl->wrapped.debounce(durationFromRelativeTime(period)));
 }
 
 Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
@@ -167,9 +214,55 @@ Observable Observable::filter(const std::function<bool(const var&)>& predicate) 
 	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
 }
 
-Observable Observable::map(Transform1 transform) const
+Observable Observable::flatMap(const std::function<Observable(const var&)>& f) const
 {
-	return Impl::fromRxCpp(impl->wrapped.map(transform));
+	return Impl::fromRxCpp(impl->wrapped.flat_map([f](const var& value) {
+		return f(value).impl->wrapped;
+	}));
+}
+
+Observable Observable::map(Function1 f) const
+{
+	return Impl::fromRxCpp(impl->wrapped.map(f));
+}
+
+Observable Observable::merge(Observable o1) const
+{
+	return impl->merge(o1);
+}
+Observable Observable::merge(Observable o1, Observable o2) const
+{
+	return impl->merge(o1, o2);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3) const
+{
+	return impl->merge(o1, o2, o3);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4) const
+{
+	return impl->merge(o1, o2, o3, o4);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const
+{
+	return impl->merge(o1, o2, o3, o4, o5);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const
+{
+	return impl->merge(o1, o2, o3, o4, o5, o6);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const
+{
+	return impl->merge(o1, o2, o3, o4, o5, o6, o7);
+}
+
+Observable Observable::sample(const juce::RelativeTime& interval)
+{
+	return Impl::fromRxCpp(impl->wrapped.sample_with_time(durationFromRelativeTime(interval)));
+}
+
+Observable Observable::scan(const var& startValue, Function2 f) const
+{
+	return Impl::fromRxCpp(impl->wrapped.scan(startValue, f));
 }
 
 Observable Observable::switchOnNext() const
@@ -179,6 +272,11 @@ Observable Observable::switchOnNext() const
 	});
 	
 	return Impl::fromRxCpp(unwrapped.switch_on_next());
+}
+
+Observable Observable::take(unsigned int numItems) const
+{
+	return Impl::fromRxCpp(impl->wrapped.take(numItems));
 }
 
 

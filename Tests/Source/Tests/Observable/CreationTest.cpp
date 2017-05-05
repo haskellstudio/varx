@@ -13,6 +13,7 @@
 #include "rxjuce_Observable.h"
 #include "rxjuce_Observer.h"
 
+using Catch::Contains;
 
 TEST_CASE("Observable::just",
 		  "[Observable][Observable::just]")
@@ -41,23 +42,22 @@ TEST_CASE("Observable::range",
 	Array<var> items;
 	
 	IT("emits integer numbers with an integer range") {
-		RxJUCECollectItems(Observable::range(Range<int>(3, 7), 3), items);
+		RxJUCECollectItems(Observable::range(3, 7, 3), items);
 		RxJUCERequireItems(items, 3, 6, 7);
 	}
 	
 	IT("emits double numbers with a double range") {
-		RxJUCECollectItems(Observable::range(Range<double>(17.5, 22.8), 2), items);
+		RxJUCECollectItems(Observable::range(17.5, 22.8, 2), items);
 		RxJUCERequireItems(items, 17.5, 19.5, 21.5, 22.8);
 	}
 	
 	IT("emits just start if start == end") {
-		RxJUCECollectItems(Observable::range(Range<int>(10, 10), 1), items);
+		RxJUCECollectItems(Observable::range(10, 10), items);
 		RxJUCERequireItems(items, 10);
 	}
 	
-	IT("emits just start if start > end") {
-		RxJUCECollectItems(Observable::range(Range<int>(10, 9), 1), items);
-		RxJUCERequireItems(items, 10);
+	IT("throws if start > end") {
+		REQUIRE_THROWS_WITH(Observable::range(10, 9), Contains("Invalid range"));
 	}
 }
 
@@ -352,5 +352,29 @@ TEST_CASE("Observable::create",
 		// After the copy is destroyed, there should be just 1 (from the pointer)
 		copy.reset();
 		REQUIRE(pointer->getReferenceCount() == 1);
+	}
+}
+
+TEST_CASE("Observable::interval",
+		  "[Observable][Observable::interval]")
+{
+	IT("can create an interval below one second") {
+		auto o = Observable::interval(RelativeTime::seconds(0.003)).take(3);
+		auto lastTime = Time::getCurrentTime();
+		Array<RelativeTime> intervals;
+		Array<var> ints;
+		o.subscribe([&](int i) {
+			auto time = Time::getCurrentTime();
+			intervals.add(time - lastTime);
+			lastTime = time;
+			ints.add(i);
+		});
+		
+		CHECK(intervals.size() == 3);
+		REQUIRE(intervals[0].inSeconds() == Approx(0).epsilon(0.01));
+		REQUIRE(intervals[1].inSeconds() == Approx(0.003).epsilon(0.001));
+		REQUIRE(intervals[2].inSeconds() == Approx(0.003).epsilon(0.001));
+		
+		RxJUCERequireItems(ints, 1, 2, 3);
 	}
 }

@@ -71,14 +71,29 @@ TEST_CASE("Observable::combineLatest",
 }
 
 
+TEST_CASE("Observable::concat",
+		  "[Observable][Observable::concat]")
+{
+	Array<var> items;
+	
+	IT("concatenates the values emitted by the source Observables") {
+		auto observable = Observable::from({"Hello", "World"});
+		auto another = Observable::from({1.5, 2.32, 5.6});
+		RxJUCECollectItems(observable.concat(another), items);
+		
+		RxJUCERequireItems(items, var("Hello"), var("World"), var(1.5), var(2.32), var(5.6));
+	}
+}
+
+
 TEST_CASE("Observable::filter",
 		  "[Observable][Observable::filter]")
 {
 	Array<var> items;
-	auto source = Observable::range(Range<double>(4, 9), 1);
+	auto source = Observable::range(4, 9, 1);
 	
 	IT("filters ints") {
-		auto source = Observable::range(Range<int>(4, 9), 1);
+		auto source = Observable::range(4, 9, 1);
 		auto filtered = source.filter([](int i) {
 			return (i % 2 == 0);
 		});
@@ -109,11 +124,27 @@ TEST_CASE("Observable::filter",
 }
 
 
+TEST_CASE("Observable::flatMap",
+		  "[Observable][Observable::flatMap]")
+{
+	Array<var> items;
+	
+	IT("merges the values emitted by the returned Observables") {
+		auto o = Observable::from({"Hello", "World"}).flatMap([](String s) {
+			return Observable::from({s.toLowerCase(), s.toUpperCase() + "!"});
+		});
+		RxJUCECollectItems(o, items);
+		
+		RxJUCERequireItems(items, "hello", "HELLO!", "world", "WORLD!");
+	}
+}
+
+
 TEST_CASE("Observable::map",
 		  "[Observable][Observable::map]")
 {
 	Array<var> items;
-	auto source = Observable::range(Range<double>(4, 7), 2);
+	auto source = Observable::range(4, 7, 2);
 	
 	IT("emits values synchronously") {
 		auto mapped = source.map([](int i) { return i * 1.5; });
@@ -175,5 +206,21 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		auto subscription = o.subscribe([](var) {}, onError);
 		
 		REQUIRE(onErrorCalled);
+	}
+}
+
+
+TEST_CASE("Observable::scan",
+		  "[Observable][Observable::scan]")
+{
+	Array<var> items;
+	
+	IT("applies the transform function to the inputs") {
+		auto o = Observable::range(1, 5).scan(10, [](int accum, int currentValue) {
+			return accum + currentValue;
+		});
+		RxJUCECollectItems(o, items);
+		
+		RxJUCERequireItems(items, 11, 13, 16, 20, 25);
 	}
 }
