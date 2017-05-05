@@ -151,6 +151,21 @@ public:
 	 */
 	Observable map(Transform1 transform) const;
 	
+	///@{
+	/**
+		Merges the emitted items of this observable and o1, o2, … into one Observable. The items are interleaved, depending on when the source Observables emit items.
+
+		An error in one of the source Observables notifies the result Observable's `onError` immediately.
+	 */
+	Observable merge(Observable o1) const;
+	Observable merge(Observable o1, Observable o2) const;
+	Observable merge(Observable o1, Observable o2, Observable o3) const;
+	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4) const;
+	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const;
+	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const;
+	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const;
+	///@}
+	
 	/**
 		​ **This must only be called if this Observable emits Observables**.
 	 

@@ -186,6 +186,35 @@ Observable Observable::map(Transform1 transform) const
 	return Impl::fromRxCpp(impl->wrapped.map(transform));
 }
 
+Observable Observable::merge(Observable o1) const
+{
+	return impl->merge(o1);
+}
+Observable Observable::merge(Observable o1, Observable o2) const
+{
+	return impl->merge(o1, o2);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3) const
+{
+	return impl->merge(o1, o2, o3);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4) const
+{
+	return impl->merge(o1, o2, o3, o4);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const
+{
+	return impl->merge(o1, o2, o3, o4, o5);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const
+{
+	return impl->merge(o1, o2, o3, o4, o5, o6);
+}
+Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const
+{
+	return impl->merge(o1, o2, o3, o4, o5, o6, o7);
+}
+
 Observable Observable::switchOnNext() const
 {
 	rxcpp::observable<rxcpp::observable<var>> unwrapped = impl->wrapped.map([](var observable) {

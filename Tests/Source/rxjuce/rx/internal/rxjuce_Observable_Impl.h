@@ -30,9 +30,15 @@ public:
 	static std::shared_ptr<Impl> fromValue(const Value& value);
 	
 	template<typename Transform, typename... Os>
-	std::shared_ptr<Impl> combineLatest(Transform&& transform, Os... observables)
+	std::shared_ptr<Impl> combineLatest(Transform&& transform, Os&&... observables)
 	{
 		return fromRxCpp(wrapped.combine_latest(transform, observables.impl->wrapped...));
+	}
+	
+	template<typename... Os>
+	std::shared_ptr<Impl> merge(Os&&... observables)
+	{
+		return fromRxCpp(wrapped.merge(observables.impl->wrapped...));
 	}
 	
 	rxcpp::observable<var> wrapped;
