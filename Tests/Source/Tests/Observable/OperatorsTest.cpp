@@ -109,6 +109,22 @@ TEST_CASE("Observable::filter",
 }
 
 
+TEST_CASE("Observable::flatMap",
+		  "[Observable][Observable::flatMap]")
+{
+	Array<var> items;
+	
+	IT("merges the values emitted by the returned Observables") {
+		auto o = Observable::from({"Hello", "World"}).flatMap([](String s) {
+			return Observable::from({s.toLowerCase(), s.toUpperCase() + "!"});
+		});
+		RxJUCECollectItems(o, items);
+		
+		RxJUCERequireItems(items, "hello", "HELLO!", "world", "WORLD!");
+	}
+}
+
+
 TEST_CASE("Observable::map",
 		  "[Observable][Observable::map]")
 {

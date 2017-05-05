@@ -145,6 +145,21 @@ public:
 	Observable filter(const std::function<bool(const var&)>& predicate) const;
 	
 	/**
+		For each emitted item, calls `f` and subscribes to the Observable returned from `f`. The emitted items from all these returned Observables are *merged* (so they interleave).
+	 
+		This Observable:
+			
+			Observable::from({"Hello", "World"}).flatMap([](String s) {
+				return Observable::from({s.toLowerCase(), s.toUpperCase() + "!"});
+			});
+	 
+		Will emit the items: `"hello"`, `"HELLO!"`, `"world"` and `"WORLD!"`.
+	 
+		@see Observable::merge, Observable::switchOnNext.
+	 */
+	Observable flatMap(const std::function<Observable(const var&)>& f) const;
+	
+	/**
 		For each item emitted by this Observable, call the function with that item and emit the result.
 	 
 		You can return an Observable from the function. If you do, you can use Observable::switchOnNext.

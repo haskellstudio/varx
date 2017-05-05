@@ -181,6 +181,13 @@ Observable Observable::filter(const std::function<bool(const var&)>& predicate) 
 	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
 }
 
+Observable Observable::flatMap(const std::function<Observable(const var&)>& f) const
+{
+	return Impl::fromRxCpp(impl->wrapped.flat_map([f](const var& value) {
+		return f(value).impl->wrapped;
+	}));
+}
+
 Observable Observable::map(Function1 f) const
 {
 	return Impl::fromRxCpp(impl->wrapped.map(f));
