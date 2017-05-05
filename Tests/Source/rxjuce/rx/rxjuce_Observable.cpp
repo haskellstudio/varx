@@ -255,6 +255,11 @@ Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observ
 	return impl->merge(o1, o2, o3, o4, o5, o6, o7);
 }
 
+Observable Observable::sample(const juce::RelativeTime& interval)
+{
+	return Impl::fromRxCpp(impl->wrapped.sample_with_time(durationFromRelativeTime(interval)));
+}
+
 Observable Observable::scan(const var& startValue, Function2 f) const
 {
 	return Impl::fromRxCpp(impl->wrapped.scan(startValue, f));

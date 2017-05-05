@@ -51,11 +51,11 @@ public:
 	static Observable fromValue(juce::Value value);
 	
 	/**
-		Returns an Observable that emits one item every `period`, starting at the time of subscription (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on. The interval has millisecond resolution.
+		Returns an Observable that emits one item every `interval`, starting at the time of subscription (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on. The interval has millisecond resolution.
 	 
 		The Observable emits endlessly, but you can use Observable::take to get a finite number of items (for example).
 	 */
-	static Observable interval(const juce::RelativeTime& period);
+	static Observable interval(const juce::RelativeTime& interval);
 	
 	/**
 		Creates an Observable which emits just a single item.
@@ -143,7 +143,7 @@ public:
 	/**
 		Returns an Observable that first emits the items from this Observable, then from o1, then from o2, and so on.
 	 
-		It only subscribes to o1 when this Observable has completed. It only subscribes to o2 when o1 has completed, and so on.
+		It only subscribes to o1 when this Observable has completed. And only subscribes to o2 when o1 has completed, and so on.
 	 */
 	Observable concat(Observable o1) const;
 	Observable concat(Observable o1, Observable o2) const;
@@ -155,13 +155,13 @@ public:
 	///@}
 	
 	/**
-		Returns an Observable which emits if `period` has passed without this Observable emitting an item. The returned Observable emits the latest item from this Observable.
+		Returns an Observable which emits if `interval` has passed without this Observable emitting an item. The returned Observable emits the latest item from this Observable.
 	 
 		It's like the instant search in a search engine: Search suggestions are only loaded if the user hasn't pressed a key for a short period of time.
 	 
 		The debounce has millisecond resolution.
 	 */
-	Observable debounce(const juce::RelativeTime& period) const;
+	Observable debounce(const juce::RelativeTime& interval) const;
 	
 	/**
 		Returns an Observable that emits only those items from this Observable that pass a predicate function.
@@ -186,7 +186,7 @@ public:
 	/**
 		For each item emitted by this Observable, call the function with that item and emit the result.
 	 
-		You can return an Observable from the function. If you do, you can use Observable::switchOnNext.
+		If `f` returns an Observable, you can use Observable::switchOnNext afterwards.
 	 */
 	Observable map(Function1 f) const;
 	
@@ -204,6 +204,15 @@ public:
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const;
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const;
 	///@}
+	
+	/**
+		Returns an Observable which checks every `interval` milliseconds whether this Observable has emitted any new items. If so, the returned Observable emits the latest item from this Observable.
+	 
+		For example, this is useful when an Observable emits items very rapidly, but you only want to update a GUI component 25 times per second to reduce CPU load.
+	 
+		The interval has millisecond resolution.
+	 */
+	Observable sample(const juce::RelativeTime& interval);
 	
 	/**
 		Calls a function `f` with the given `startValue` and the first item emitted by this Observable. The value returned from `f` is remembered. When the second item is emitted, `f` is called with the remembered value (called the *accumulator*) and the second emitted item. The returned item is remembered, until the third item is emitted, and so on.
