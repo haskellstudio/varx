@@ -52,12 +52,12 @@ TEST_CASE("Observable::range",
 	}
 	
 	IT("emits just start if start == end") {
-		RxJUCECollectItems(Observable::range(10, 10, 1), items);
+		RxJUCECollectItems(Observable::range(10, 10), items);
 		RxJUCERequireItems(items, 10);
 	}
 	
 	IT("throws if start > end") {
-		REQUIRE_THROWS_WITH(Observable::range(10, 9, 1), Contains("Invalid range"));
+		REQUIRE_THROWS_WITH(Observable::range(10, 9), Contains("Invalid range"));
 	}
 }
 

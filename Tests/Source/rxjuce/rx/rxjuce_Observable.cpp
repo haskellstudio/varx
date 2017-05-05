@@ -141,39 +141,39 @@ Subscription Observable::subscribe(const std::function<void(const var&)>& onNext
 
 #pragma mark - Operators
 
-Observable Observable::combineLatest(Observable o1, Transform2& transform) const
+Observable Observable::combineLatest(Observable o1, Function2& f) const
 {
-	return impl->combineLatest(transform, o1);
+	return impl->combineLatest(f, o1);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Transform3 transform) const
+Observable Observable::combineLatest(Observable o1, Observable o2, Function3 f) const
 {
-	return impl->combineLatest(transform, o1, o2);
+	return impl->combineLatest(f, o1, o2);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform) const
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Function4 f) const
 {
-	return impl->combineLatest(transform, o1, o2, o3);
+	return impl->combineLatest(f, o1, o2, o3);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform) const
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const
 {
-	return impl->combineLatest(transform, o1, o2, o3, o4);
+	return impl->combineLatest(f, o1, o2, o3, o4);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const
 {
-	return impl->combineLatest(transform, o1, o2, o3, o4, o5);
+	return impl->combineLatest(f, o1, o2, o3, o4, o5);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const
 {
-	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6);
+	return impl->combineLatest(f, o1, o2, o3, o4, o5, o6);
 }
 
-Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const
+Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const
 {
-	return impl->combineLatest(transform, o1, o2, o3, o4, o5, o6, o7);
+	return impl->combineLatest(f, o1, o2, o3, o4, o5, o6, o7);
 }
 
 Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
@@ -181,9 +181,9 @@ Observable Observable::filter(const std::function<bool(const var&)>& predicate) 
 	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
 }
 
-Observable Observable::map(Transform1 transform) const
+Observable Observable::map(Function1 f) const
 {
-	return Impl::fromRxCpp(impl->wrapped.map(transform));
+	return Impl::fromRxCpp(impl->wrapped.map(f));
 }
 
 Observable Observable::merge(Observable o1) const
@@ -213,6 +213,11 @@ Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observ
 Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const
 {
 	return impl->merge(o1, o2, o3, o4, o5, o6, o7);
+}
+
+Observable Observable::scan(const var& startValue, Function2 f) const
+{
+	return Impl::fromRxCpp(impl->wrapped.scan(startValue, f));
 }
 
 Observable Observable::switchOnNext() const

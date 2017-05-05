@@ -177,3 +177,19 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		REQUIRE(onErrorCalled);
 	}
 }
+
+
+TEST_CASE("Observable::scan",
+		  "[Observable][Observable::scan]")
+{
+	Array<var> items;
+	
+	IT("applies the transform function to the inputs") {
+		auto o = Observable::range(1, 5).scan(10, [](int accum, int currentValue) {
+			return accum + currentValue;
+		});
+		RxJUCECollectItems(o, items);
+		
+		RxJUCERequireItems(items, 11, 13, 16, 20, 25);
+	}
+}

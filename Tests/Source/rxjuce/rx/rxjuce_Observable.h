@@ -75,7 +75,7 @@ public:
 			 Observable::range(3, 7, 3) // {3, 6, 7}
 			 Observable::range(17.5, 22.8, 2) // {17.5, 19.5, 21.5, 22.8}
 	 */
-	static Observable range(int first, int last, unsigned int step);
+	static Observable range(int first, int last, unsigned int step = 1);
 	static Observable range(double first, double last, unsigned int step);
 	///@}
 	
@@ -113,16 +113,16 @@ public:
 #pragma mark - Transform Functions
 	///@{
 	/**
-		A function which takes one or more vars as input, and outputs a var.
+		A `FunctionN` is a function that takes `N` var arguments, and returns a var.
 	 */
-	typedef const std::function<var(const var&)>& Transform1;
-	typedef const std::function<var(const var&, const var&)>& Transform2;
-	typedef const std::function<var(const var&, const var&, const var&)>& Transform3;
-	typedef const std::function<var(const var&, const var&, const var&, const var&)>& Transform4;
-	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&)>& Transform5;
-	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&)>& Transform6;
-	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform7;
-	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Transform8;
+	typedef const std::function<var(const var&)>& Function1;
+	typedef const std::function<var(const var&, const var&)>& Function2;
+	typedef const std::function<var(const var&, const var&, const var&)>& Function3;
+	typedef const std::function<var(const var&, const var&, const var&, const var&)>& Function4;
+	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&)>& Function5;
+	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&)>& Function6;
+	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Function7;
+	typedef const std::function<var(const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&)>& Function8;
 	///@}
 	
 #pragma mark - Operators
@@ -130,13 +130,13 @@ public:
 	/**
 		When an item is emitted by either this Observable or o1, o2, …, combines the latest item emitted by each Observable via the given function and emits the result of this function.
 	 */
-	Observable combineLatest(Observable o1, Transform2 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Transform3 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Transform4 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Transform5 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Transform6 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Transform7 transform) const;
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Transform8 transform) const;
+	Observable combineLatest(Observable o1, Function2 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Function3 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Function4 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const;
 	///@}
 	
 	/**
@@ -145,11 +145,11 @@ public:
 	Observable filter(const std::function<bool(const var&)>& predicate) const;
 	
 	/**
-		For each item emitted by this Observable, call the transform function with that item and emit the result.
+		For each item emitted by this Observable, call the function with that item and emit the result.
 	 
-		You can return an Observable from the transform function. If you do, you can use Observable::switchOnNext.
+		You can return an Observable from the function. If you do, you can use Observable::switchOnNext.
 	 */
-	Observable map(Transform1 transform) const;
+	Observable map(Function1 f) const;
 	
 	///@{
 	/**
@@ -165,6 +165,13 @@ public:
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const;
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const;
 	///@}
+	
+	/**
+		Calls a function `f` with the given `startValue` and the first item emitted by this Observable. The value returned from `f` is remembered. When the second item is emitted, `f` is called with the remembered value (called the *accumulator*) and the second emitted item. The returned item is remembered, until the third item is emitted, and so on.
+		
+		The first parameter to `f` is the accumulator, the second is the current item.
+	 */
+	Observable scan(const var& startValue, Function2 f) const;
 	
 	/**
 		​ **This must only be called if this Observable emits Observables**.
@@ -183,7 +190,7 @@ public:
 	/**
 		Returns an Observable that will be observed on a specified scheduler, for example the JUCE Message Thread or a background thread.
 	 
-		When you apply Observable::map to the returned Observable, the map transform function will run on the specified scheduler.
+		When you apply Observable::map to the returned Observable, the map function will run on the specified scheduler.
 	 
 		For example:
 	 
@@ -202,7 +209,7 @@ public:
 	/**
 		Wraps the Observable into a var.
 	 
-		This allows you to return an Observable from a transform function, e.g. when using Observable::map.
+		This allows you to return an Observable from a function, e.g. when using Observable::map.
 	 */
 	operator var() const;
 	
