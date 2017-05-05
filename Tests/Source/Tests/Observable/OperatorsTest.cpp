@@ -75,10 +75,10 @@ TEST_CASE("Observable::filter",
 		  "[Observable][Observable::filter]")
 {
 	Array<var> items;
-	auto source = Observable::range(Range<double>(4, 9), 1);
+	auto source = Observable::range(4, 9, 1);
 	
 	IT("filters ints") {
-		auto source = Observable::range(Range<int>(4, 9), 1);
+		auto source = Observable::range(4, 9, 1);
 		auto filtered = source.filter([](int i) {
 			return (i % 2 == 0);
 		});
@@ -113,7 +113,7 @@ TEST_CASE("Observable::map",
 		  "[Observable][Observable::map]")
 {
 	Array<var> items;
-	auto source = Observable::range(Range<double>(4, 7), 2);
+	auto source = Observable::range(4, 7, 2);
 	
 	IT("emits values synchronously") {
 		auto mapped = source.map([](int i) { return i * 1.5; });

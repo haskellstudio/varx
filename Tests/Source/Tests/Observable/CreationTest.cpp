@@ -13,6 +13,7 @@
 #include "rxjuce_Observable.h"
 #include "rxjuce_Observer.h"
 
+using Catch::Contains;
 
 TEST_CASE("Observable::just",
 		  "[Observable][Observable::just]")
@@ -41,23 +42,22 @@ TEST_CASE("Observable::range",
 	Array<var> items;
 	
 	IT("emits integer numbers with an integer range") {
-		RxJUCECollectItems(Observable::range(Range<int>(3, 7), 3), items);
+		RxJUCECollectItems(Observable::range(3, 7, 3), items);
 		RxJUCERequireItems(items, 3, 6, 7);
 	}
 	
 	IT("emits double numbers with a double range") {
-		RxJUCECollectItems(Observable::range(Range<double>(17.5, 22.8), 2), items);
+		RxJUCECollectItems(Observable::range(17.5, 22.8, 2), items);
 		RxJUCERequireItems(items, 17.5, 19.5, 21.5, 22.8);
 	}
 	
 	IT("emits just start if start == end") {
-		RxJUCECollectItems(Observable::range(Range<int>(10, 10), 1), items);
+		RxJUCECollectItems(Observable::range(10, 10, 1), items);
 		RxJUCERequireItems(items, 10);
 	}
 	
-	IT("emits just start if start > end") {
-		RxJUCECollectItems(Observable::range(Range<int>(10, 9), 1), items);
-		RxJUCERequireItems(items, 10);
+	IT("throws if start > end") {
+		REQUIRE_THROWS_WITH(Observable::range(10, 9, 1), Contains("Invalid range"));
 	}
 }
 

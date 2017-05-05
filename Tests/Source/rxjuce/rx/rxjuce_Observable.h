@@ -59,15 +59,17 @@ public:
 	
 	///@{
 	/**
-		Creates an Observable which emits values from a given range, starting at range.getStart() to (and including) range.getEnd().
+		Creates an Observable which emits values from a given range, starting at `first` to (and including) `last`.
+	 
+		​ **Throws an exception if first > last.**
 	 
 		For example:
 	 
-			 Observable::range(Range<int>(3, 7), 3) // {3, 6, 7}
-			 Observable::range(Range<double>(17.5, 22.8), 2) // {17.5, 19.5, 21.5, 22.8}
+			 Observable::range(3, 7, 3) // {3, 6, 7}
+			 Observable::range(17.5, 22.8, 2) // {17.5, 19.5, 21.5, 22.8}
 	 */
-	static Observable range(const juce::Range<int>& range, int step);
-	static Observable range(const juce::Range<double>& range, int step);
+	static Observable range(int first, int last, int step);
+	static Observable range(double first, double last, int step);
 	///@}
 	
 	/**

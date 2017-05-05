@@ -29,7 +29,9 @@ namespace {
 		const rxjuce::Observable observable;
 	};
 	
-	const std::string ObservableUnwrappingError("Error unwrapping Observable. This is likely because you called switchOnNext on an Observable that doesn't emit Observable items.");
+	const std::runtime_error ObservableUnwrappingError("Error unwrapping Observable. This is likely because you called switchOnNext on an Observable that doesn't emit Observable items.");
+	
+	const std::runtime_error InvalidRangeError("Invalid range.");
 }
 
 namespace juce {
@@ -44,7 +46,7 @@ namespace juce {
 			if (auto wrapper = dynamic_cast<ReferenceCountedWrapper *>(ptr.get()))
 				return wrapper->observable;
 			else
-				throw std::runtime_error(ObservableUnwrappingError);
+				throw ObservableUnwrappingError;
 		}
 		
 		static var toVar(const rxjuce::Observable& observable)
@@ -84,16 +86,22 @@ Observable Observable::just(const var& value)
 	return Impl::fromRxCpp(rxcpp::observable<>::just(value));
 }
 
-Observable Observable::range(const juce::Range<int>& range, int step)
+Observable Observable::range(int first, int last, int step)
 {
-	auto o = rxcpp::observable<>::range<int>(range.getStart(), range.getEnd(), step);
+	if (first > last)
+		throw InvalidRangeError;
+	
+	auto o = rxcpp::observable<>::range<int>(first, last, step);
 	
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
 }
 
-Observable Observable::range(const juce::Range<double>& range, int step)
+Observable Observable::range(double first, double last, int step)
 {
-	auto o = rxcpp::observable<>::range<double>(range.getStart(), range.getEnd(), step);
+	if (first > last)
+		throw InvalidRangeError;
+	
+	auto o = rxcpp::observable<>::range<double>(first, last, step);
 	
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<double>::toVar));
 }
