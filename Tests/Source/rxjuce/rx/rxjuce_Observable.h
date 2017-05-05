@@ -155,6 +155,15 @@ public:
 	///@}
 	
 	/**
+		Returns an Observable which emits if `period` has passed without this Observable emitting an item. The returned Observable emits the latest item from this Observable.
+	 
+		It's like the instant search in a search engine: Search suggestions are only loaded if the user hasn't pressed a key for a short period of time.
+	 
+		The debounce has millisecond resolution.
+	 */
+	Observable debounce(const juce::RelativeTime& period) const;
+	
+	/**
 		Returns an Observable that emits only those items from this Observable that pass a predicate function.
 	 */
 	Observable filter(const std::function<bool(const var&)>& predicate) const;

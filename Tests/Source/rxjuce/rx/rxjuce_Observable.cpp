@@ -32,6 +32,11 @@ namespace {
 	const std::runtime_error ObservableUnwrappingError("Error unwrapping Observable. This is likely because you called switchOnNext on an Observable that doesn't emit Observable items.");
 	
 	const std::runtime_error InvalidRangeError("Invalid range.");
+	
+	std::chrono::milliseconds durationFromRelativeTime(const juce::RelativeTime& relativeTime)
+	{
+		return std::chrono::milliseconds(relativeTime.inMilliseconds());
+	}
 }
 
 namespace juce {
@@ -83,7 +88,7 @@ Observable Observable::fromValue(Value value)
 
 Observable Observable::interval(const juce::RelativeTime& period)
 {
-	auto o = rxcpp::observable<>::interval(std::chrono::milliseconds(period.inMilliseconds()));
+	auto o = rxcpp::observable<>::interval(durationFromRelativeTime(period));
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
 }
 
@@ -197,6 +202,11 @@ Observable Observable::concat(Observable o1, Observable o2, Observable o3, Obser
 Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const
 {
 	return impl->concat(o1, o2, o3, o4, o5, o6, o7);
+}
+
+Observable Observable::debounce(const juce::RelativeTime& period) const
+{
+	return Impl::fromRxCpp(impl->wrapped.debounce(durationFromRelativeTime(period)));
 }
 
 Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
