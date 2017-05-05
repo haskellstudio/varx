@@ -51,9 +51,11 @@ public:
 	static Observable fromValue(juce::Value value);
 	
 	/**
-		Returns an Observable that emits one item every `interval`, starting at the time of subscription (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on. The interval has millisecond resolution.
+		Returns an Observable that emits one item every `interval`, starting at the time of subscription (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on.
 	 
 		The Observable emits endlessly, but you can use Observable::take to get a finite number of items (for example).
+	 
+		The interval has millisecond resolution.
 	 */
 	static Observable interval(const juce::RelativeTime& interval);
 	
@@ -159,7 +161,7 @@ public:
 	 
 		It's like the instant search in a search engine: Search suggestions are only loaded if the user hasn't pressed a key for a short period of time.
 	 
-		The debounce has millisecond resolution.
+		The interval has millisecond resolution.
 	 */
 	Observable debounce(const juce::RelativeTime& interval) const;
 	

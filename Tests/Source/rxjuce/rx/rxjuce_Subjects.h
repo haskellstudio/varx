@@ -49,7 +49,7 @@ public:
 	/**
 		Returns an Observable that emits an item whenever onNext is called on this subject.
 	 
-		On subscribe, the Observable emits the item most recently emitted by the BehaviorSubject. It then continues to emit any items that are passed to onNext.
+		On subscribe, the Observable emits the item most recently emitted by the BehaviorSubject (or the initial item). It then continues to emit any items that are passed to onNext.
 	 */
 	Observable getObservable() const;
 	
