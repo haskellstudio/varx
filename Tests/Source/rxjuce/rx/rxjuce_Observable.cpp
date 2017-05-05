@@ -81,12 +81,18 @@ Observable Observable::fromValue(Value value)
 	return Impl::fromValue(value);
 }
 
+Observable Observable::interval(const juce::RelativeTime& period)
+{
+	auto o = rxcpp::observable<>::interval(std::chrono::milliseconds(period.inMilliseconds()));
+	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
+}
+
 Observable Observable::just(const var& value)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::just(value));
 }
 
-Observable Observable::range(int first, int last, int step)
+Observable Observable::range(int first, int last, unsigned int step)
 {
 	if (first > last)
 		throw InvalidRangeError;
@@ -96,7 +102,7 @@ Observable Observable::range(int first, int last, int step)
 	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
 }
 
-Observable Observable::range(double first, double last, int step)
+Observable Observable::range(double first, double last, unsigned int step)
 {
 	if (first > last)
 		throw InvalidRangeError;
@@ -187,6 +193,11 @@ Observable Observable::switchOnNext() const
 	});
 	
 	return Impl::fromRxCpp(unwrapped.switch_on_next());
+}
+
+Observable Observable::take(unsigned int numItems) const
+{
+	return Impl::fromRxCpp(impl->wrapped.take(numItems));
 }
 
 

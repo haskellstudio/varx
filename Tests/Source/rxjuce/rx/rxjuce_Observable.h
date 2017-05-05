@@ -51,6 +51,13 @@ public:
 	static Observable fromValue(juce::Value value);
 	
 	/**
+		Returns an Observable that emits one item every `period`, starting at the time of subscription (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on. The interval has millisecond resolution.
+	 
+		The Observable emits endlessly, but you can use Observable::take to get a finite number of items (for example).
+	 */
+	static Observable interval(const juce::RelativeTime& period);
+	
+	/**
 		Creates an Observable which emits just a single item.
 	 
 		The value is emitted immediately on each new subscription.
@@ -68,8 +75,8 @@ public:
 			 Observable::range(3, 7, 3) // {3, 6, 7}
 			 Observable::range(17.5, 22.8, 2) // {17.5, 19.5, 21.5, 22.8}
 	 */
-	static Observable range(int first, int last, int step);
-	static Observable range(double first, double last, int step);
+	static Observable range(int first, int last, unsigned int step);
+	static Observable range(double first, double last, unsigned int step);
 	///@}
 	
 	/**
@@ -150,6 +157,11 @@ public:
 		Returns an Observable that emits the items emitted by the Observables which this Observable emits.
 	 */
 	Observable switchOnNext() const;
+	
+	/**
+		Returns an Observable that emits only the first `numItems` items from this Observable.
+	 */
+	Observable take(unsigned int numItems) const;
 	
 	
 #pragma mark - Scheduling

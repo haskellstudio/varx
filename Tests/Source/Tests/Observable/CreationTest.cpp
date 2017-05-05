@@ -354,3 +354,27 @@ TEST_CASE("Observable::create",
 		REQUIRE(pointer->getReferenceCount() == 1);
 	}
 }
+
+TEST_CASE("Observable::interval",
+		  "[Observable][Observable::interval]")
+{
+	IT("can create an interval below one second") {
+		auto o = Observable::interval(RelativeTime::seconds(0.003)).take(3);
+		auto lastTime = Time::getCurrentTime();
+		Array<RelativeTime> intervals;
+		Array<var> ints;
+		o.subscribe([&](int i) {
+			auto time = Time::getCurrentTime();
+			intervals.add(time - lastTime);
+			lastTime = time;
+			ints.add(i);
+		});
+		
+		CHECK(intervals.size() == 3);
+		REQUIRE(intervals[0].inSeconds() == Approx(0).epsilon(0.01));
+		REQUIRE(intervals[1].inSeconds() == Approx(0.003).epsilon(0.001));
+		REQUIRE(intervals[2].inSeconds() == Approx(0.003).epsilon(0.001));
+		
+		RxJUCERequireItems(ints, 1, 2, 3);
+	}
+}
