@@ -71,6 +71,21 @@ TEST_CASE("Observable::combineLatest",
 }
 
 
+TEST_CASE("Observable::concat",
+		  "[Observable][Observable::concat]")
+{
+	Array<var> items;
+	
+	IT("concatenates the values emitted by the source Observables") {
+		auto observable = Observable::from({"Hello", "World"});
+		auto another = Observable::from({1.5, 2.32, 5.6});
+		RxJUCECollectItems(observable.concat(another), items);
+		
+		RxJUCERequireItems(items, var("Hello"), var("World"), var(1.5), var(2.32), var(5.6));
+	}
+}
+
+
 TEST_CASE("Observable::filter",
 		  "[Observable][Observable::filter]")
 {

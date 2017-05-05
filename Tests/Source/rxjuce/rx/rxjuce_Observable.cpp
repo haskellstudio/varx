@@ -145,35 +145,58 @@ Observable Observable::combineLatest(Observable o1, Function2& f) const
 {
 	return impl->combineLatest(f, o1);
 }
-
 Observable Observable::combineLatest(Observable o1, Observable o2, Function3 f) const
 {
 	return impl->combineLatest(f, o1, o2);
 }
-
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Function4 f) const
 {
 	return impl->combineLatest(f, o1, o2, o3);
 }
-
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const
 {
 	return impl->combineLatest(f, o1, o2, o3, o4);
 }
-
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const
 {
 	return impl->combineLatest(f, o1, o2, o3, o4, o5);
 }
-
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const
 {
 	return impl->combineLatest(f, o1, o2, o3, o4, o5, o6);
 }
-
 Observable Observable::combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const
 {
 	return impl->combineLatest(f, o1, o2, o3, o4, o5, o6, o7);
+}
+
+Observable Observable::concat(Observable o1) const
+{
+	return impl->concat(o1);
+}
+Observable Observable::concat(Observable o1, Observable o2) const
+{
+	return impl->concat(o1, o2);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3) const
+{
+	return impl->concat(o1, o2, o3);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4) const
+{
+	return impl->concat(o1, o2, o3, o4);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const
+{
+	return impl->concat(o1, o2, o3, o4, o5);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const
+{
+	return impl->concat(o1, o2, o3, o4, o5, o6);
+}
+Observable Observable::concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const
+{
+	return impl->concat(o1, o2, o3, o4, o5, o6, o7);
 }
 
 Observable Observable::filter(const std::function<bool(const var&)>& predicate) const

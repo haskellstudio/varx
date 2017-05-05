@@ -41,6 +41,12 @@ public:
 		return fromRxCpp(wrapped.merge(observables.impl->wrapped...));
 	}
 	
+	template<typename... Os>
+	std::shared_ptr<Impl> concat(Os&&... observables)
+	{
+		return fromRxCpp(wrapped.concat(observables.impl->wrapped...));
+	}
+	
 	rxcpp::observable<var> wrapped;
 	
 private:

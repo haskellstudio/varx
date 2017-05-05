@@ -138,9 +138,24 @@ public:
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const;
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const;
 	///@}
+
+	///@{
+	/**
+		Returns an Observable that first emits the items from this Observable, then from o1, then from o2, and so on.
+	 
+		It only subscribes to o1 when this Observable has completed. It only subscribes to o2 when o1 has completed, and so on.
+	 */
+	Observable concat(Observable o1) const;
+	Observable concat(Observable o1, Observable o2) const;
+	Observable concat(Observable o1, Observable o2, Observable o3) const;
+	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4) const;
+	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const;
+	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const;
+	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const;
+	///@}
 	
 	/**
-		Returns an Observable which emits only those items from this Observable that pass a predicate function.
+		Returns an Observable that emits only those items from this Observable that pass a predicate function.
 	 */
 	Observable filter(const std::function<bool(const var&)>& predicate) const;
 	
