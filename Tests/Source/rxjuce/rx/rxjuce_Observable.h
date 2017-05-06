@@ -78,6 +78,7 @@ public:
 			 Observable::range(17.5, 22.8, 2) // {17.5, 19.5, 21.5, 22.8}
 	 */
 	static Observable range(int first, int last, unsigned int step = 1);
+	/** \overload */
 	static Observable range(double first, double last, unsigned int step);
 	///@}
 	
@@ -105,7 +106,7 @@ public:
 	Subscription subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void(Error)>& onError = TerminateOnError,
 						   const std::function<void()>& onCompleted = EmptyOnCompleted) const;
-	
+	/** \overload */
 	Subscription subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void()>& onCompleted,
 						   const std::function<void(Error)>& onError = TerminateOnError) const;
@@ -130,14 +131,20 @@ public:
 #pragma mark - Operators
 	///@{
 	/**
-		When an item is emitted by either this Observable or o1, o2, …, combines the latest item emitted by each Observable via the given function and emits the result of this function.
+		Returns an Observable that emits whenever an item is emitted by either this Observable or o1, o2, …. It combines the latest item emitted by each Observable via the given function and emits the result of this function.
 	 */
 	Observable combineLatest(Observable o1, Function2 f) const;
+	/** \overload */
 	Observable combineLatest(Observable o1, Observable o2, Function3 f) const;
+	/** \overload */
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Function4 f) const;
+	/** \overload */
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const;
+	/** \overload */
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const;
+	/** \overload */
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const;
+	/** \overload */
 	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const;
 	///@}
 
@@ -148,11 +155,17 @@ public:
 		It only subscribes to o1 when this Observable has completed. And only subscribes to o2 when o1 has completed, and so on.
 	 */
 	Observable concat(Observable o1) const;
+	/** \overload */
 	Observable concat(Observable o1, Observable o2) const;
+	/** \overload */
 	Observable concat(Observable o1, Observable o2, Observable o3) const;
+	/** \overload */
 	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4) const;
+	/** \overload */
 	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const;
+	/** \overload */
 	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const;
+	/** \overload */
 	Observable concat(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const;
 	///@}
 	
@@ -199,11 +212,17 @@ public:
 		An error in one of the source Observables notifies the result Observable's `onError` immediately.
 	 */
 	Observable merge(Observable o1) const;
+	/** \overload */
 	Observable merge(Observable o1, Observable o2) const;
+	/** \overload */
 	Observable merge(Observable o1, Observable o2, Observable o3) const;
+	/** \overload */
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4) const;
+	/** \overload */
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5) const;
+	/** \overload */
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6) const;
+	/** \overload */
 	Observable merge(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7) const;
 	///@}
 	
