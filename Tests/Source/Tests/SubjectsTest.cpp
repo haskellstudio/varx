@@ -24,14 +24,14 @@ TEST_CASE("BehaviorSubject",
 	RxJUCECollectItems(subject.getObservable(), items);
 	
 	IT("changes value when changing the Observer") {
-		CHECK(subject.getValue() == "Initial Item");
+		CHECK(subject.getLatestItem() == "Initial Item");
 		subject.getObserver().onNext(32.55);
 		
-		REQUIRE(subject.getValue() == var(32.55));
+		REQUIRE(subject.getLatestItem() == var(32.55));
 	}
 	
 	IT("has the initial item after being created") {
-		CHECK(subject.getValue() == "Initial Item");
+		CHECK(subject.getLatestItem() == "Initial Item");
 		RxJUCERequireItems(items, "Initial Item");
 	}
 	
@@ -40,7 +40,7 @@ TEST_CASE("BehaviorSubject",
 		
 		subject.onNext("New Item");
 		
-		CHECK(subject.getValue() == "New Item");
+		CHECK(subject.getLatestItem() == "New Item");
 		RxJUCERequireItems(items, "Initial Item", "New Item");
 	}
 	

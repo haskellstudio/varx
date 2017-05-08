@@ -59,7 +59,7 @@ public:
 	Observer getObserver();
 	
 	/** Returns the most recently emitted item. If no items have been emitted, it returns the initial item. */
-	juce::var getValue() const;
+	juce::var getLatestItem() const;
 	
 private:
 	struct Impl;

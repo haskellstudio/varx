@@ -53,7 +53,7 @@ Observer BehaviorSubject::getObserver()
 	return std::make_shared<Observer::Impl>(impl->subject.get_subscriber());
 }
 
-var BehaviorSubject::getValue() const
+var BehaviorSubject::getLatestItem() const
 {
 	return impl->subject.get_value();
 }
