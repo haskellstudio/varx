@@ -20,9 +20,9 @@ RXJUCE_NAMESPACE_BEGIN
 struct BehaviorSubject::Impl
 {
 	Impl(const var& initial)
-	: subject(initial) {}
+	: wrapped(initial) {}
 	
-	const rxcpp::subjects::behavior<var> subject;
+	const rxcpp::subjects::behavior<var> wrapped;
 };
 
 BehaviorSubject::BehaviorSubject(const var& initial)
@@ -30,38 +30,38 @@ BehaviorSubject::BehaviorSubject(const var& initial)
 
 void BehaviorSubject::onNext(const var& next)
 {
-	impl->subject.get_subscriber().on_next(next);
+	impl->wrapped.get_subscriber().on_next(next);
 }
 
 void BehaviorSubject::onError(Error error)
 {
-	impl->subject.get_subscriber().on_error(error);
+	impl->wrapped.get_subscriber().on_error(error);
 }
 
 void BehaviorSubject::onCompleted()
 {
-	impl->subject.get_subscriber().on_completed();
+	impl->wrapped.get_subscriber().on_completed();
 }
 
 Observable BehaviorSubject::getObservable() const
 {
-	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
+	return Observable::Impl::fromRxCpp(impl->wrapped.get_observable());
 }
 
 Observer BehaviorSubject::getObserver()
 {
-	return std::make_shared<Observer::Impl>(impl->subject.get_subscriber());
+	return std::make_shared<Observer::Impl>(impl->wrapped.get_subscriber());
 }
 
 var BehaviorSubject::getLatestItem() const
 {
-	return impl->subject.get_value();
+	return impl->wrapped.get_value();
 }
 
 
 struct PublishSubject::Impl
 {
-	const rxcpp::subjects::subject<var> subject;
+	const rxcpp::subjects::subject<var> wrapped;
 };
 
 PublishSubject::PublishSubject()
@@ -69,27 +69,27 @@ PublishSubject::PublishSubject()
 
 void PublishSubject::onNext(const var& next)
 {
-	impl->subject.get_subscriber().on_next(next);
+	impl->wrapped.get_subscriber().on_next(next);
 }
 
 void PublishSubject::onError(Error error)
 {
-	impl->subject.get_subscriber().on_error(error);
+	impl->wrapped.get_subscriber().on_error(error);
 }
 
 void PublishSubject::onCompleted()
 {
-	impl->subject.get_subscriber().on_completed();
+	impl->wrapped.get_subscriber().on_completed();
 }
 
 Observable PublishSubject::getObservable() const
 {
-	return Observable::Impl::fromRxCpp(impl->subject.get_observable());
+	return Observable::Impl::fromRxCpp(impl->wrapped.get_observable());
 }
 
 Observer PublishSubject::getObserver()
 {
-	return std::make_shared<Observer::Impl>(impl->subject.get_subscriber());
+	return std::make_shared<Observer::Impl>(impl->wrapped.get_subscriber());
 }
 
 RXJUCE_NAMESPACE_END

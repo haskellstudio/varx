@@ -265,9 +265,9 @@ public:
 	 
 			Observable::range(Range<double>(1, 1000), 1)
 				.observeOn(Scheduler::newThread())
-				.map([](double d){ return std::sqrt(d); }) // Will run on a new thread
+				.map([](double d){ return std::sqrt(d); }) // The lambda will be called on a new thread
 				.observeOn(Scheduler::messageThread())
-				.subscribe([&](double squareRoot) { }); // Will be called on the message thread
+				.subscribe([&](double squareRoot) { }); // The lambda will be called on the message thread
 	 
 		@see Scheduler::messageThread, Scheduler::backgroundThread and Scheduler::newThread
 	 */

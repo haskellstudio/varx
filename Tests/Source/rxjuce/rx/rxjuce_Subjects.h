@@ -42,7 +42,7 @@ public:
 	void onError(Error error);
 	
 	/**
-		Notifies that the subject has finished generating values. **It's illegal to call BehaviorSubject::onNext or BehaviorSubject::onError after calling this.**
+		Notifies that the subject has finished generating values.
 	 */
 	void onCompleted();
 	
@@ -88,7 +88,7 @@ public:
 	void onError(Error error);
 	
 	/**
-		Notifies that the subject has finished generating values. **It's illegal to call PublishSubject::onNext or PublishSubject::onError after calling this.**
+		Notifies that the subject has finished generating values.
 	 */
 	void onCompleted();
 	

@@ -68,6 +68,8 @@ private:
 		private:
 			const ScopedSubscription subscription;
 		};
+ 
+	In this example, `subscription` is destroyed when an instance of `MyClass` is destroyed. So the instance will stop receiving items from `input`.
  */
 class ScopedSubscription : public Subscription
 {
