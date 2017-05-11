@@ -42,7 +42,7 @@ public:
 	static Observable from(const juce::Array<var>& array);
 	
 	/**
-		Creates an Observable from a given JUCE Value. The returned Observable **only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Observed<Value>, which will handle this.
+		Creates an Observable from a given JUCE Value. The returned Observable **only emits items until it is destroyed**, so you are responsible for managing its lifetime. Or use Reactive<Value>, which will handle this.
 	 
 		The returned Observable notifies the onComplete handler when it's destroyed. @see Observable::subscribe
 	 
@@ -292,12 +292,10 @@ public:
 	juce::Array<var> toArray(const std::function<void(Error)>& onError = TerminateOnError) const;
 	
 private:
+	friend class Subject;
 	struct Impl;
-	std::shared_ptr<Impl> impl;
-	
-	friend class BehaviorSubject;
-	friend class PublishSubject;
 	Observable(const std::shared_ptr<Impl>&);
+	std::shared_ptr<Impl> impl;
 	
 	static const std::function<void(Error)> TerminateOnError;
 	static const std::function<void()> EmptyOnCompleted;

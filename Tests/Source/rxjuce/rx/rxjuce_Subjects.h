@@ -12,102 +12,67 @@
 
 #include "rxjuce_Prefix.h"
 
+#include "rxjuce_Observer.h"
 #include "rxjuce_Observable.h"
 
 RXJUCE_NAMESPACE_BEGIN
 
 /**
-	A BehaviorSubject is a bridge between an Observer side (BehaviorSubject::onNext) and an Observable side (BehaviorSubject::getObservable). It is constructed with an initial item.
- 
-	When you can call BehaviorSubject::onNext with an item, the Observable side emits this item synchronously.
- 
-	On subscribe, it begins by emitting the most recently emitted item. It then continues to emit any items that are passed to onNext.
- 
-	The BehaviorSubject can be a model value of your app: Initialize it to some default value when the app starts, use the subject's Observable to update the corresponding GUI components, and call getValue when you need to serialize the app state.
+	A Subject is an Observer and an Observable at the same time. When Observer::onNext is called, the Observable emits an item.
  */
-class BehaviorSubject
+class Subject : public Observer, public Observable
+{
+public:
+	/**
+		Returns an Observable that emits an item whenever onNext is called on this subject.
+	 */
+	Observable getObservable() const;
+	
+	/**
+		Returns the Observer side. If you call onNext on this Observer, this subject's Observable side will emit an item.
+	 */
+	Observer getObserver() const;
+	
+private:
+	friend class BehaviorSubject;
+	friend class PublishSubject;
+	friend class BehaviorSubjectImpl;
+	friend class PublishSubjectImpl;
+	struct Impl;
+	explicit Subject(const std::shared_ptr<Impl>& impl);
+	std::shared_ptr<Impl> impl;
+	
+	JUCE_LEAK_DETECTOR(Subject)
+};
+
+
+/**
+	A subject that starts with an initial item. On subscribe, it emits the most recently emitted item. It then continues to emit any items that are passed to onNext.
+ */
+class BehaviorSubject : public Subject
 {
 public:
 	/** Creates a new instance with a given initial item */
 	explicit BehaviorSubject(const juce::var& initial);
 	
-	/**
-		Emits a new item. The Observable side emits this item synchronously.
-	 */
-	void onNext(const juce::var& next);
-	
-	/**
-		Emits an error. The Observable side emits the error to all subscribers.
-	 */
-	void onError(Error error);
-	
-	/**
-		Notifies that the subject has finished generating values.
-	 */
-	void onCompleted();
-	
-	/**
-		Returns an Observable that emits an item whenever onNext is called on this subject.
-	 
-		On subscribe, the Observable emits the item most recently emitted by the BehaviorSubject (or the initial item). It then continues to emit any items that are passed to onNext.
-	 */
-	Observable getObservable() const;
-	
-	/**
-		Returns the Observer side. If you call onNext on the Observer, this subject's Observable side will emit an item.
-	 */
-	Observer getObserver();
-	
 	/** Returns the most recently emitted item. If no items have been emitted, it returns the initial item. */
 	juce::var getLatestItem() const;
 	
 private:
-	struct Impl;
-	std::shared_ptr<Impl> impl;
-
 	JUCE_LEAK_DETECTOR(BehaviorSubject)
 };
 
+
 /**
-	A subject that emits only those items that are passed to onNext *after the time of the subscription*.
+	A subject that initially doesn't have a value. It does not emit an item on subscribe, and emits only those items that are passed to onNext *after the time of the subscription*.
  */
-class PublishSubject
+class PublishSubject : public Subject
 {
 public:
 	/** Creates a new instance. */
 	PublishSubject();
 	
-	/**
-		Emits a new item. The Observable side emits this item synchronously.
-	 */
-	void onNext(const juce::var& next);
-	
-	/**
-		Emits an error. The Observable side emits the error to all subscribers.
-	 */
-	void onError(Error error);
-	
-	/**
-		Notifies that the subject has finished generating values.
-	 */
-	void onCompleted();
-	
-	/**
-		Returns an Observable that emits an item whenever onNext is called on this subject.
-	 
-		The Observable emits only those items that are passed to onNext *after the time of the subscription*.
-	 */
-	Observable getObservable() const;
-	
-	/**
-		Returns the Observer side. If you call onNext on the Observer, this subject's Observable side will emit an item.
-	 */
-	Observer getObserver();
-	
 private:
-	struct Impl;
-	std::shared_ptr<Impl> impl;
-	
 	JUCE_LEAK_DETECTOR(PublishSubject)
 };
 

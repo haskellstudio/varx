@@ -22,7 +22,7 @@ using namespace juce;
 
 struct Observer::Impl
 {
-	Impl(const rxcpp::subscriber<var>& wrapped);
+	explicit Impl(const rxcpp::subscriber<var>& wrapped);
 	
 	const rxcpp::subscriber<var> wrapped;
 };

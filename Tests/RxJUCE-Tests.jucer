@@ -14,14 +14,22 @@
       </GROUP>
       <GROUP id="{AAC38EBE-F6C2-A3B5-51FB-6DE3BC2C9994}" name="rxjuce">
         <GROUP id="{E527C2EC-CBF0-1913-2847-0065E31DA35C}" name="gui">
-          <FILE id="EMbJyP" name="rxjuce_Observed.cpp" compile="1" resource="0"
-                file="Source/rxjuce/gui/rxjuce_Observed.cpp"/>
-          <FILE id="IwF3P1" name="rxjuce_Observed.h" compile="0" resource="0"
-                file="Source/rxjuce/gui/rxjuce_Observed.h"/>
+          <FILE id="HnIlyn" name="rxjuce_Connections.cpp" compile="1" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Connections.cpp"/>
+          <FILE id="ODWEEx" name="rxjuce_Connections.h" compile="0" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Connections.h"/>
+          <FILE id="EMbJyP" name="rxjuce_Reactive.cpp" compile="1" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Reactive.cpp"/>
+          <FILE id="IwF3P1" name="rxjuce_Reactive.h" compile="0" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Reactive.h"/>
         </GROUP>
         <GROUP id="{AD8089E2-1815-3BBD-C046-CA92D277ED4D}" name="util">
           <FILE id="mkwt56" name="rxjuce_PrintFunctions.h" compile="0" resource="0"
                 file="Source/rxjuce/util/rxjuce_PrintFunctions.h"/>
+          <FILE id="o2B7Ay" name="rxjuce_VariantConverters.cpp" compile="1" resource="0"
+                file="Source/rxjuce/util/rxjuce_VariantConverters.cpp"/>
+          <FILE id="FIoxaW" name="rxjuce_VariantConverters.h" compile="0" resource="0"
+                file="Source/rxjuce/util/rxjuce_VariantConverters.h"/>
         </GROUP>
         <GROUP id="{76338C3B-D82A-3F81-A964-2397D69B048B}" name="rx">
           <GROUP id="{75278435-1220-7549-B806-8FE1D21BB583}" name="internal">

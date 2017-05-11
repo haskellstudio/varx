@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    ObservedTest.cpp
+    ReactiveTest.cpp
     Created: 28 Apr 2017 8:12:02pm
     Author:  Martin Finke
 
@@ -10,15 +10,15 @@
 
 #include "rxjuce_TestPrefix.h"
 
-#include "rxjuce_Observed.h"
+#include "rxjuce_Reactive.h"
 
 
-TEST_CASE("Observed<Button> stateChanged",
-		  "[Observed<Button>]")
+TEST_CASE("Reactive<Button> stateChanged",
+		  "[Reactive<Button>]")
 {
-	Observed<TextButton> button("Click Here");
+	Reactive<TextButton> button("Click Here");
 	Array<var> items;
-	RxJUCECollectItems(button.buttonStateObservable(), items);
+	RxJUCECollectItems(button.rx.buttonState, items);
 	
 	IT("emits the normal state on subscribe") {
 		RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
@@ -43,12 +43,12 @@ TEST_CASE("Observed<Button> stateChanged",
 }
 
 
-TEST_CASE("Observed<Button> clicked",
-		  "[Observed<Button>]")
+TEST_CASE("Reactive<Button> clicked",
+		  "[Reactive<Button>]")
 {
-	Observed<TextButton> button("Click Here");
+	Reactive<TextButton> button("Click Here");
 	Array<var> items;
-	RxJUCECollectItems(button.clickedObservable(), items);
+	RxJUCECollectItems(button.rx.clicked, items);
 	
 	IT("doesn't emit an item on subscribe") {
 		REQUIRE(items.isEmpty());
@@ -69,8 +69,8 @@ TEST_CASE("Observed<Button> clicked",
 }
 
 
-TEST_CASE("Observed<Button> with custom TextButton subclass",
-		  "[Observed<Button>]")
+TEST_CASE("Reactive<Button> with custom TextButton subclass",
+		  "[Reactive<Button>]")
 {
 	class MyButton : public TextButton
 	{
@@ -84,9 +84,9 @@ TEST_CASE("Observed<Button> with custom TextButton subclass",
 		}
 	};
 	
-	Observed<MyButton> button;
+	Reactive<MyButton> button;
 	Array<var> items;
-	RxJUCECollectItems(button.buttonStateObservable(), items);
+	RxJUCECollectItems(button.rx.buttonState, items);
 	
 	IT("initially has the normal state") {
 		RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
@@ -107,10 +107,10 @@ TEST_CASE("Observed<Button> with custom TextButton subclass",
 }
 
 
-TEST_CASE("Observed<Value> conversion",
-		  "[Observed<Value>]")
+TEST_CASE("Reactive<Value> conversion",
+		  "[Reactive<Value>]")
 {
-	Observed<Value> value;
+	Reactive<Value> value;
 	
 	IT("supports copy assignment from var-compatible types") {
 		value = 3;
@@ -135,12 +135,12 @@ TEST_CASE("Observed<Value> conversion",
 }
 
 
-TEST_CASE("Observed<Value> Observable",
-		  "[Observed<Value>]")
+TEST_CASE("Reactive<Value> Observable",
+		  "[Reactive<Value>]")
 {
-	auto value = std::make_shared<Observed<Value>>("Initial");
+	auto value = std::make_shared<Reactive<Value>>("Initial");
 	Array<var> items;
-	RxJUCECollectItems(value->getObservable(), items);
+	RxJUCECollectItems(value->rx.observable, items);
 	
 	IT("emits items asynchronously when the Value changes") {
 		value->setValue("Second");
@@ -160,4 +160,26 @@ TEST_CASE("Observed<Value> Observable",
 		
 		RxJUCERequireItems(items, "Initial");
 	}
+}
+
+TEST_CASE("Template ambiguities")
+{
+	class MyButton : public Button {
+	public:
+		MyButton()
+		: Button("") {}
+		void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override {}
+	};
+	Reactive<Component> myComponent;
+	Reactive<MyButton> myButton;
+	Reactive<ImageComponent> myImageComponent;
+	
+#warning Test this:
+	/*
+	 class MyCustomComponent : public Component {...};
+	 Reactive<MyCustomComponent> myCustomComponent; // should use Reactive<Component>
+	 
+	 */
+	
+	
 }
