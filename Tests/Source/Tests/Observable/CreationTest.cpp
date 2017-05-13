@@ -125,21 +125,74 @@ TEST_CASE("Observable::create",
 TEST_CASE("Observable::defer",
 		  "[Observable][Observable::defer]")
 {
-#warning TODO
+	Array<var> items;
+	
+	IT("calls the factory function on every new subscription") {
+		int numCalls = 0;
+		auto observable = Observable::defer([&]() {
+			numCalls++;
+			return Observable::from({3, 4});
+		});
+		
+		RxJUCECollectItems(observable, items);
+		RxJUCECollectItems(observable, items);
+		RxJUCECollectItems(observable, items);
+		
+		RxJUCERequireItems(items, 3, 4, 3, 4, 3, 4);
+		REQUIRE(numCalls == 3);
+	}
 }
 
 
 TEST_CASE("Observable::empty",
 		  "[Observable][Observable::empty]")
 {
-#warning TODO
+	Array<var> items;
+	auto o = Observable::empty();
+	
+	IT("doesn't emit any items") {
+		RxJUCECollectItems(o, items);
+		RxJUCERunDispatchLoop();
+		
+		REQUIRE(items.isEmpty());
+	}
+	
+	IT("notifies onCompleted immediately") {
+		DisposeBag disposeBag;
+		bool completed = false;
+		o.subscribe([](var){}, [&](){
+			completed = true;
+		}).disposedBy(disposeBag);
+		
+		REQUIRE(completed);
+	}
 }
 
 
 TEST_CASE("Observable::error",
 		  "[Observable][Observable::error]")
 {
-#warning TODO
+	Array<var> items;
+	auto o = Observable::error(std::runtime_error("Error!!111!"));
+	DisposeBag disposeBag;
+	
+	IT("doesn't emit any items") {
+		o.subscribe([&](var item){
+			items.add(item);
+		}, [](Error e){}).disposedBy(disposeBag);
+		RxJUCERunDispatchLoop();
+		
+		REQUIRE(items.isEmpty());
+	}
+	
+	IT("notifies onCompleted immediately") {
+		bool onErrorCalled = false;
+		o.subscribe([](var){}, [&](Error e){
+			onErrorCalled = true;
+		}).disposedBy(disposeBag);
+		
+		REQUIRE(onErrorCalled);
+	}
 }
 
 
@@ -382,7 +435,23 @@ TEST_CASE("Observable::just",
 TEST_CASE("Observable::never",
 		  "[Observable][Observable::never]")
 {
-#warning TODO
+	auto o = Observable::never();
+	DisposeBag disposeBag;
+	
+	IT("doesn't terminate and doesn't emit") {
+		bool onNextCalled = false;
+		bool onErrorCalled = false;
+		bool onCompletedCalled = false;
+		o.subscribe([&](var) { onNextCalled = true; },
+					[&](Error) { onErrorCalled = true; },
+					[&]() { onCompletedCalled = true; }).disposedBy(disposeBag);
+		
+		RxJUCERunDispatchLoop();
+		
+		REQUIRE(!onNextCalled);
+		REQUIRE(!onErrorCalled);
+		REQUIRE(!onCompletedCalled);
+	}
 }
 
 
@@ -415,5 +484,17 @@ TEST_CASE("Observable::range",
 TEST_CASE("Observable::repeat",
 		  "[Observable][Observable::repeat]")
 {
-#warning TODO
+	Array<var> items;
+	
+	IT("repeats an item indefinitely") {
+		RxJUCECollectItems(Observable::repeat(8).take(9), items);
+		
+		RxJUCERequireItems(items, 8, 8, 8, 8, 8, 8, 8, 8, 8);
+	}
+	
+	IT("repeats an items a limited number of times") {
+		RxJUCECollectItems(Observable::repeat("4", 7), items);
+		
+		RxJUCERequireItems(items, "4", "4", "4", "4", "4", "4", "4");
+	}
 }

@@ -38,7 +38,8 @@ void Observer::onCompleted() const
 Disposable Observer::bindTo(const Observable& observable) const
 {
 	Observer self = *this;
-	return observable.subscribe(std::bind(&Observer::onNext, self, _1));
+//	return observable.subscribe(std::bind(&Observer::onNext, self, _1));
+	return observable.subscribe([self](const var& next) { self.onNext(next); });
 }
 
 RXJUCE_NAMESPACE_END

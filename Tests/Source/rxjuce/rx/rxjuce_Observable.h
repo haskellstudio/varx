@@ -50,7 +50,7 @@ public:
 	/**
 		Creates an Observable which doesn't emit any items, and immediately notifies onError.
 	 */
-	static Observable error(Error error);
+	static Observable error(const std::exception& error);
 	
 	/**
 		Creates an Observable that immediately emits the items from the given Array.

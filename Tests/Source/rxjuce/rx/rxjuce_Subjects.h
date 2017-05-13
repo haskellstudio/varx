@@ -91,7 +91,7 @@ public:
 	 
 		The `bufferSize` is the maximum number of items to remember and replay. Pass ReplaySubject::MaxBufferSize if you want all items to be remembered. The buffer size is increased as items are emitted (not allocated upfront).
 	 */
-	explicit ReplaySubject(size_t bufferSize);
+	explicit ReplaySubject(size_t bufferSize = MaxBufferSize);
 	
 	/**
 		The maximum number of items that can be remembered by this class. You can pass this to ReplaySubject::ReplaySubject to remember "all" items (within memory boundaries).

@@ -63,14 +63,14 @@ Observable Observable::empty()
 	return Impl::fromRxCpp(rxcpp::observable<>::empty<var>());
 }
 
-Observable Observable::error(Error error)
+Observable Observable::error(const std::exception& error)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::error<var>(error));
 }
 
 Observable Observable::from(const Array<var>& array)
 {
-	return Impl::fromRxCpp(rxcpp::observable<>::iterate(array));
+	return Impl::fromRxCpp(rxcpp::observable<>::iterate(array, rxcpp::identity_immediate()));
 }
 
 Observable Observable::fromValue(Value value)
@@ -99,7 +99,7 @@ Observable Observable::range(int first, int last, unsigned int step)
 	if (first > last)
 		throw InvalidRangeError;
 	
-	auto o = rxcpp::observable<>::range<int>(first, last, step);
+	auto o = rxcpp::observable<>::range<int>(first, last, step, rxcpp::identity_immediate());
 	
 	return Impl::fromRxCpp(o.map(toVar<int>));
 }
@@ -109,7 +109,7 @@ Observable Observable::range(double first, double last, unsigned int step)
 	if (first > last)
 		throw InvalidRangeError;
 	
-	auto o = rxcpp::observable<>::range<double>(first, last, step);
+	auto o = rxcpp::observable<>::range<double>(first, last, step, rxcpp::identity_immediate());
 	
 	return Impl::fromRxCpp(o.map(toVar<double>));
 }

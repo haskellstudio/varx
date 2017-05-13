@@ -1,6 +1,7 @@
 #define DONT_SET_USING_JUCE_NAMESPACE 1
 #include "JuceHeader.h"
 
+#include <exception>
 #include <functional>
 #include <memory>
 #include <map>

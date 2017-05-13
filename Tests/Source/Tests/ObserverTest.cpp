@@ -12,6 +12,7 @@
 
 #include "rxjuce_Observable.h"
 #include "rxjuce_Observer.h"
+#include "rxjuce_Subjects.h"
 
 
 TEST_CASE("Observer",
@@ -51,6 +52,22 @@ TEST_CASE("Observer",
 	}
 	
 	IT("can be bound to an Observable") {
-#warning TODO Test Observer::bindTo
+		DisposeBag disposeBag;
+		
+		// Create subject
+		BehaviorSubject subject("Initial Value");
+		CHECK(subject.getLatestItem() == "Initial Value");
+		
+		// Collect items from subject
+		Array<var> items;
+		RxJUCECollectItems(subject, items);
+		
+		// Bind observer to some observable
+		Observer observer = subject.asObserver();
+		observer.bindTo(Observable::from({3, 4, 5})).disposedBy(disposeBag);
+		
+		// Subject should received items from Observable
+		RxJUCERequireItems(items, var("Initial Value"), var(3), var(4), var(5));
+		REQUIRE(subject.getLatestItem() == var(5));
 	}
 }

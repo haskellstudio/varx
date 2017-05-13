@@ -15,17 +15,17 @@
 
 
 TEST_CASE("BehaviorSubject",
-		  "[BehaviorSubject]")
+		  "[Subject][BehaviorSubject]")
 {
 	BehaviorSubject subject("Initial Item");
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
-	RxJUCECollectItems(subject, items);
+	RxJUCECollectItems(subject.asObservable(), items);
 	
 	IT("changes value when changing the Observer") {
 		CHECK(subject.getLatestItem() == "Initial Item");
-		subject.onNext(32.55);
+		subject.asObserver().onNext(32.55);
 		
 		REQUIRE(subject.getLatestItem() == var(32.55));
 	}
@@ -48,13 +48,13 @@ TEST_CASE("BehaviorSubject",
 		BehaviorSubject subject(17);
 		bool onErrorCalled = false;
 		subject.onError(Error());
-		subject.subscribe([](var){}, [&](Error) { onErrorCalled = true; });
+		subject.asObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; });
 		REQUIRE(onErrorCalled);
 	}
 	
 	IT("notifies onCompleted when calling onCompleted") {
 		bool completed = false;
-		subject.subscribe([](var){}, [&](){ completed = true; });
+		subject.asObservable().subscribe([](var){}, [&](){ completed = true; });
 		subject.onCompleted();
 		
 		REQUIRE(completed);
@@ -63,7 +63,7 @@ TEST_CASE("BehaviorSubject",
 	IT("does not call onCompleted when destroying the subject") {
 		auto subject = std::make_shared<BehaviorSubject>(3);
 		bool completed = false;
-		subject->subscribe([](var){}, [&](){ completed = true; });
+		subject->asObservable().subscribe([](var){}, [&](){ completed = true; });
 		subject.reset();
 		
 		REQUIRE(!completed);
@@ -78,14 +78,14 @@ TEST_CASE("BehaviorSubject",
 
 
 TEST_CASE("PublishSubject",
-		  "[PublishSubject]")
+		  "[Subject][PublishSubject]")
 {
 	PublishSubject subject;
 	DisposeBag disposeBag;
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
-	RxJUCECollectItems(subject, items);
+	RxJUCECollectItems(subject.asObservable(), items);
 	
 	IT("does not emit an item if nothing has been pushed") {
 		REQUIRE(items.isEmpty());
@@ -105,14 +105,14 @@ TEST_CASE("PublishSubject",
 		RxJUCECheckItems(items, 1, 2);
 		
 		Array<var> laterItems;
-		RxJUCECollectItems(subject, laterItems);
+		RxJUCECollectItems(subject.asObservable(), laterItems);
 		
 		REQUIRE(laterItems.isEmpty());
 	}
 	
 	IT("changes value when changing the Observer") {
-		subject.onNext(32.51);
-		subject.onNext(3.0);
+		subject.asObserver().onNext(32.51);
+		subject.asObserver().onNext(3.0);
 		
 		RxJUCERequireItems(items, 32.51, 3.0);
 	}
@@ -132,7 +132,7 @@ TEST_CASE("PublishSubject",
 		PublishSubject subject;
 		bool onErrorCalled = false;
 		subject.onError(Error());
-		subject.subscribe([](var){}, [&](Error) { onErrorCalled = true; }).disposedBy(disposeBag);
+		subject.asObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; }).disposedBy(disposeBag);
 		REQUIRE(onErrorCalled);
 	}
 	
@@ -142,13 +142,13 @@ TEST_CASE("PublishSubject",
 		
 		IT("notifies onCompleted when calling onCompleted") {
 			subject->onCompleted();
-			subject->subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
+			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
 			
 			REQUIRE(completed);
 		}
 		
 		IT("does not call onCompleted when destroying the subject") {
-			subject->subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
+			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
 			CHECK(!completed);
 			subject.reset();
 			
@@ -165,7 +165,106 @@ TEST_CASE("PublishSubject",
 
 
 TEST_CASE("ReplaySubject",
-		  "[ReplaySubject]")
+		  "[Subject][ReplaySubject]")
 {
-#warning TODO
+	ReplaySubject subject;
+	DisposeBag disposeBag;
+	
+	// Subscribe to the subject's Observable
+	Array<var> items;
+	RxJUCECollectItems(subject.asObservable(), items);
+	
+	IT("does not emit an item if nothing has been pushed") {
+		REQUIRE(items.isEmpty());
+	}
+	
+	IT("emits when pushing a new item") {
+		CHECK(items.isEmpty());
+		
+		subject.onNext("First Item");
+		
+		RxJUCERequireItems(items, "First Item");
+	}
+	
+	IT("emits previous items when subscribing") {
+		subject.onNext(1);
+		subject.onNext(2);
+		RxJUCECheckItems(items, 1, 2);
+		
+		Array<var> laterItems;
+		RxJUCECollectItems(subject.asObservable(), laterItems);
+		
+		RxJUCERequireItems(laterItems, 1, 2);
+	}
+	
+	IT("emits previous items limited by the max. buffer size") {
+		auto subject = std::make_shared<ReplaySubject>(4);
+		
+		// These should be forgotten:
+		subject->onNext(17.5);
+		subject->onNext("Hello!");
+		
+		// These should be remembered:
+		subject->onNext(7);
+		subject->onNext(28);
+		subject->onNext(3);
+		subject->onNext(6);
+		
+		Array<var> items;
+		RxJUCECollectItems(*subject, items);
+		
+		RxJUCERequireItems(items, 7, 28, 3, 6);
+	}
+	
+	IT("changes value when changing the Observer") {
+		subject.asObserver().onNext(32.51);
+		subject.asObserver().onNext(3.0);
+		
+		RxJUCERequireItems(items, 32.51, 3.0);
+	}
+	
+	IT("emits after destruction, if there's still an Observer pushing items") {
+		auto subject = std::make_shared<ReplaySubject>();
+		auto observer = subject->asObserver();
+		
+		RxJUCECollectItems(subject->asObservable(), items);
+		subject.reset();
+		observer.onNext(12345);
+		
+		RxJUCERequireItems(items, 12345);
+	}
+	
+	IT("emits an error when calling onError") {
+		ReplaySubject subject;
+		bool onErrorCalled = false;
+		subject.onError(Error());
+		subject.asObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; }).disposedBy(disposeBag);
+		REQUIRE(onErrorCalled);
+	}
+	
+	CONTEXT("onCompleted") {
+		auto subject = std::make_shared<PublishSubject>();
+		bool completed = false;
+		
+		IT("notifies onCompleted when calling onCompleted") {
+			subject->onCompleted();
+			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
+			
+			REQUIRE(completed);
+		}
+		
+		IT("does not call onCompleted when destroying the subject") {
+			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
+			CHECK(!completed);
+			subject.reset();
+			
+			REQUIRE(!completed);
+		}
+		
+		IT("can call onCompleted multiple times") {
+			subject->onCompleted();
+			subject->onCompleted();
+			subject->onCompleted();
+		}
+	}
 }

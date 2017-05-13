@@ -101,7 +101,28 @@ TEST_CASE("Reactive<Component>",
 TEST_CASE("Reactive<ImageComponent>",
 		  "[Reactive<ImageComponent>][ImageComponentExtension]")
 {
-#warning TODO
+	Reactive<ImageComponent> imageComponent;
+	const Image image1(Image::RGB, 17, 47, false);
+	const Image image2(Image::RGB, 32, 12, false);
+	const RectanglePlacement placement(RectanglePlacement::onlyReduceInSize | RectanglePlacement::yBottom);
+	
+	IT("allows setting a new image and placement") {
+		imageComponent.rx.image.onNext(toVar(image1));
+		
+		CHECK(imageComponent.getImage().getWidth() == 17);
+		CHECK(imageComponent.getImage().getHeight() == 47);
+		
+		imageComponent.rx.imagePlacement.onNext(toVar(placement));
+		
+		CHECK(imageComponent.getImagePlacement() == placement);
+		
+		imageComponent.rx.image.onNext(toVar(image2));
+		
+		REQUIRE(imageComponent.getImage().getWidth() == 32);
+		REQUIRE(imageComponent.getImage().getHeight() == 12);
+		
+		REQUIRE(imageComponent.getImagePlacement() == placement);
+	}
 }
 
 
