@@ -14,17 +14,31 @@
       </GROUP>
       <GROUP id="{AAC38EBE-F6C2-A3B5-51FB-6DE3BC2C9994}" name="rxjuce">
         <GROUP id="{E527C2EC-CBF0-1913-2847-0065E31DA35C}" name="gui">
-          <FILE id="EMbJyP" name="rxjuce_Observed.cpp" compile="1" resource="0"
-                file="Source/rxjuce/gui/rxjuce_Observed.cpp"/>
-          <FILE id="IwF3P1" name="rxjuce_Observed.h" compile="0" resource="0"
-                file="Source/rxjuce/gui/rxjuce_Observed.h"/>
+          <FILE id="HnIlyn" name="rxjuce_Extensions.cpp" compile="1" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Extensions.cpp"/>
+          <FILE id="ODWEEx" name="rxjuce_Extensions.h" compile="0" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Extensions.h"/>
+          <FILE id="EMbJyP" name="rxjuce_Reactive.cpp" compile="1" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Reactive.cpp"/>
+          <FILE id="IwF3P1" name="rxjuce_Reactive.h" compile="0" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Reactive.h"/>
         </GROUP>
         <GROUP id="{AD8089E2-1815-3BBD-C046-CA92D277ED4D}" name="util">
           <FILE id="mkwt56" name="rxjuce_PrintFunctions.h" compile="0" resource="0"
                 file="Source/rxjuce/util/rxjuce_PrintFunctions.h"/>
+          <FILE id="o2B7Ay" name="rxjuce_VariantConverters.cpp" compile="1" resource="0"
+                file="Source/rxjuce/util/rxjuce_VariantConverters.cpp"/>
+          <FILE id="FIoxaW" name="rxjuce_VariantConverters.h" compile="0" resource="0"
+                file="Source/rxjuce/util/rxjuce_VariantConverters.h"/>
         </GROUP>
         <GROUP id="{76338C3B-D82A-3F81-A964-2397D69B048B}" name="rx">
           <GROUP id="{75278435-1220-7549-B806-8FE1D21BB583}" name="internal">
+            <FILE id="uYDYsm" name="rxjuce_Disposable_Impl.cpp" compile="1" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Disposable_Impl.cpp"/>
+            <FILE id="eesXtB" name="rxjuce_Disposable_Impl.h" compile="0" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Disposable_Impl.h"/>
+            <FILE id="Mcz91C" name="rxjuce_DisposeBag_Impl.h" compile="0" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_DisposeBag_Impl.h"/>
             <FILE id="SDUXlA" name="rxjuce_Observable_Impl.cpp" compile="1" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Observable_Impl.cpp"/>
             <FILE id="tnH33O" name="rxjuce_Observable_Impl.h" compile="0" resource="0"
@@ -37,11 +51,15 @@
                   file="Source/rxjuce/rx/internal/rxjuce_Scheduler_Impl.cpp"/>
             <FILE id="uh4iiO" name="rxjuce_Scheduler_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Scheduler_Impl.h"/>
-            <FILE id="uYDYsm" name="rxjuce_Subscription_Impl.cpp" compile="1" resource="0"
-                  file="Source/rxjuce/rx/internal/rxjuce_Subscription_Impl.cpp"/>
-            <FILE id="eesXtB" name="rxjuce_Subscription_Impl.h" compile="0" resource="0"
-                  file="Source/rxjuce/rx/internal/rxjuce_Subscription_Impl.h"/>
           </GROUP>
+          <FILE id="Mm9AB1" name="rxjuce_Disposable.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Disposable.cpp"/>
+          <FILE id="yo6GHG" name="rxjuce_Disposable.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_Disposable.h"/>
+          <FILE id="QL8LFU" name="rxjuce_DisposeBag.cpp" compile="1" resource="0"
+                file="Source/rxjuce/rx/rxjuce_DisposeBag.cpp"/>
+          <FILE id="b7QK4q" name="rxjuce_DisposeBag.h" compile="0" resource="0"
+                file="Source/rxjuce/rx/rxjuce_DisposeBag.h"/>
           <FILE id="JIhXEX" name="rxjuce_Observable.cpp" compile="1" resource="0"
                 file="Source/rxjuce/rx/rxjuce_Observable.cpp"/>
           <FILE id="Iif8lu" name="rxjuce_Observable.h" compile="0" resource="0"
@@ -58,10 +76,6 @@
                 file="Source/rxjuce/rx/rxjuce_Subjects.cpp"/>
           <FILE id="rvpqFg" name="rxjuce_Subjects.h" compile="0" resource="0"
                 file="Source/rxjuce/rx/rxjuce_Subjects.h"/>
-          <FILE id="Mm9AB1" name="rxjuce_Subscription.cpp" compile="1" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subscription.cpp"/>
-          <FILE id="yo6GHG" name="rxjuce_Subscription.h" compile="0" resource="0"
-                file="Source/rxjuce/rx/rxjuce_Subscription.h"/>
         </GROUP>
         <GROUP id="{D5AF6A28-2E79-73AD-8BF3-FEC0F6AF1AB8}" name="RxCpp">
           <GROUP id="{8112CCFB-011C-5F92-BED5-3A4B39870F81}" name="Rx">
@@ -245,14 +259,16 @@
           <FILE id="ShEoW4" name="SchedulingTest.cpp" compile="1" resource="0"
                 file="Source/Tests/Observable/SchedulingTest.cpp"/>
         </GROUP>
-        <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
-              file="Source/Tests/ObservedTest.cpp"/>
+        <FILE id="Gs8Vom" name="ConnectionsTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ConnectionsTest.cpp"/>
+        <FILE id="K3FGg8" name="DisposableTest.cpp" compile="1" resource="0"
+              file="Source/Tests/DisposableTest.cpp"/>
         <FILE id="vc7e2E" name="ObserverTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObserverTest.cpp"/>
+        <FILE id="wJg0X6" name="ReactiveTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ReactiveTest.cpp"/>
         <FILE id="qEsfze" name="SubjectsTest.cpp" compile="1" resource="0"
               file="Source/Tests/SubjectsTest.cpp"/>
-        <FILE id="K3FGg8" name="SubscriptionTest.cpp" compile="1" resource="0"
-              file="Source/Tests/SubscriptionTest.cpp"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

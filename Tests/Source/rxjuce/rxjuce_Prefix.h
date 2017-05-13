@@ -1,16 +1,19 @@
 #define DONT_SET_USING_JUCE_NAMESPACE 1
 #include "JuceHeader.h"
 
+#include <exception>
 #include <functional>
 #include <memory>
 #include <map>
 #include <type_traits>
 #include <utility>
+#include <initializer_list>
 
 #define RXJUCE_NAMESPACE_BEGIN namespace rxjuce {
 #define RXJUCE_NAMESPACE_END }
 
 #define RXJUCE_SOURCE_PREFIX namespace rxjuce { \
+using std::placeholders::_1; \
 using namespace juce; \
 \
 template<class T> \

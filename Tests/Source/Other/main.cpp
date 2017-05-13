@@ -11,7 +11,7 @@ public:
 		
 		Catch::ConfigData config;
 		config.shouldDebugBreak = true;
-//		config.testsOrTags = {"[unrelated-subscriptions]"};
+//		config.testsOrTags = {"ComponentExtension"};
 		
 		Catch::Session session;
 		session.useConfigData(config);

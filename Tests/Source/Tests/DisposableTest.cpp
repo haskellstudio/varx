@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    SubscriptionTest.cpp
+    DisposableTest.cpp
     Created: 28 Apr 2017 8:12:29pm
     Author:  Martin Finke
 
@@ -12,11 +12,11 @@
 
 #include "rxjuce_Observable.h"
 #include "rxjuce_Observer.h"
-#include "rxjuce_Subscription.h"
+#include "rxjuce_Disposable.h"
 
 
-TEST_CASE("Subscription",
-		  "[Subscription]")
+TEST_CASE("Disposable",
+		  "[Disposable]")
 {
 	// Create Observable which emits a single item asynchronously
 	auto observable = std::make_shared<Observable>(Observable::create([](Observer observer) {
@@ -27,19 +27,9 @@ TEST_CASE("Subscription",
 	
 	// Subscribe to it
 	Array<var> items;
-	auto subscription = std::make_shared<Subscription>(observable->subscribe([&](String item) {
+	auto disposable = std::make_shared<Disposable>(observable->subscribe([&](String item) {
 		items.add(item);
 	}));
-	
-	IT("is initially subscribed") {
-		REQUIRE(subscription->isSubscribed());
-	}
-	
-	IT("is not subscribed after calling unsubscribe()") {
-		subscription->unsubscribe();
-		
-		REQUIRE_FALSE(subscription->isSubscribed());
-	}
 	
 	IT("received items while being subscribed") {
 		RxJUCERunDispatchLoop();
@@ -47,23 +37,23 @@ TEST_CASE("Subscription",
 		RxJUCERequireItems(items, "Item");
 	}
 	
-	IT("does not receive items after unsubscribing") {
-		subscription->unsubscribe();
+	IT("does not receive items after disposing") {
+		disposable->dispose();
 		RxJUCERunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
 	
 	IT("takes ownership when move constructing") {
-		Subscription other = std::move(*subscription);
-		other.unsubscribe();
+		Disposable other = std::move(*disposable);
+		other.dispose();
 		RxJUCERunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
 	
-	IT("does not unsubscribe when destroyed") {
-		subscription.reset();
+	IT("does not dispose when being destroyed") {
+		disposable.reset();
 		RxJUCERunDispatchLoop();
 		
 		RxJUCERequireItems(items, "Item");
@@ -76,15 +66,17 @@ TEST_CASE("Subscription",
 		RxJUCERequireItems(items, "Item");
 	}
 	
-	// Unsubscribe after each IT(), to prevent old subscriptions from filling the items array
-	if (subscription)
-		subscription->unsubscribe();
+	// Unsubscribe after each IT(), to prevent old disposables from filling the items array
+	if (disposable)
+		disposable->dispose();
 }
 
 
-TEST_CASE("ScopedSubscription",
-		  "[ScopedSubscription]")
+TEST_CASE("DisposeBag",
+		  "[DisposeBag]")
 {
+	auto disposeBag = std::make_shared<DisposeBag>();
+	
 	// Create Observable which emits a single item asynchronously
 	auto observable = Observable::create([](Observer observer) {
 		MessageManager::getInstance()->callAsync([observer]() mutable {
@@ -94,9 +86,9 @@ TEST_CASE("ScopedSubscription",
 	
 	// Subscribe to it
 	Array<var> items;
-	auto subscription = std::make_shared<ScopedSubscription>(observable.subscribe([&](String item) {
+	observable.subscribe([&](String item) {
 		items.add(item);
-	}));
+	}).disposedBy(*disposeBag);
 	
 	IT("received items while not destroyed") {
 		RxJUCERunDispatchLoop();
@@ -105,10 +97,22 @@ TEST_CASE("ScopedSubscription",
 	}
 	
 	IT("does not receive items after being destroyed") {
-		subscription.reset();
+		disposeBag.reset();
 		RxJUCERunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
+	}
+	
+	IT("can dispose multiple Disposables") {
+		for (int i = 0; i < 5; ++i) {
+			observable.subscribe([&](String item) {
+				items.add(item);
+			}).disposedBy(*disposeBag);
+		}
 		
+		disposeBag.reset();
+		RxJUCERunDispatchLoop();
+		
+		REQUIRE(items.isEmpty());
 	}
 }

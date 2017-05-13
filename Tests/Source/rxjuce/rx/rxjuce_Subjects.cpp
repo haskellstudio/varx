@@ -17,79 +17,119 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-struct BehaviorSubject::Impl
+class Subject::Impl
 {
-	Impl(const var& initial)
-	: wrapped(initial) {}
-	
-	const rxcpp::subjects::behavior<var> wrapped;
+public:
+	virtual ~Impl() {}
+	virtual rxcpp::subscriber<var> getSubscriber() const = 0;
+	virtual rxcpp::observable<var> asObservable() const = 0;
+	virtual var getLatestItem() const
+	{
+		jassertfalse;
+		return var::undefined();
+	}
 };
 
-BehaviorSubject::BehaviorSubject(const var& initial)
-: impl(std::make_shared<Impl>(initial)) {}
-
-void BehaviorSubject::onNext(const var& next)
+class BehaviorSubjectImpl : public Subject::Impl
 {
-	impl->wrapped.get_subscriber().on_next(next);
+public:
+	BehaviorSubjectImpl(const juce::var& initial)
+	: wrapped(initial) {}
+	
+	rxcpp::subscriber<var> getSubscriber() const override
+	{
+		return wrapped.get_subscriber();
+	}
+	
+	rxcpp::observable<var> asObservable() const override
+	{
+		return wrapped.get_observable();
+	}
+	
+	var getLatestItem() const override
+	{
+		return wrapped.get_value();
+	}
+	
+private:
+	const rxcpp::subjects::behavior<var> wrapped;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BehaviorSubjectImpl)
+};
+
+class PublishSubjectImpl : public Subject::Impl
+{
+public:
+	PublishSubjectImpl() {}
+	
+	rxcpp::subscriber<var> getSubscriber() const override
+	{
+		return wrapped.get_subscriber();
+	}
+	
+	rxcpp::observable<var> asObservable() const override
+	{
+		return wrapped.get_observable();
+	}
+	
+private:
+	const rxcpp::subjects::subject<var> wrapped;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PublishSubjectImpl)
+};
+
+class ReplaySubjectImpl : public Subject::Impl
+{
+public:
+	ReplaySubjectImpl(size_t bufferSize)
+	: wrapped(bufferSize, rxcpp::identity_immediate()) {}
+	
+	rxcpp::subscriber<var> getSubscriber() const override
+	{
+		return wrapped.get_subscriber();
+	}
+	
+	rxcpp::observable<var> asObservable() const override
+	{
+		return wrapped.get_observable();
+	}
+	
+private:
+	const rxcpp::subjects::replay<var, rxcpp::identity_one_worker> wrapped;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ReplaySubjectImpl)
+};
+
+
+Subject::Subject(const std::shared_ptr<Impl>& impl)
+: Observer(std::make_shared<Observer::Impl>(impl->getSubscriber())),
+  Observable(std::make_shared<Observable::Impl>(impl->asObservable())),
+  impl(impl) {}
+
+Observable Subject::asObservable() const
+{
+	return *this;
 }
 
-void BehaviorSubject::onError(Error error)
+Observer Subject::asObserver() const
 {
-	impl->wrapped.get_subscriber().on_error(error);
+	return *this;
 }
 
-void BehaviorSubject::onCompleted()
-{
-	impl->wrapped.get_subscriber().on_completed();
-}
-
-Observable BehaviorSubject::getObservable() const
-{
-	return Observable::Impl::fromRxCpp(impl->wrapped.get_observable());
-}
-
-Observer BehaviorSubject::getObserver()
-{
-	return std::make_shared<Observer::Impl>(impl->wrapped.get_subscriber());
-}
+BehaviorSubject::BehaviorSubject(const juce::var& initial)
+: Subject(std::make_shared<BehaviorSubjectImpl>(initial)) {}
 
 var BehaviorSubject::getLatestItem() const
 {
-	return impl->wrapped.get_value();
+	return impl->getLatestItem();
 }
-
-
-struct PublishSubject::Impl
-{
-	const rxcpp::subjects::subject<var> wrapped;
-};
 
 PublishSubject::PublishSubject()
-: impl(std::make_shared<Impl>()) {}
+: Subject(std::make_shared<PublishSubjectImpl>()) {}
 
-void PublishSubject::onNext(const var& next)
-{
-	impl->wrapped.get_subscriber().on_next(next);
-}
+ReplaySubject::ReplaySubject(size_t bufferSize)
+: Subject(std::make_shared<ReplaySubjectImpl>(bufferSize)) {}
 
-void PublishSubject::onError(Error error)
-{
-	impl->wrapped.get_subscriber().on_error(error);
-}
-
-void PublishSubject::onCompleted()
-{
-	impl->wrapped.get_subscriber().on_completed();
-}
-
-Observable PublishSubject::getObservable() const
-{
-	return Observable::Impl::fromRxCpp(impl->wrapped.get_observable());
-}
-
-Observer PublishSubject::getObserver()
-{
-	return std::make_shared<Observer::Impl>(impl->wrapped.get_subscriber());
-}
+const size_t ReplaySubject::MaxBufferSize = std::numeric_limits<size_t>::max();
 
 RXJUCE_NAMESPACE_END

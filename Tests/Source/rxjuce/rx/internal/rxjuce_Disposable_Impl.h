@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    rxjuce_Subscription_Impl.h
+    rxjuce_Disposable_Impl.h
     Created: 2 May 2017 9:16:56am
     Author:  Martin Finke
 
@@ -12,15 +12,13 @@
 
 #include "rxjuce_Prefix.h"
 
-#include "rxjuce_Subscription.h"
+#include "rxjuce_Disposable.h"
 
 #include "../../RxCpp/Rx/v2/src/rxcpp/rx-lite.hpp"
 
 RXJUCE_NAMESPACE_BEGIN
 
-using namespace juce;
-
-struct Subscription::Impl
+struct Disposable::Impl
 {
 	Impl(const rxcpp::subscription& wrapped);
 	

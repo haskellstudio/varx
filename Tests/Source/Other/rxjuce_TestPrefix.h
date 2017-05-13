@@ -11,7 +11,7 @@
 #pragma once
 
 #include "rxjuce_PrintFunctions.h"
-#include "rxjuce_Subscription.h"
+#include "rxjuce_DisposeBag.h"
 
 #include "catch.hpp"
 
@@ -22,7 +22,7 @@ using namespace rxjuce;
 #define IT( desc )			SECTION( std::string("       It ") + desc, "" )
 
 /** Subscribes to an Observable and collects all emitted items into a given Array. */
-#define RxJUCECollectItems(__observable, __arrayName) const ScopedSubscription JUCE_JOIN_MACRO(__arrayName, JUCE_JOIN_MACRO(Subscription_, __LINE__))((__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); }))
+#define RxJUCECollectItems(__observable, __arrayName) DisposeBag JUCE_JOIN_MACRO(__arrayName, JUCE_JOIN_MACRO(Disposable_, __LINE__)); (__observable).subscribe([&__arrayName](var v){ __arrayName.add(v); }).disposedBy(JUCE_JOIN_MACRO(__arrayName, JUCE_JOIN_MACRO(Disposable_, __LINE__)));
 
 /** REQUIREs that a given Array is equal to the list of passed items. */
 #define RxJUCERequireItems(__arrayName, ...) REQUIRE(__arrayName == Array<var>({__VA_ARGS__}))

@@ -11,36 +11,44 @@
 #pragma once
 
 #include "rxjuce_Prefix.h"
+#include "rxjuce_Disposable.h"
 
 RXJUCE_NAMESPACE_BEGIN
+
+class Observable;
 
 /**
 	Retrieves items. You can call onNext to notify the Observer with a new item.
  
-	@see BehaviorSubject, PublishSubject, Observable::create
+	An Observer does **not** automatically call onCompleted when it's destroyed.
+ 
+	@see Subject, Observable::create
  */
 class Observer
 {
 public:
 	/** Notifies the Observer with a new item. */
-	void onNext(const juce::var& next);
+	void onNext(const juce::var& next) const;
 	
 	/** Notifies the Observer that an error has occurred. */
-	void onError(Error error);
+	void onError(Error error) const;
+	
+	/** Notifies the Observer that no more values will be pushed. */
+	void onCompleted() const;
 	
 	/**
-		Notifies the Observer that no more values will be pushed. **It's illegal to call Observer::onNext or Observer::onError after calling this.**
+		Binds the Observer to an Observable. Whenever the Observable emits an item, Observer::onNext is called with that item.
+	 
+		​ **You are responsible for managing the returned Disposable. It doesn't automatically expire when this Observer is destroyed.**
 	 */
-	void onCompleted();
+	Disposable bindTo(const Observable& observable) const;
 	
 private:
-	struct Impl;
-	std::shared_ptr<Impl> impl;
-	
+	friend class Subject;
 	friend class Observable;
-	friend class BehaviorSubject;
-	friend class PublishSubject;
-	Observer(const std::shared_ptr<Impl>&);
+	struct Impl;
+	explicit Observer(const std::shared_ptr<Impl>& impl);
+	std::shared_ptr<Impl> impl;
 	
 	JUCE_LEAK_DETECTOR(Observer)
 };

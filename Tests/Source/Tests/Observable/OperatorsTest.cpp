@@ -12,6 +12,7 @@
 
 #include "rxjuce_Observable.h"
 #include "rxjuce_Observer.h"
+#include "rxjuce_Subjects.h"
 
 
 template<typename Var, typename... Vars>
@@ -82,6 +83,45 @@ TEST_CASE("Observable::concat",
 		RxJUCECollectItems(observable.concat(another), items);
 		
 		RxJUCERequireItems(items, var("Hello"), var("World"), var(1.5), var(2.32), var(5.6));
+	}
+}
+
+
+TEST_CASE("Observable::distinctUntilChanged",
+		  "[Observable][Observable::distinctUntilChanged]")
+{
+	IT("doesn't emit consecutive duplicate items") {
+		Array<var> originalItems;
+		Array<var> filteredItems;
+		PublishSubject subject;
+		
+		RxJUCECollectItems(subject, originalItems);
+		RxJUCECollectItems(subject.distinctUntilChanged(), filteredItems);
+		
+		subject.onNext(3);
+		subject.onNext(3);
+		subject.onNext("3"); // Is equal to 3, due to how juce::var defines operator==
+		subject.onNext(3);
+		subject.onNext(3);
+		subject.onNext(5);
+		subject.onNext(3);
+		
+		RxJUCERequireItems(originalItems, var(3), var(3), var("3"), var(3), var(3), var(5), var(3));
+		RxJUCERequireItems(filteredItems, var(3), var(5), var(3));
+	}
+}
+
+
+TEST_CASE("Observable::elementAt",
+		  "[Observable][Observable::elementAt]")
+{
+	auto observable = Observable::from({17.4, 3.0, 1.5, 6.77});
+	Array<var> items;
+	
+	IT("emits only the item at the given index") {
+		RxJUCECollectItems(observable.elementAt(2), items);
+		
+		RxJUCERequireItems(items, 1.5);
 	}
 }
 
@@ -203,9 +243,27 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		auto onError = [&](Error) {
 			onErrorCalled = true;
 		};
-		auto subscription = o.subscribe([](var) {}, onError);
+		DisposeBag disposeBag;
+		o.subscribe([](var) {}, onError).disposedBy(disposeBag);
 		
 		REQUIRE(onErrorCalled);
+	}
+}
+
+
+TEST_CASE("Observable::reduce",
+		  "[Observable][Observable::reduce]")
+{
+	Array<var> items;
+	
+	IT("reduces emitted items") {
+		auto observable = Observable::from({10, 100, 1000}).reduce(2, [](int accum, int next) {
+			return accum + next;
+		});
+
+		RxJUCECollectItems(observable, items);
+		
+		RxJUCERequireItems(items, 1112);
 	}
 }
 
@@ -222,5 +280,167 @@ TEST_CASE("Observable::scan",
 		RxJUCECollectItems(o, items);
 		
 		RxJUCERequireItems(items, 11, 13, 16, 20, 25);
+	}
+}
+
+
+TEST_CASE("Observable::skip",
+		  "[Observable][Observable::skip]")
+{
+	Array<var> items;
+	
+	IT("skips the first 4 items") {
+		auto o = Observable::from({4, 7, 2, 1, 19, 1, 33, 4}).skip(4);
+		RxJUCECollectItems(o, items);
+		
+		RxJUCERequireItems(items, 19, 1, 33, 4);
+	}
+}
+
+
+TEST_CASE("Observable::skipUntil",
+		  "[Observable][Observable::skipUntil]")
+{
+	Array<var> items;
+	
+	IT("skips until another Observable emits an item") {
+		PublishSubject subject;
+		PublishSubject trigger;
+		
+		RxJUCECollectItems(subject.skipUntil(trigger), items);
+		
+		// Emit some items, these should NOT be received
+		subject.onNext("Not");
+		subject.onNext("Getting");
+		subject.onNext("This");
+		
+		// Trigger
+		trigger.onNext(var::undefined());
+		
+		// Emit more items, these should be received
+		subject.onNext("These");
+		subject.onNext("Are");
+		subject.onNext("Received");
+		
+		RxJUCERequireItems(items, "These", "Are", "Received");
+	}
+}
+
+
+TEST_CASE("Observable::startWith",
+		  "[Observable][Observable::startWith]")
+{
+	Array<var> items;
+	auto observable = Observable::from({17, 3});
+	
+	IT("prepends items to an existing Observable") {
+		RxJUCECollectItems(observable.startWith(6, 4, 7, 2), items);
+		
+		RxJUCERequireItems(items, 6, 4, 7, 2, 17, 3);
+	}
+}
+
+
+TEST_CASE("Observable::takeLast",
+		  "[Observable][Observable::takeLast]")
+{
+	Array<var> items;
+	auto observable = Observable::from({"First", "Another", "And one more", "Last item"});
+	
+	IT("takes the last 2 emitted items") {
+		RxJUCECollectItems(observable.takeLast(2), items);
+		
+		RxJUCERequireItems(items, "And one more", "Last item");
+	}
+}
+
+
+TEST_CASE("Observable::takeUntil",
+		  "[Observable][Observable::takeUntil]")
+{
+	Array<var> items;
+	
+	IT("emits until another Observable emits an item") {
+		PublishSubject subject;
+		PublishSubject trigger;
+		
+		RxJUCECollectItems(subject.takeUntil(trigger), items);
+		
+		// Emit some items, these should be received
+		subject.onNext("These");
+		subject.onNext("Are");
+		subject.onNext("Received");
+		
+		// Trigger
+		trigger.onNext("Hey stop!");
+		
+		// Emit more items, these should NOT be received
+		subject.onNext("Not");
+		subject.onNext("Getting");
+		subject.onNext("This");
+		
+		RxJUCERequireItems(items, "These", "Are", "Received");
+	}
+}
+
+
+TEST_CASE("Observable::takeWhile",
+		  "[Observable][Observable::takeWhile]")
+{
+	Array<var> items;
+	
+	IT("emits items as long as the predicate returns true") {
+		PublishSubject subject;
+		const auto predicate = [](int i) {
+			return i <= 10;
+		};
+		
+		RxJUCECollectItems(subject.takeWhile(predicate), items);
+		
+		// These should be emitted
+		subject.onNext(4);
+		subject.onNext(7);
+		subject.onNext(10);
+		
+		// These shouldn't be emitted, because predicate(11) == false
+		subject.onNext(11);
+		subject.onNext(3);
+		subject.onNext(7);
+		
+		RxJUCERequireItems(items, 4, 7, 10);
+	}
+}
+
+
+TEST_CASE("Observable::zip",
+		  "[Observable][Observable::zip]")
+{
+	Array<var> items;
+	
+	IT("zips three Observables together") {
+		PublishSubject strings;
+		PublishSubject ints;
+		PublishSubject doubles;
+		const auto combine = [](String s, int i, double d) {
+			return "s=" + s + "; i=" + String(i) + "; d=" + String(d);
+		};
+		
+		RxJUCECollectItems(strings.zip(ints, doubles, combine), items);
+		
+		// First item should be emitted when all three Observables have emitted once
+		strings.onNext("a");
+		CHECK(items.isEmpty());
+		ints.onNext(1);
+		CHECK(items.isEmpty());
+		doubles.onNext(0.1);
+		RxJUCECheckItems(items, "s=a; i=1; d=0.1");
+		
+		// Second item should be emitted when all three Observables have emitted twice
+		doubles.onNext(0.25);
+		CHECK(items.size() == 1);
+		ints.onNext(57);
+		CHECK(items.size() == 1);
+		strings.onNext("x");
+		RxJUCERequireItems(items, "s=a; i=1; d=0.1", "s=x; i=57; d=0.25");
 	}
 }

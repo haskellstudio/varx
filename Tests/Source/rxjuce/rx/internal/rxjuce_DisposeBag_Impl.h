@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    rxjuce_Observer_Impl.h
-    Created: 2 May 2017 9:02:15am
+    rxjuce_DisposeBag_Impl.h
+    Created: 13 May 2017 3:08:51pm
     Author:  Martin Finke
 
   ==============================================================================
@@ -12,19 +12,15 @@
 
 #include "rxjuce_Prefix.h"
 
-#include "rxjuce_Observer.h"
+#include "rxjuce_DisposeBag.h"
 
 #include "../../RxCpp/Rx/v2/src/rxcpp/rx-lite.hpp"
 
 RXJUCE_NAMESPACE_BEGIN
 
-using namespace juce;
-
-struct Observer::Impl
+struct DisposeBag::Impl
 {
-	explicit Impl(const rxcpp::subscriber<var>& wrapped);
-	
-	const rxcpp::subscriber<var> wrapped;
+	const rxcpp::composite_subscription wrapped;
 };
 
 RXJUCE_NAMESPACE_END
