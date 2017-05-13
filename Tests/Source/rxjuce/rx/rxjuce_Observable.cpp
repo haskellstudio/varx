@@ -44,6 +44,30 @@ const std::function<void()> Observable::EmptyOnCompleted = [](){};
 Observable::Observable(const shared_ptr<Impl>& impl)
 :	impl(impl) {}
 
+Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
+{
+	return Impl::fromRxCpp(rxcpp::observable<>::create<var>([onSubscribe](rxcpp::subscriber<var> s) {
+		onSubscribe(Observer(std::make_shared<Observer::Impl>(s)));
+	}));
+}
+
+Observable Observable::defer(const std::function<Observable()>& factory)
+{
+	return Impl::fromRxCpp(rxcpp::observable<>::defer([factory]() {
+		return factory().impl->wrapped;
+	}));
+}
+
+Observable Observable::empty()
+{
+	return Impl::fromRxCpp(rxcpp::observable<>::empty<var>());
+}
+
+Observable Observable::error(Error error)
+{
+	return Impl::fromRxCpp(rxcpp::observable<>::error<var>(error));
+}
+
 Observable Observable::from(const Array<var>& array)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::iterate(array));
@@ -63,6 +87,11 @@ Observable Observable::interval(const juce::RelativeTime& period)
 Observable Observable::just(const var& value)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::just(value));
+}
+
+Observable Observable::never()
+{
+	return Impl::fromRxCpp(rxcpp::observable<>::never<var>());
 }
 
 Observable Observable::range(int first, int last, unsigned int step)
@@ -85,11 +114,14 @@ Observable Observable::range(double first, double last, unsigned int step)
 	return Impl::fromRxCpp(o.map(toVar<double>));
 }
 
-Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
+Observable Observable::repeat(const var& item)
 {
-	return Impl::fromRxCpp(rxcpp::observable<>::create<var>([onSubscribe](rxcpp::subscriber<var> s) {
-		onSubscribe(Observer(std::make_shared<Observer::Impl>(s)));
-	}));
+	return Impl::fromRxCpp(rxcpp::observable<>::just(item).repeat());
+}
+
+Observable Observable::repeat(const var& item, unsigned int times)
+{
+	return Impl::fromRxCpp(rxcpp::observable<>::just(item).repeat(times));
 }
 
 
@@ -182,6 +214,11 @@ Observable Observable::distinctUntilChanged() const
 	return Impl::fromRxCpp(impl->wrapped.distinct_until_changed());
 }
 
+Observable Observable::elementAt(int index) const
+{
+	return Impl::fromRxCpp(impl->wrapped.element_at(index));
+}
+
 Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
 {
 	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
@@ -228,6 +265,11 @@ Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observ
 	return impl->merge(o1, o2, o3, o4, o5, o6, o7);
 }
 
+Observable Observable::reduce(const var& startValue, Function2 f) const
+{
+	return Impl::fromRxCpp(impl->wrapped.reduce(startValue, f));
+}
+
 Observable Observable::sample(const juce::RelativeTime& interval)
 {
 	return Impl::fromRxCpp(impl->wrapped.sample_with_time(durationFromRelativeTime(interval)));
@@ -236,6 +278,16 @@ Observable Observable::sample(const juce::RelativeTime& interval)
 Observable Observable::scan(const var& startValue, Function2 f) const
 {
 	return Impl::fromRxCpp(impl->wrapped.scan(startValue, f));
+}
+
+Observable Observable::skip(unsigned int numItems) const
+{
+	return Impl::fromRxCpp(impl->wrapped.skip(numItems));
+}
+
+Observable Observable::skipUntil(Observable other) const
+{
+	return Impl::fromRxCpp(impl->wrapped.skip_until(other.impl->wrapped));
 }
 
 Observable Observable::startWith(const var& item1) const
@@ -285,9 +337,48 @@ Observable Observable::take(unsigned int numItems) const
 	return Impl::fromRxCpp(impl->wrapped.take(numItems));
 }
 
+Observable Observable::takeLast(unsigned int numItems) const
+{
+	return Impl::fromRxCpp(impl->wrapped.take_last(numItems));
+}
+
 Observable Observable::takeUntil(Observable other) const
 {
 	return Impl::fromRxCpp(impl->wrapped.take_until(other.impl->wrapped));
+}
+
+Observable Observable::takeWhile(const std::function<bool(const var&)>& predicate) const
+{
+	return Impl::fromRxCpp(impl->wrapped.take_while(predicate));
+}
+
+Observable Observable::zip(Observable o1, Function2& f) const
+{
+	return impl->zip(f, o1);
+}
+Observable Observable::zip(Observable o1, Observable o2, Function3 f) const
+{
+	return impl->zip(f, o1, o2);
+}
+Observable Observable::zip(Observable o1, Observable o2, Observable o3, Function4 f) const
+{
+	return impl->zip(f, o1, o2, o3);
+}
+Observable Observable::zip(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const
+{
+	return impl->zip(f, o1, o2, o3, o4);
+}
+Observable Observable::zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const
+{
+	return impl->zip(f, o1, o2, o3, o4, o5);
+}
+Observable Observable::zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const
+{
+	return impl->zip(f, o1, o2, o3, o4, o5, o6);
+}
+Observable Observable::zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const
+{
+	return impl->zip(f, o1, o2, o3, o4, o5, o6, o7);
 }
 
 

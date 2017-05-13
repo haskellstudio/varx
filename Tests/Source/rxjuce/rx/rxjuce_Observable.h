@@ -31,6 +31,28 @@ public:
 	
 #pragma mark - Creation
 	/**
+		Creates an Observable which emits values from an Observer on each disposable.
+	 
+		In the onSubscribe function, you get an Observer. You can call Observer::onNext on it to emit values from the Observable.
+	 */
+	static Observable create(const std::function<void(Observer)>& onSubscribe);
+	
+	/**
+		Creates a new Observable for each subscriber, by calling the `factory` function on each new subscription.
+	 */
+	static Observable defer(const std::function<Observable()>& factory);
+	
+	/**
+		Creates an Observable that doesn't emit any items and notifies onComplete immediately.
+	 */
+	static Observable empty();
+	
+	/**
+		Creates an Observable which doesn't emit any items, and immediately notifies onError.
+	 */
+	static Observable error(Error error);
+	
+	/**
 		Creates an Observable that immediately emits the items from the given Array.
 	 
 		Note that you can also pass an initializer list, like this:
@@ -60,11 +82,16 @@ public:
 	static Observable interval(const juce::RelativeTime& interval);
 	
 	/**
-		Creates an Observable which emits a single element.
+		Creates an Observable which emits a single item.
 	 
 		The value is emitted immediately on each new disposable.
 	 */
 	static Observable just(const var& value);
+	
+	/**
+		Creates an Observable that never emits any events and never terminates.
+	 */
+	static Observable never();
 	
 	///@{
 	/**
@@ -83,11 +110,13 @@ public:
 	///@}
 	
 	/**
-		Creates an Observable which emits values from an Observer on each disposable.
+		Creates an Observable which emits a given item repeatedly.
 	 
-		In the onSubscribe function, you get an Observer. You can call Observer::onNext on it to emit values from the Observable.
+		An optional `times` parameter specifies how often the item should be repeated. If omitted, the item will is repeated indefinitely.
 	 */
-	static Observable create(const std::function<void(Observer)>& onSubscribe);
+	static Observable repeat(const var& item);
+	/** \overload */
+	static Observable repeat(const var& item, unsigned int times);
 	
 	
 #pragma mark - Disposable
@@ -131,7 +160,7 @@ public:
 #pragma mark - Operators
 	///@{
 	/**
-		Returns an Observable that emits whenever an item is emitted by either this Observable or o1, o2, …. It combines the latest item emitted by each Observable via the given function and emits the result of this function.
+		Returns an Observable that emits **whenever** an item is emitted by either this Observable **or** o1, o2, …. It combines the **latest** item from each Observable via the given function and emits the result of this function.
 	 */
 	Observable combineLatest(Observable o1, Function2 f) const;
 	/** \overload */
@@ -178,7 +207,15 @@ public:
 	 */
 	Observable debounce(const juce::RelativeTime& interval) const;
 	
+	/**
+		Returns an Observable which emits the same items as this Observable, but suppresses consecutive duplicate items.
+	 */
 	Observable distinctUntilChanged() const;
+	
+	/**
+		Returns an Observable which emits only one item: The `index`th item emitted by this Observable.
+	 */
+	Observable elementAt(int index) const;
 	
 	/**
 		Returns an Observable that emits only those items from this Observable that pass a predicate function.
@@ -229,6 +266,11 @@ public:
 	///@}
 	
 	/**
+		Begins with a `startValue`, and then applies `f` to all items emitted by this Observable, and returns the aggregate result as a single-element Observable sequence.
+	 */
+	Observable reduce(const var& startValue, Function2 f) const;
+	
+	/**
 		Returns an Observable which checks every `interval` milliseconds whether this Observable has emitted any new items. If so, the returned Observable emits the latest item from this Observable.
 	 
 		For example, this is useful when an Observable emits items very rapidly, but you only want to update a GUI component 25 times per second to reduce CPU load.
@@ -243,6 +285,16 @@ public:
 		The first parameter to `f` is the accumulator, the second is the current item.
 	 */
 	Observable scan(const var& startValue, Function2 f) const;
+	
+	/**
+		Returns an Observable which suppresses emitting the first `numItems` items from this Observable.
+	 */
+	Observable skip(unsigned int numItems) const;
+	
+	/**
+		Returns an Observable which suppresses emitting items from this Observable until the `other` Observable sequence emits an item.
+	 */
+	Observable skipUntil(Observable other) const;
 	
 	/**
 		Emits the given item(s) before beginning to emit the items in this Observable.
@@ -275,7 +327,45 @@ public:
 	 */
 	Observable take(unsigned int numItems) const;
 	
+	/**
+		Returns an Observable that emits only the last `numItems` items from this Observable.
+	 */
+	Observable takeLast(unsigned int numItems) const;
+	
+	/**
+		Emits items from this Observable until the `other` Observable sequence emits an item.
+	 */
 	Observable takeUntil(Observable other) const;
+	
+	/**
+		Emits items from the beginning of this Observable as long as the given `predicate` returns `true`.
+	 
+		The predicate is called on each item emitted by this Observable, until it returns `false`.
+	 */
+	Observable takeWhile(const std::function<bool(const var&)>& predicate) const;
+	
+	///@{
+	/**
+		Returns an Observable that emits **whenever** an item is emitted by either this Observable **or** o1, o2, …. It combines the **latest** item from each Observable via the given function and emits the result of this function.
+	 
+		It applies this function in strict sequence, so the first item emitted by the returned Observable is the result of `f` applied to the first item emitted by this Observable and the first item emitted by `o1`; the second item emitted by the returned Observable is the result of `f` applied to the second item emitted by this Observable and the second item emitted by `o1`; and so on.
+	 
+		The returned Observable only emits as many items as the number of items emitted by the source Observable that emits the fewest items.
+	 */
+	Observable zip(Observable o1, Function2 f) const;
+	/** \overload */
+	Observable zip(Observable o1, Observable o2, Function3 f) const;
+	/** \overload */
+	Observable zip(Observable o1, Observable o2, Observable o3, Function4 f) const;
+	/** \overload */
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const;
+	/** \overload */
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const;
+	/** \overload */
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const;
+	/** \overload */
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const;
+	///@}
 	
 	
 #pragma mark - Scheduling

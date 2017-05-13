@@ -53,6 +53,12 @@ public:
 		return fromRxCpp(wrapped.start_with(items...));
 	}
 	
+	template<typename Transform, typename... Os>
+	std::shared_ptr<Impl> zip(Transform&& transform, Os&&... observables)
+	{
+		return fromRxCpp(wrapped.zip(transform, observables.impl->wrapped...));
+	}
+	
 	rxcpp::observable<var> wrapped;
 	
 private:
