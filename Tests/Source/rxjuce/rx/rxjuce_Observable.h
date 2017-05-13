@@ -254,6 +254,8 @@ public:
 	 */
 	Observable take(unsigned int numItems) const;
 	
+	Observable takeUntil(Observable other) const;
+	
 	
 #pragma mark - Scheduling
 	/**

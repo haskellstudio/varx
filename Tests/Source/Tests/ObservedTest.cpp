@@ -11,6 +11,7 @@
 #include "rxjuce_TestPrefix.h"
 
 #include "rxjuce_Reactive.h"
+#include "rxjuce_VariantConverters.h"
 
 
 TEST_CASE("Reactive<Button> stateChanged",
@@ -58,13 +59,13 @@ TEST_CASE("Reactive<Button> clicked",
 		button.triggerClick();
 		RxJUCERunDispatchLoop();
 		
-		RxJUCECheckItems(items, var());
+		RxJUCECheckItems(items, var::undefined());
 		
 		button.triggerClick();
 		button.triggerClick();
 		RxJUCERunDispatchLoop();
 		
-		RxJUCERequireItems(items, var(), var(), var());
+		RxJUCERequireItems(items, var::undefined(), var::undefined(), var::undefined());
 	}
 }
 
@@ -162,24 +163,65 @@ TEST_CASE("Reactive<Value> Observable",
 	}
 }
 
+TEST_CASE("ComponentConnection")
+{
+	Array<var> items;
+	Reactive<Component> component;
+	RxJUCECollectItems(component.rx.visible, items);
+	
+	IT("initially has the same value as the getter") {
+		REQUIRE(component.isVisible() == fromVar<bool>(component.rx.visible.getLatestItem()));
+	}
+	
+	IT("emits when visibility is changed through setter") {
+		for (bool visible : {false, false, true, true, false}) {
+			component.setVisible(visible);
+		}
+		
+		RxJUCERequireItems(items, false, true, false);
+	}
+	
+	IT("changes visiblility when pushing items") {
+		for (bool visible : {false, false, true, true, false}) {
+			component.rx.visible.onNext(visible);
+			
+			REQUIRE(component.isVisible() == visible);
+		}
+	}
+}
+
+
+template<typename T1, typename T2>
+using isSame = typename std::is_same<typename std::decay<T1>::type, T2>;
+
 TEST_CASE("Template ambiguities")
 {
-	class MyButton : public Button {
-	public:
-		MyButton()
-		: Button("") {}
-		void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override {}
-	};
-	Reactive<Component> myComponent;
-	Reactive<MyButton> myButton;
-	Reactive<ImageComponent> myImageComponent;
+	Array<var> items;
 	
-#warning Test this:
-	/*
-	 class MyCustomComponent : public Component {...};
-	 Reactive<MyCustomComponent> myCustomComponent; // should use Reactive<Component>
-	 
-	 */
+	IT("chooses the correct template for a juce::Component") {
+		Reactive<Component> myComponent;
+		static_assert(isSame<decltype(myComponent.rx), ComponentConnection>::value, "rx Member has wrong type.");
+	}
 	
+	IT("chooses the correct template for a Component subclass") {
+		class MyCustomComponent : public Component {};
+		Reactive<MyCustomComponent> myCustomComponent;
+		static_assert(isSame<decltype(myCustomComponent.rx), ComponentConnection>::value, "rx Member has wrong type.");
+	}
 	
+	IT("chooses the correct template for a Button subclass") {
+		class MyButton : public Button {
+		public:
+			MyButton()
+			: Button("") {}
+			void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override {}
+		};
+		Reactive<MyButton> myButton;
+		static_assert(isSame<decltype(myButton.rx), ButtonConnection>::value, "rx Member has wrong type.");
+	}
+	
+	IT("chooses the correct template for a juce::ImageComponent") {
+		Reactive<ImageComponent> myImageComponent;
+		static_assert(isSame<decltype(myImageComponent.rx), ImageComponentConnection>::value, "rx Member has wrong type.");
+	}
 }

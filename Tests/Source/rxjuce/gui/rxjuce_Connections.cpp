@@ -15,12 +15,22 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
+ConnectionBase::ConnectionBase()
+: _deallocated(1),
+  deallocated(_deallocated.asObservable()) {}
+
+ConnectionBase::~ConnectionBase()
+{
+	_deallocated.onNext(var::undefined());
+	_deallocated.onCompleted();
+}
+
 ValueConnection::ValueConnection(const Value& inputValue)
 : subject(inputValue.getValue()),
   value(inputValue)
 {
 	value.addListener(this);
-	subscriptions.add(subject.subscribe(std::bind(&Value::setValue, value, _1)));
+	subject.takeUntil(deallocated).subscribe(std::bind(&Value::setValue, value, _1));
 }
 
 void ValueConnection::valueChanged(Value&)
@@ -30,7 +40,14 @@ void ValueConnection::valueChanged(Value&)
 
 
 ComponentConnection::ComponentConnection(Component& parent)
-: visible(parent.isVisible()) {}
+: visible(parent.isVisible())
+{
+	parent.addComponentListener(this);
+	
+	visible.takeUntil(deallocated).subscribe([&parent](bool visible) {
+		parent.setVisible(visible);
+	});
+}
 
 void ComponentConnection::componentVisibilityChanged(Component& component)
 {
@@ -44,25 +61,25 @@ void ComponentConnection::componentVisibilityChanged(Component& component)
 ButtonConnection::ButtonConnection(Button& parent)
 : ComponentConnection(parent),
   _toggleState(parent.getToggleStateValue()),
-  clicked(_clicked.getObservable()),
+  clicked(_clicked.asObservable()),
   buttonState(parent.getState()),
   toggleState(_toggleState.subject),
-  text(_text.getObserver()),
-  tooltip(_tooltip.getObserver())
+  text(_text.asObserver()),
+  tooltip(_tooltip.asObserver())
 {
 	parent.addListener(this);
 	
-	subscriptions.add(_text.subscribe(std::bind(&Button::setButtonText, &parent, _1)));
-	subscriptions.add(_tooltip.subscribe(std::bind(&Button::setTooltip, &parent, _1)));
+	_text.takeUntil(deallocated).subscribe(std::bind(&Button::setButtonText, &parent, _1));
+	_tooltip.takeUntil(deallocated).subscribe(std::bind(&Button::setTooltip, &parent, _1));
 	
-	subscriptions.add(buttonState.subscribe([&parent](const var& v) {
+	buttonState.takeUntil(deallocated).subscribe([&parent](const var& v) {
 		parent.setState(fromVar<Button::ButtonState>(v));
-	}));
+	});
 }
 
 void ButtonConnection::buttonClicked(Button *)
 {
-	_clicked.onNext(var());
+	_clicked.onNext(var::undefined());
 }
 
 void ButtonConnection::buttonStateChanged(Button *button)
@@ -73,11 +90,11 @@ void ButtonConnection::buttonStateChanged(Button *button)
 
 ImageComponentConnection::ImageComponentConnection(juce::ImageComponent& parent)
 : rxjuce::ComponentConnection(parent),
-  image(_image.getObserver())
+  image(_image.asObserver())
 {
-	subscriptions.add(_image.subscribe([&parent](const var& image) {
+	_image.takeUntil(deallocated).subscribe([&parent](const var& image) {
 		parent.setImage(fromVar<Image>(image));
-	}));
+	});
 }
 
 RXJUCE_NAMESPACE_END

@@ -18,7 +18,18 @@
 
 RXJUCE_NAMESPACE_BEGIN
 
-class ValueConnection : private juce::Value::Listener
+class ConnectionBase
+{
+	const ReplaySubject _deallocated;
+	
+public:
+	ConnectionBase();
+	virtual ~ConnectionBase();
+	
+	const Observable deallocated;
+};
+
+class ValueConnection : public ConnectionBase, private juce::Value::Listener
 {
 public:
 	ValueConnection(const juce::Value& inputValue);
@@ -27,19 +38,17 @@ public:
 	
 private:
 	juce::Value value;
-	juce::Array<ScopedSubscription> subscriptions;
 	
 	void valueChanged(juce::Value&) override;
 };
 
-class ComponentConnection : private juce::ComponentListener
+class ComponentConnection : public ConnectionBase, private juce::ComponentListener
 {
 public:
 	ComponentConnection(juce::Component& parent);
 	
 	const BehaviorSubject visible;
 	
-private:
 	void componentVisibilityChanged(juce::Component &component) override;
 };
 
@@ -59,11 +68,8 @@ public:
 	const Observer text;
 	const Observer tooltip;
 	
-private:
 	void buttonClicked(juce::Button *) override;
 	void buttonStateChanged(juce::Button *) override;
-	
-	juce::Array<ScopedSubscription> subscriptions;
 };
 
 class ImageComponentConnection : public ComponentConnection
@@ -74,9 +80,6 @@ public:
 	ImageComponentConnection(juce::ImageComponent& parent);
 	
 	const Observer image;
-	
-private:
-	juce::Array<ScopedSubscription> subscriptions;
 };
 
 RXJUCE_NAMESPACE_END

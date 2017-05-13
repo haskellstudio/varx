@@ -26,18 +26,20 @@ public:
 	/**
 		Returns an Observable that emits an item whenever onNext is called on this subject.
 	 */
-	Observable getObservable() const;
+	Observable asObservable() const;
 	
 	/**
 		Returns the Observer side. If you call onNext on this Observer, this subject's Observable side will emit an item.
 	 */
-	Observer getObserver() const;
+	Observer asObserver() const;
 	
 private:
 	friend class BehaviorSubject;
 	friend class PublishSubject;
+	friend class ReplaySubject;
 	friend class BehaviorSubjectImpl;
 	friend class PublishSubjectImpl;
+	friend class ReplaySubjectImpl;
 	struct Impl;
 	explicit Subject(const std::shared_ptr<Impl>& impl);
 	std::shared_ptr<Impl> impl;
@@ -74,6 +76,30 @@ public:
 	
 private:
 	JUCE_LEAK_DETECTOR(PublishSubject)
+};
+
+/**
+	A Subject that, on every new subscription, notifies the Observer with all of the items that were emitted since the ReplaySubject was created. It then continues to emit any items that are passed to onNext.
+ */
+class ReplaySubject : public Subject
+{
+public:
+	/**
+		Creates a new instance.
+	 
+		The `bufferSize` is the maximum number of items to remember and replay. Pass ReplaySubject::MaxBufferSize if you want all items to be remembered. The buffer size is increased as items are emitted (not allocated upfront).
+	 */
+	explicit ReplaySubject(size_t bufferSize);
+	
+	/**
+		The maximum number of items that can be remembered by this class. You can pass this to ReplaySubject::ReplaySubject to remember "all" items (within memory boundaries).
+	 
+		The buffer size is increased as items are emitted (not allocated upfront).
+	 */
+	static const size_t MaxBufferSize;
+	
+private:
+	JUCE_LEAK_DETECTOR(ReplaySubject)
 };
 
 RXJUCE_NAMESPACE_END

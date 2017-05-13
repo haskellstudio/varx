@@ -247,6 +247,11 @@ Observable Observable::take(unsigned int numItems) const
 	return Impl::fromRxCpp(impl->wrapped.take(numItems));
 }
 
+Observable Observable::takeUntil(Observable other) const
+{
+	return Impl::fromRxCpp(impl->wrapped.take_until(other.impl->wrapped));
+}
+
 
 #pragma mark - Scheduling
 
