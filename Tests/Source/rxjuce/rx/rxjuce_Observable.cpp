@@ -15,7 +15,7 @@
 #include "rxjuce_Observable_Impl.h"
 #include "rxjuce_Observer_Impl.h"
 #include "rxjuce_Scheduler_Impl.h"
-#include "rxjuce_Subscription_Impl.h"
+#include "rxjuce_Disposable_Impl.h"
 #include "rxjuce_VariantConverters.h"
 
 RXJUCE_SOURCE_PREFIX
@@ -93,18 +93,18 @@ Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
 }
 
 
-#pragma mark - Subscription
+#pragma mark - Disposable
 
-Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
+Disposable Observable::subscribe(const std::function<void(const var&)>& onNext,
 								   const std::function<void(Error)>& onError,
 								   const std::function<void()>& onCompleted) const
 {
-	auto subscription = impl->wrapped.subscribe(onNext, onError, onCompleted);
+	auto disposable = impl->wrapped.subscribe(onNext, onError, onCompleted);
 	
-	return Subscription(std::make_shared<Subscription::Impl>(subscription));
+	return Disposable(std::make_shared<Disposable::Impl>(disposable));
 }
 
-Subscription Observable::subscribe(const std::function<void(const var&)>& onNext,
+Disposable Observable::subscribe(const std::function<void(const var&)>& onNext,
 								   const std::function<void()>& onCompleted,
 								   const std::function<void(Error)>& onError) const
 {
@@ -177,6 +177,11 @@ Observable Observable::debounce(const juce::RelativeTime& period) const
 	return Impl::fromRxCpp(impl->wrapped.debounce(durationFromRelativeTime(period)));
 }
 
+Observable Observable::distinctUntilChanged() const
+{
+	return Impl::fromRxCpp(impl->wrapped.distinct_until_changed());
+}
+
 Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
 {
 	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
@@ -231,6 +236,39 @@ Observable Observable::sample(const juce::RelativeTime& interval)
 Observable Observable::scan(const var& startValue, Function2 f) const
 {
 	return Impl::fromRxCpp(impl->wrapped.scan(startValue, f));
+}
+
+Observable Observable::startWith(const var& item1) const
+{
+	return impl->startWith(item1);
+}
+Observable Observable::startWith(const var& item1, const var& item2) const
+{
+	return impl->startWith(item1, item2);
+}
+Observable Observable::startWith(const var& item1, const var& item2, const var& item3) const
+{
+	return impl->startWith(item1, item2, item3);
+}
+Observable Observable::startWith(const var& item1, const var& item2, const var& item3, const var& item4) const
+{
+	return impl->startWith(item1, item2, item3, item4);
+}
+Observable Observable::startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5) const
+{
+	return impl->startWith(item1, item2, item3, item4, item5);
+}
+Observable Observable::startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5, const var& item6) const
+{
+	return impl->startWith(item1, item2, item3, item4, item5, item6);
+}
+Observable Observable::startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5, const var& item6, const var& item7) const
+{
+	return impl->startWith(item1, item2, item3, item4, item5, item6, item7);
+}
+Observable Observable::startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5, const var& item6, const var& item7, const var& item8) const
+{
+	return impl->startWith(item1, item2, item3, item4, item5, item6, item7, item8);
 }
 
 Observable Observable::switchOnNext() const

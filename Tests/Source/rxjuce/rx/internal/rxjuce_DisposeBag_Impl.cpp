@@ -1,20 +1,17 @@
 /*
   ==============================================================================
 
-    rxjuce_Subscription_Impl.cpp
-    Created: 2 May 2017 9:16:56am
+    rxjuce_DisposeBag_Impl.cpp
+    Created: 13 May 2017 3:08:51pm
     Author:  Martin Finke
 
   ==============================================================================
 */
 
-#include "rxjuce_Subscription_Impl.h"
+#include "rxjuce_DisposeBag_Impl.h"
 
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
-
-Subscription::Impl::Impl(const rxcpp::subscription& wrapped)
-: wrapped(wrapped) {}
 
 RXJUCE_NAMESPACE_END

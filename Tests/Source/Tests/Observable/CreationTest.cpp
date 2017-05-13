@@ -26,7 +26,7 @@ TEST_CASE("Observable::just",
 		RxJUCERequireItems(items, 18.3);
 	}
 	
-	IT("notifies multiple subscriptions") {
+	IT("notifies multiple disposables") {
 		Observable o = Observable::just("Hello");
 		RxJUCECollectItems(o, items);
 		RxJUCECollectItems(o, items);
@@ -121,7 +121,7 @@ TEST_CASE("Observable::fromValue",
 		RxJUCERequireItems(items, "Initial Item", "4");
 	}
 	
-	IT("notifies multiple Subscriptions on subscribe") {
+	IT("notifies multiple Disposables on subscribe") {
 		Observable another = Observable::fromValue(value);
 		RxJUCECollectItems(another, items);
 		
@@ -136,10 +136,11 @@ TEST_CASE("Observable::fromValue",
 		RxJUCERequireItems(items, "Initial Item", "Initial Item");
 	}
 	
-	IT("notifies multiple Subscriptions if a Value is set multiple times") {
-		ScopedSubscription another = observable.subscribe([&](String newValue) {
+	IT("notifies multiple Disposables if a Value is set multiple times") {
+		DisposeBag disposeBag;
+		observable.subscribe([&](String newValue) {
 			items.add(newValue.toUpperCase());
-		});
+		}).disposedBy(disposeBag);
 		
 		value = "Bar";
 		RxJUCERunDispatchLoop();
@@ -291,18 +292,18 @@ TEST_CASE("Observable::create",
 			});
 		}));
 		
-		IT("emits when there's still a subscription") {
-			auto subscription = observable->subscribe([&](var next){ items.add(next); });
+		IT("emits when there's still a disposable") {
+			auto disposable = observable->subscribe([&](var next){ items.add(next); });
 			observable.reset();
 			RxJUCERunDispatchLoop();
 			
 			RxJUCERequireItems(items, "First", "Second");
 		}
 		
-		IT("doesn't emit when the subscription has unsubscribed") {
-			auto subscription = observable->subscribe([&](var next){ items.add(next); });
+		IT("doesn't emit when the disposable has unsubscribed") {
+			auto disposable = observable->subscribe([&](var next){ items.add(next); });
 			observable.reset();
-			subscription.unsubscribe();
+			disposable.dispose();
 			RxJUCERunDispatchLoop();
 			
 			REQUIRE(items.isEmpty());
@@ -310,7 +311,7 @@ TEST_CASE("Observable::create",
 		
 	}
 	
-	IT("calls onSubscribe again for each new subscription") {
+	IT("calls onSubscribe again for each new disposable") {
 		auto observable = Observable::create([](Observer observer) {
 			observer.onNext("onSubscribe called");
 		});
@@ -346,7 +347,7 @@ TEST_CASE("Observable::create",
 		CHECK(pointer->getReferenceCount() == 2);
 		
 		// Creating a copy should not increase the ref count
-		Subscription s = copy->subscribe([](var){});
+		Disposable s = copy->subscribe([](var){});
 		CHECK(pointer->getReferenceCount() == 2);
 		
 		// After the copy is destroyed, there should be just 1 (from the pointer)

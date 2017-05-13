@@ -6,6 +6,7 @@
 #include <map>
 #include <type_traits>
 #include <utility>
+#include <initializer_list>
 
 #define RXJUCE_NAMESPACE_BEGIN namespace rxjuce {
 #define RXJUCE_NAMESPACE_END }

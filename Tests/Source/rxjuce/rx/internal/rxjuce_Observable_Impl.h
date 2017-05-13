@@ -36,15 +36,21 @@ public:
 	}
 	
 	template<typename... Os>
+	std::shared_ptr<Impl> concat(Os&&... observables)
+	{
+		return fromRxCpp(wrapped.concat(observables.impl->wrapped...));
+	}
+	
+	template<typename... Os>
 	std::shared_ptr<Impl> merge(Os&&... observables)
 	{
 		return fromRxCpp(wrapped.merge(observables.impl->wrapped...));
 	}
 	
-	template<typename... Os>
-	std::shared_ptr<Impl> concat(Os&&... observables)
+	template<typename... Items>
+	std::shared_ptr<Impl> startWith(Items&&... items)
 	{
-		return fromRxCpp(wrapped.concat(observables.impl->wrapped...));
+		return fromRxCpp(wrapped.start_with(items...));
 	}
 	
 	rxcpp::observable<var> wrapped;

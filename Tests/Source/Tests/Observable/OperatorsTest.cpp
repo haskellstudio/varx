@@ -203,7 +203,7 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		auto onError = [&](Error) {
 			onErrorCalled = true;
 		};
-		auto subscription = o.subscribe([](var) {}, onError);
+		auto disposable = o.subscribe([](var) {}, onError);
 		
 		REQUIRE(onErrorCalled);
 	}

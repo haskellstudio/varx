@@ -12,7 +12,7 @@
 
 #include "rxjuce_Prefix.h"
 
-#include "rxjuce_Subscription.h"
+#include "rxjuce_Disposable.h"
 
 RXJUCE_NAMESPACE_BEGIN
 
@@ -31,9 +31,9 @@ public:
 	
 #pragma mark - Creation
 	/**
-		Creates an Observable that immediately emits the items from the given Array to each subscriber.
+		Creates an Observable that immediately emits the items from the given Array.
 	 
-		Note that you can also pass a std::initializer_list here, like this:
+		Note that you can also pass an initializer list, like this:
 	 
 			Observable::from({"Hello", "Test"})
 	 
@@ -51,7 +51,7 @@ public:
 	static Observable fromValue(juce::Value value);
 	
 	/**
-		Returns an Observable that emits one item every `interval`, starting at the time of subscription (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on.
+		Returns an Observable that emits one item every `interval`, starting at the time of disposable (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on.
 	 
 		The Observable emits endlessly, but you can use Observable::take to get a finite number of items (for example).
 	 
@@ -60,15 +60,15 @@ public:
 	static Observable interval(const juce::RelativeTime& interval);
 	
 	/**
-		Creates an Observable which emits just a single item.
+		Creates an Observable which emits a single element.
 	 
-		The value is emitted immediately on each new subscription.
+		The value is emitted immediately on each new disposable.
 	 */
 	static Observable just(const var& value);
 	
 	///@{
 	/**
-		Creates an Observable which emits values from a given range, starting at `first` to (and including) `last`.
+		Creates an Observable which emits a range of items, starting at `first` to (and including) `last`. It completes after emitting the `last` item.
 	 
 		​ **Throws an exception if first > last.**
 	 
@@ -83,14 +83,14 @@ public:
 	///@}
 	
 	/**
-		Creates an Observable which emits values from a Subscriber on each subscription.
+		Creates an Observable which emits values from an Observer on each disposable.
 	 
-		In your implementation of onSubscribe, you get an Observer. You can call Observer::onNext on it to emit values from the Observable.
+		In the onSubscribe function, you get an Observer. You can call Observer::onNext on it to emit values from the Observable.
 	 */
 	static Observable create(const std::function<void(Observer)>& onSubscribe);
 	
 	
-#pragma mark - Subscription
+#pragma mark - Disposable
 	///@{
 	/**
 		Subscribes to an Observable, to receive values it emits.
@@ -101,13 +101,13 @@ public:
 	 
 		The **onCompleted** function is called exactly once to notify that the Observable has generated all data and will not emit any more items.
 	 
-		The returned Subscription can be used to unsubscribe from the Observable, to stop receiving values from it. **You will keep receiving values until you call Subscription::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedSubscription, which automatically unsubscribes when it is destroyed.
+		The returned Disposable can be used to unsubscribe from the Observable, to stop receiving values from it. **You will keep receiving values until you call Disposable::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedDisposable, which automatically unsubscribes when it is destroyed.
 	 */
-	Subscription subscribe(const std::function<void(const var&)>& onNext,
+	Disposable subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void(Error)>& onError = TerminateOnError,
 						   const std::function<void()>& onCompleted = EmptyOnCompleted) const;
 	/** \overload */
-	Subscription subscribe(const std::function<void(const var&)>& onNext,
+	Disposable subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void()>& onCompleted,
 						   const std::function<void(Error)>& onError = TerminateOnError) const;
 	///@}
@@ -178,6 +178,8 @@ public:
 	 */
 	Observable debounce(const juce::RelativeTime& interval) const;
 	
+	Observable distinctUntilChanged() const;
+	
 	/**
 		Returns an Observable that emits only those items from this Observable that pass a predicate function.
 	 */
@@ -241,6 +243,25 @@ public:
 		The first parameter to `f` is the accumulator, the second is the current item.
 	 */
 	Observable scan(const var& startValue, Function2 f) const;
+	
+	/**
+		Emits the given item(s) before beginning to emit the items in this Observable.
+	 */
+	Observable startWith(const var& item1) const;
+	/** \overload */
+	Observable startWith(const var& item1, const var& item2) const;
+	/** \overload */
+	Observable startWith(const var& item1, const var& item2, const var& item3) const;
+	/** \overload */
+	Observable startWith(const var& item1, const var& item2, const var& item3, const var& item4) const;
+	/** \overload */
+	Observable startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5) const;
+	/** \overload */
+	Observable startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5, const var& item6) const;
+	/** \overload */
+	Observable startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5, const var& item6, const var& item7) const;
+	/** \overload */
+	Observable startWith(const var& item1, const var& item2, const var& item3, const var& item4, const var& item5, const var& item6, const var& item7, const var& item8) const;
 	
 	/**
 		​ **This must only be called if this Observable emits Observables**.

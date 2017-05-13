@@ -19,6 +19,8 @@ RXJUCE_NAMESPACE_BEGIN
 
 /**
 	A Subject is an Observer and an Observable at the same time. When Observer::onNext is called, the Observable emits an item.
+ 
+	It does **not** automatically call onCompleted when it's destroyed.
  */
 class Subject : public Observer, public Observable
 {
@@ -66,7 +68,7 @@ private:
 
 
 /**
-	A subject that initially doesn't have a value. It does not emit an item on subscribe, and emits only those items that are passed to onNext *after the time of the subscription*.
+	A subject that initially doesn't have a value. It does not emit an item on subscribe, and emits only those items that are passed to onNext *after the time of the disposable*.
  */
 class PublishSubject : public Subject
 {
@@ -79,7 +81,7 @@ private:
 };
 
 /**
-	A Subject that, on every new subscription, notifies the Observer with all of the items that were emitted since the ReplaySubject was created. It then continues to emit any items that are passed to onNext.
+	A Subject that, on every new disposable, notifies the Observer with all of the items that were emitted since the ReplaySubject was created. It then continues to emit any items that are passed to onNext.
  */
 class ReplaySubject : public Subject
 {

@@ -35,7 +35,7 @@ void Observer::onCompleted() const
 	impl->wrapped.on_completed();
 }
 
-Subscription Observer::bindTo(const Observable& observable) const
+Disposable Observer::bindTo(const Observable& observable) const
 {
 	Observer self = *this;
 	return observable.subscribe(std::bind(&Observer::onNext, self, _1));

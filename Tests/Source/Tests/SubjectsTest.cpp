@@ -81,6 +81,7 @@ TEST_CASE("PublishSubject",
 		  "[PublishSubject]")
 {
 	PublishSubject subject;
+	DisposeBag disposeBag;
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
@@ -131,7 +132,7 @@ TEST_CASE("PublishSubject",
 		PublishSubject subject;
 		bool onErrorCalled = false;
 		subject.onError(Error());
-		ScopedSubscription s = subject.asObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; });
+		subject.asObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; }).disposedBy(disposeBag);
 		REQUIRE(onErrorCalled);
 	}
 	
@@ -141,13 +142,13 @@ TEST_CASE("PublishSubject",
 		
 		IT("notifies onCompleted when calling onCompleted") {
 			subject->onCompleted();
-			ScopedSubscription s = subject->asObservable().subscribe([](var){}, [&](){ completed = true; });
+			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
 			
 			REQUIRE(completed);
 		}
 		
 		IT("does not call onCompleted when destroying the subject") {
-			ScopedSubscription s = subject->asObservable().subscribe([](var){}, [&](){ completed = true; });
+			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
 			CHECK(!completed);
 			subject.reset();
 			

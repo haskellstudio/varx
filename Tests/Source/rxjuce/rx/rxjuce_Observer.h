@@ -11,7 +11,7 @@
 #pragma once
 
 #include "rxjuce_Prefix.h"
-#include "rxjuce_Subscription.h"
+#include "rxjuce_Disposable.h"
 
 RXJUCE_NAMESPACE_BEGIN
 
@@ -19,6 +19,8 @@ class Observable;
 
 /**
 	Retrieves items. You can call onNext to notify the Observer with a new item.
+ 
+	An Observer does **not** automatically call onCompleted when it's destroyed.
  
 	@see Subject, Observable::create
  */
@@ -37,9 +39,9 @@ public:
 	/**
 		Binds the Observer to an Observable. Whenever the Observable emits an item, Observer::onNext is called with that item.
 	 
-		​ **You are responsible for managing the returned Subscription. It doesn't automatically expire when this Observer is destroyed.**
+		​ **You are responsible for managing the returned Disposable. It doesn't automatically expire when this Observer is destroyed.**
 	 */
-	Subscription bindTo(const Observable& observable) const;
+	Disposable bindTo(const Observable& observable) const;
 	
 private:
 	friend class Subject;

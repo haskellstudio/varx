@@ -28,11 +28,6 @@ public:
 		jassertfalse;
 		return var::undefined();
 	}
-	
-	virtual Value asValue() const {
-		jassertfalse;
-		return Value();
-	}
 };
 
 class BehaviorSubjectImpl : public Subject::Impl
@@ -58,11 +53,15 @@ public:
 	
 private:
 	const rxcpp::subjects::behavior<var> wrapped;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BehaviorSubjectImpl)
 };
 
 class PublishSubjectImpl : public Subject::Impl
 {
 public:
+	PublishSubjectImpl() {}
+	
 	rxcpp::subscriber<var> getSubscriber() const override
 	{
 		return wrapped.get_subscriber();
@@ -75,6 +74,8 @@ public:
 	
 private:
 	const rxcpp::subjects::subject<var> wrapped;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PublishSubjectImpl)
 };
 
 class ReplaySubjectImpl : public Subject::Impl
@@ -95,6 +96,8 @@ public:
 	
 private:
 	const rxcpp::subjects::replay<var, rxcpp::identity_one_worker> wrapped;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ReplaySubjectImpl)
 };
 
 
