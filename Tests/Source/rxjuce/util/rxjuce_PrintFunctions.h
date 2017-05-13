@@ -23,7 +23,7 @@ namespace juce {\
 		os << rxjuce::util::desc(value);\
 		return os;\
 	}\
-}\
+}
 
 RXJUCE_DEFINE_PRINT_FUNCTION(juce::var, {
 	if (value.isBool())

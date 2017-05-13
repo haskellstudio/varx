@@ -11,6 +11,7 @@
 #define RXJUCE_NAMESPACE_END }
 
 #define RXJUCE_SOURCE_PREFIX namespace rxjuce { \
+using std::placeholders::_1; \
 using namespace juce; \
 \
 template<class T> \

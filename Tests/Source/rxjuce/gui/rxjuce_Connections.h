@@ -34,22 +34,17 @@ private:
 
 class ComponentConnection : private juce::ComponentListener
 {
-private:
-	const PublishSubject _beingDeleted;
 public:
 	ComponentConnection(juce::Component& parent);
 	
 	const BehaviorSubject visible;
-	const Observable beingDeleted;
 	
 private:
 	void componentVisibilityChanged(juce::Component &component) override;
-	void componentBeingDeleted(juce::Component &component) override;
 };
 
 class ButtonConnection : public ComponentConnection, private juce::Button::Listener
 {
-private:
 	const PublishSubject _clicked;
 	const ValueConnection _toggleState;
 	const PublishSubject _text;
@@ -71,18 +66,17 @@ private:
 	juce::Array<ScopedSubscription> subscriptions;
 };
 
-class TextButtonConnection : public ButtonConnection
-{
-public:
-	TextButtonConnection(juce::TextButton& parent)
-	: ButtonConnection(parent) {}
-};
-
 class ImageComponentConnection : public ComponentConnection
 {
+	const PublishSubject _image;
+	
 public:
-	ImageComponentConnection(juce::ImageComponent& parent)
-	: ComponentConnection(parent) {}
+	ImageComponentConnection(juce::ImageComponent& parent);
+	
+	const Observer image;
+	
+private:
+	juce::Array<ScopedSubscription> subscriptions;
 };
 
 RXJUCE_NAMESPACE_END

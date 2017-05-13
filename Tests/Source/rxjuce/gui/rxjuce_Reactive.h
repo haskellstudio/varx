@@ -28,7 +28,7 @@ namespace detail {
 	using IsSimpleComponent = typename std::enable_if<std::is_base_of<juce::Component, T>::value && !std::is_base_of<juce::ImageComponent, T>::value && !std::is_base_of<juce::Button, T>::value>::type;
 	
 	template<typename T>
-	using IsSimpleButton = typename std::enable_if<std::is_base_of<juce::Button, T>::value && !std::is_base_of<juce::TextButton, T>::value>::type;
+	using IsButton = typename std::enable_if<std::is_base_of<juce::Button, T>::value>::type;
 }
 
 // If you get an error here, it means that you are trying to use an unsupported type T.
@@ -61,7 +61,7 @@ public:
 
 
 template<typename Button>
-class Reactive<Button, detail::IsSimpleButton<Button>> : public Button
+class Reactive<Button, detail::IsButton<Button>> : public Button
 {
 public:
 	template<typename... Args>
@@ -70,18 +70,6 @@ public:
 	  rx(*this) {}
 	
 	const ButtonConnection rx;
-};
-
-template<typename Button>
-class Reactive<Button, detail::Is<juce::TextButton, Button>> : public Button
-{
-public:
-	template<typename... Args>
-	Reactive(Args&&... args)
-	: Button(std::forward<Args>(args)...),
-	rx(*this) {}
-	
-	const TextButtonConnection rx;
 };
 
 template<>

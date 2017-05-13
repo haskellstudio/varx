@@ -17,12 +17,10 @@ RXJUCE_NAMESPACE_BEGIN
 
 ValueConnection::ValueConnection(const Value& inputValue)
 : subject(inputValue.getValue()),
-value(inputValue)
+  value(inputValue)
 {
 	value.addListener(this);
-	subscriptions.add(subject.subscribe([this](const var& next) {
-		value.setValue(next);
-	}));
+	subscriptions.add(subject.subscribe(std::bind(&Value::setValue, value, _1)));
 }
 
 void ValueConnection::valueChanged(Value&)
@@ -30,9 +28,9 @@ void ValueConnection::valueChanged(Value&)
 	subject.onNext(value.getValue());
 }
 
+
 ComponentConnection::ComponentConnection(Component& parent)
-: visible(parent.isVisible()),
-  beingDeleted(_beingDeleted.getObservable()) {}
+: visible(parent.isVisible()) {}
 
 void ComponentConnection::componentVisibilityChanged(Component& component)
 {
@@ -40,11 +38,6 @@ void ComponentConnection::componentVisibilityChanged(Component& component)
 	if (component.isVisible() != latestItem) {
 		visible.onNext(component.isVisible());
 	}
-}
-
-void ComponentConnection::componentBeingDeleted(Component& component)
-{
-	_beingDeleted.onNext(var());
 }
 
 
@@ -59,12 +52,11 @@ ButtonConnection::ButtonConnection(Button& parent)
 {
 	parent.addListener(this);
 	
-	subscriptions.add(_text.subscribe([](const String& text) {
-		
-	}));
+	subscriptions.add(_text.subscribe(std::bind(&Button::setButtonText, &parent, _1)));
+	subscriptions.add(_tooltip.subscribe(std::bind(&Button::setTooltip, &parent, _1)));
 	
 	subscriptions.add(buttonState.subscribe([&parent](const var& v) {
-		parent.setState(VariantConverter<Button::ButtonState>::fromVar(v));
+		parent.setState(fromVar<Button::ButtonState>(v));
 	}));
 }
 
@@ -77,6 +69,15 @@ void ButtonConnection::buttonStateChanged(Button *button)
 {
 	if (var(button->getState()) != buttonState.getLatestItem())
 		buttonState.onNext(button->getState());
+}
+
+ImageComponentConnection::ImageComponentConnection(juce::ImageComponent& parent)
+: rxjuce::ComponentConnection(parent),
+  image(_image.getObserver())
+{
+	subscriptions.add(_image.subscribe([&parent](const var& image) {
+		parent.setImage(fromVar<Image>(image));
+	}));
 }
 
 RXJUCE_NAMESPACE_END

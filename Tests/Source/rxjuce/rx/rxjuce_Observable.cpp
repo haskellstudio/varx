@@ -57,7 +57,7 @@ Observable Observable::fromValue(Value value)
 Observable Observable::interval(const juce::RelativeTime& period)
 {
 	auto o = rxcpp::observable<>::interval(durationFromRelativeTime(period));
-	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
+	return Impl::fromRxCpp(o.map(toVar<int>));
 }
 
 Observable Observable::just(const var& value)
@@ -72,7 +72,7 @@ Observable Observable::range(int first, int last, unsigned int step)
 	
 	auto o = rxcpp::observable<>::range<int>(first, last, step);
 	
-	return Impl::fromRxCpp(o.map(juce::VariantConverter<int>::toVar));
+	return Impl::fromRxCpp(o.map(toVar<int>));
 }
 
 Observable Observable::range(double first, double last, unsigned int step)
@@ -82,7 +82,7 @@ Observable Observable::range(double first, double last, unsigned int step)
 	
 	auto o = rxcpp::observable<>::range<double>(first, last, step);
 	
-	return Impl::fromRxCpp(o.map(juce::VariantConverter<double>::toVar));
+	return Impl::fromRxCpp(o.map(toVar<double>));
 }
 
 Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
@@ -236,7 +236,7 @@ Observable Observable::scan(const var& startValue, Function2 f) const
 Observable Observable::switchOnNext() const
 {
 	rxcpp::observable<rxcpp::observable<var>> unwrapped = impl->wrapped.map([](var observable) {
-		return VariantConverter<Observable>::fromVar(observable).impl->wrapped;
+		return fromVar<Observable>(observable).impl->wrapped;
 	});
 	
 	return Impl::fromRxCpp(unwrapped.switch_on_next());
@@ -260,7 +260,7 @@ Observable Observable::observeOn(const Scheduler& scheduler) const
 
 Observable::operator var() const
 {
-	return VariantConverter<Observable>::toVar(*this);
+	return toVar<Observable>(*this);
 }
 
 juce::Array<var> Observable::toArray(const std::function<void(Error)>& onError) const

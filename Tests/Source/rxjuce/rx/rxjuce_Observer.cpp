@@ -17,8 +17,6 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-using std::placeholders::_1;
-
 Observer::Observer(const std::shared_ptr<Impl>& impl)
 : impl(impl) {}
 
@@ -40,7 +38,7 @@ void Observer::onCompleted() const
 Subscription Observer::bindTo(const Observable& observable) const
 {
 	Observer self = *this;
-	return observable.subscribe(std::bind(&Observer::onNext, self, std::placeholders::_1));
+	return observable.subscribe(std::bind(&Observer::onNext, self, _1));
 }
 
 RXJUCE_NAMESPACE_END
