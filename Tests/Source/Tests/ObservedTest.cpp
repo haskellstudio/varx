@@ -140,7 +140,7 @@ TEST_CASE("Reactive<Value> Observable",
 {
 	auto value = std::make_shared<Reactive<Value>>("Initial");
 	Array<var> items;
-	RxJUCECollectItems(value->rx.observable, items);
+	RxJUCECollectItems(value->rx.subject, items);
 	
 	IT("emits items asynchronously when the Value changes") {
 		value->setValue("Second");
