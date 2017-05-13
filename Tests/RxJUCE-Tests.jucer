@@ -14,10 +14,10 @@
       </GROUP>
       <GROUP id="{AAC38EBE-F6C2-A3B5-51FB-6DE3BC2C9994}" name="rxjuce">
         <GROUP id="{E527C2EC-CBF0-1913-2847-0065E31DA35C}" name="gui">
-          <FILE id="HnIlyn" name="rxjuce_Connections.cpp" compile="1" resource="0"
-                file="Source/rxjuce/gui/rxjuce_Connections.cpp"/>
-          <FILE id="ODWEEx" name="rxjuce_Connections.h" compile="0" resource="0"
-                file="Source/rxjuce/gui/rxjuce_Connections.h"/>
+          <FILE id="HnIlyn" name="rxjuce_Extensions.cpp" compile="1" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Extensions.cpp"/>
+          <FILE id="ODWEEx" name="rxjuce_Extensions.h" compile="0" resource="0"
+                file="Source/rxjuce/gui/rxjuce_Extensions.h"/>
           <FILE id="EMbJyP" name="rxjuce_Reactive.cpp" compile="1" resource="0"
                 file="Source/rxjuce/gui/rxjuce_Reactive.cpp"/>
           <FILE id="IwF3P1" name="rxjuce_Reactive.h" compile="0" resource="0"
@@ -37,8 +37,6 @@
                   file="Source/rxjuce/rx/internal/rxjuce_Disposable_Impl.cpp"/>
             <FILE id="eesXtB" name="rxjuce_Disposable_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Disposable_Impl.h"/>
-            <FILE id="RPYuLG" name="rxjuce_DisposeBag_Impl.cpp" compile="1" resource="0"
-                  file="Source/rxjuce/rx/internal/rxjuce_DisposeBag_Impl.cpp"/>
             <FILE id="Mcz91C" name="rxjuce_DisposeBag_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_DisposeBag_Impl.h"/>
             <FILE id="SDUXlA" name="rxjuce_Observable_Impl.cpp" compile="1" resource="0"
@@ -261,12 +259,14 @@
           <FILE id="ShEoW4" name="SchedulingTest.cpp" compile="1" resource="0"
                 file="Source/Tests/Observable/SchedulingTest.cpp"/>
         </GROUP>
+        <FILE id="Gs8Vom" name="ConnectionsTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ConnectionsTest.cpp"/>
         <FILE id="K3FGg8" name="DisposableTest.cpp" compile="1" resource="0"
               file="Source/Tests/DisposableTest.cpp"/>
-        <FILE id="wJg0X6" name="ObservedTest.cpp" compile="1" resource="0"
-              file="Source/Tests/ObservedTest.cpp"/>
         <FILE id="vc7e2E" name="ObserverTest.cpp" compile="1" resource="0"
               file="Source/Tests/ObserverTest.cpp"/>
+        <FILE id="wJg0X6" name="ReactiveTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ReactiveTest.cpp"/>
         <FILE id="qEsfze" name="SubjectsTest.cpp" compile="1" resource="0"
               file="Source/Tests/SubjectsTest.cpp"/>
       </GROUP>

@@ -31,7 +31,7 @@ public:
 	
 #pragma mark - Creation
 	/**
-		Creates an Observable which emits values from an Observer on each disposable.
+		Creates an Observable which emits values from an Observer on each subscription.
 	 
 		In the onSubscribe function, you get an Observer. You can call Observer::onNext on it to emit values from the Observable.
 	 */
@@ -73,7 +73,7 @@ public:
 	static Observable fromValue(juce::Value value);
 	
 	/**
-		Returns an Observable that emits one item every `interval`, starting at the time of disposable (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on.
+		Returns an Observable that emits one item every `interval`, starting at the time of subscription (where the first item is emitted). The emitted items are `1`, `2`, `3`, and so on.
 	 
 		The Observable emits endlessly, but you can use Observable::take to get a finite number of items (for example).
 	 
@@ -84,7 +84,7 @@ public:
 	/**
 		Creates an Observable which emits a single item.
 	 
-		The value is emitted immediately on each new disposable.
+		The value is emitted immediately on each new subscription.
 	 */
 	static Observable just(const var& value);
 	
@@ -130,7 +130,7 @@ public:
 	 
 		The **onCompleted** function is called exactly once to notify that the Observable has generated all data and will not emit any more items.
 	 
-		The returned Disposable can be used to unsubscribe from the Observable, to stop receiving values from it. **You will keep receiving values until you call Disposable::unsubscribe, or until the Observable source is destroyed**. You can use a ScopedDisposable, which automatically unsubscribes when it is destroyed.
+		The returned Disposable can be used to unsubscribe from the Observable, to stop receiving values from it. **You will keep receiving values until you call Disposable::dispose, or until the Observable source is destroyed**. The best way is to use a DisposeBag, which automatically unsubscribes when it is destroyed.
 	 */
 	Disposable subscribe(const std::function<void(const var&)>& onNext,
 						   const std::function<void(Error)>& onError = TerminateOnError,
@@ -403,6 +403,7 @@ public:
 		​ **If you don't pass an onError handler, an exception inside the Observable will terminate your app.**
 	 */
 	juce::Array<var> toArray(const std::function<void(Error)>& onError = TerminateOnError) const;
+	
 	
 private:
 	friend class Subject;

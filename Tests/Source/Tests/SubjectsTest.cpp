@@ -21,11 +21,11 @@ TEST_CASE("BehaviorSubject",
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
-	RxJUCECollectItems(subject.asObservable(), items);
+	RxJUCECollectItems(subject, items);
 	
 	IT("changes value when changing the Observer") {
 		CHECK(subject.getLatestItem() == "Initial Item");
-		subject.asObserver().onNext(32.55);
+		subject.onNext(32.55);
 		
 		REQUIRE(subject.getLatestItem() == var(32.55));
 	}
@@ -48,13 +48,13 @@ TEST_CASE("BehaviorSubject",
 		BehaviorSubject subject(17);
 		bool onErrorCalled = false;
 		subject.onError(Error());
-		subject.asObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; });
+		subject.subscribe([](var){}, [&](Error) { onErrorCalled = true; });
 		REQUIRE(onErrorCalled);
 	}
 	
 	IT("notifies onCompleted when calling onCompleted") {
 		bool completed = false;
-		subject.asObservable().subscribe([](var){}, [&](){ completed = true; });
+		subject.subscribe([](var){}, [&](){ completed = true; });
 		subject.onCompleted();
 		
 		REQUIRE(completed);
@@ -63,7 +63,7 @@ TEST_CASE("BehaviorSubject",
 	IT("does not call onCompleted when destroying the subject") {
 		auto subject = std::make_shared<BehaviorSubject>(3);
 		bool completed = false;
-		subject->asObservable().subscribe([](var){}, [&](){ completed = true; });
+		subject->subscribe([](var){}, [&](){ completed = true; });
 		subject.reset();
 		
 		REQUIRE(!completed);
@@ -85,7 +85,7 @@ TEST_CASE("PublishSubject",
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
-	RxJUCECollectItems(subject.asObservable(), items);
+	RxJUCECollectItems(subject, items);
 	
 	IT("does not emit an item if nothing has been pushed") {
 		REQUIRE(items.isEmpty());
@@ -105,14 +105,14 @@ TEST_CASE("PublishSubject",
 		RxJUCECheckItems(items, 1, 2);
 		
 		Array<var> laterItems;
-		RxJUCECollectItems(subject.asObservable(), laterItems);
+		RxJUCECollectItems(subject, laterItems);
 		
 		REQUIRE(laterItems.isEmpty());
 	}
 	
 	IT("changes value when changing the Observer") {
-		subject.asObserver().onNext(32.51);
-		subject.asObserver().onNext(3.0);
+		subject.onNext(32.51);
+		subject.onNext(3.0);
 		
 		RxJUCERequireItems(items, 32.51, 3.0);
 	}
@@ -132,7 +132,7 @@ TEST_CASE("PublishSubject",
 		PublishSubject subject;
 		bool onErrorCalled = false;
 		subject.onError(Error());
-		subject.asObservable().subscribe([](var){}, [&](Error) { onErrorCalled = true; }).disposedBy(disposeBag);
+		subject.subscribe([](var){}, [&](Error) { onErrorCalled = true; }).disposedBy(disposeBag);
 		REQUIRE(onErrorCalled);
 	}
 	
@@ -142,13 +142,13 @@ TEST_CASE("PublishSubject",
 		
 		IT("notifies onCompleted when calling onCompleted") {
 			subject->onCompleted();
-			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
+			subject->subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
 			
 			REQUIRE(completed);
 		}
 		
 		IT("does not call onCompleted when destroying the subject") {
-			subject->asObservable().subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
+			subject->subscribe([](var){}, [&](){ completed = true; }).disposedBy(disposeBag);
 			CHECK(!completed);
 			subject.reset();
 			
@@ -161,5 +161,11 @@ TEST_CASE("PublishSubject",
 			subject->onCompleted();
 		}
 	}
-	
+}
+
+
+TEST_CASE("ReplaySubject",
+		  "[ReplaySubject]")
+{
+#warning TODO
 }

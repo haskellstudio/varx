@@ -15,50 +15,131 @@
 
 using Catch::Contains;
 
-TEST_CASE("Observable::just",
-		  "[Observable][Observable::just]")
+
+TEST_CASE("Observable::create",
+		  "[Observable][Observable::create]")
 {
 	Array<var> items;
 	
-	IT("emits a single value on subscribe") {
-		RxJUCECollectItems(Observable::just(18.3), items);
+	IT("emits items when pushing items synchronously") {
+		auto observable = Observable::create([](Observer observer) {
+			observer.onNext("First");
+			observer.onNext("Second");
+		});
+		RxJUCECollectItems(observable, items);
 		
-		RxJUCERequireItems(items, 18.3);
+		RxJUCERequireItems(items, "First", "Second");
 	}
 	
-	IT("notifies multiple disposables") {
-		Observable o = Observable::just("Hello");
-		RxJUCECollectItems(o, items);
-		RxJUCECollectItems(o, items);
+	IT("emits items when pushing items asynchronously") {
+		auto observable = Observable::create([](Observer observer) {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
+				observer.onNext("First");
+				observer.onNext("Second");
+			});
+		});
+		RxJUCECollectItems(observable, items);
 		
-		RxJUCERequireItems(items, "Hello", "Hello");
+		// There shouldn't be any items until the async callback is executed
+		CHECK(items.isEmpty());
+		
+		// The items should be there after running the dispatch loop
+		RxJUCERunDispatchLoop();
+		RxJUCERequireItems(items, "First", "Second");
+	}
+	
+	IT("emits can emit items asynchronously after being destroyed") {
+		auto observable = std::make_shared<Observable>(Observable::create([](Observer observer) {
+			MessageManager::getInstance()->callAsync([observer]() mutable {
+				observer.onNext("First");
+				observer.onNext("Second");
+			});
+		}));
+		
+		IT("emits when there's still a disposable") {
+			auto disposable = observable->subscribe([&](var next){ items.add(next); });
+			observable.reset();
+			RxJUCERunDispatchLoop();
+			
+			RxJUCERequireItems(items, "First", "Second");
+		}
+		
+		IT("doesn't emit when the disposable has unsubscribed") {
+			auto disposable = observable->subscribe([&](var next){ items.add(next); });
+			observable.reset();
+			disposable.dispose();
+			RxJUCERunDispatchLoop();
+			
+			REQUIRE(items.isEmpty());
+		}
+		
+	}
+	
+	IT("calls onSubscribe again for each new disposable") {
+		auto observable = Observable::create([](Observer observer) {
+			observer.onNext("onSubscribe called");
+		});
+		RxJUCECollectItems(observable, items);
+		RxJUCECollectItems(observable, items);
+		RxJUCECollectItems(observable, items);
+		
+		RxJUCERequireItems(items, "onSubscribe called", "onSubscribe called", "onSubscribe called");
+	}
+	
+	IT("captures an object until the Observable is destroyed") {
+		// Create a ref counted object
+		class Dummy : public ReferenceCountedObject
+		{
+		public:
+			Dummy()
+			: ReferenceCountedObject() {}
+		};
+		ReferenceCountedObjectPtr<ReferenceCountedObject> pointer(new Dummy());
+		
+		// Capture it in the Observable
+		auto observable = std::make_shared<Observable>(Observable::create([pointer](Observer observer) {}));
+		
+		// There should be 2 references: From pointer and from the Observable
+		CHECK(pointer->getReferenceCount() == 2);
+		
+		// If a copy of the Observable is made, it should still be 2
+		auto copy = std::make_shared<Observable>(*observable);
+		CHECK(pointer->getReferenceCount() == 2);
+		
+		// After the first Observable is destroyed, there should still be 2
+		observable.reset();
+		CHECK(pointer->getReferenceCount() == 2);
+		
+		// Creating a copy should not increase the ref count
+		DisposeBag disposeBag;
+		copy->subscribe([](var){}).disposedBy(disposeBag);
+		CHECK(pointer->getReferenceCount() == 2);
+		
+		// After the copy is destroyed, there should be just 1 (from the pointer)
+		copy.reset();
+		REQUIRE(pointer->getReferenceCount() == 1);
 	}
 }
 
 
-TEST_CASE("Observable::range",
-		  "[Observable][Observable::range]")
+TEST_CASE("Observable::defer",
+		  "[Observable][Observable::defer]")
 {
-	Array<var> items;
-	
-	IT("emits integer numbers with an integer range") {
-		RxJUCECollectItems(Observable::range(3, 7, 3), items);
-		RxJUCERequireItems(items, 3, 6, 7);
-	}
-	
-	IT("emits double numbers with a double range") {
-		RxJUCECollectItems(Observable::range(17.5, 22.8, 2), items);
-		RxJUCERequireItems(items, 17.5, 19.5, 21.5, 22.8);
-	}
-	
-	IT("emits just start if start == end") {
-		RxJUCECollectItems(Observable::range(10, 10), items);
-		RxJUCERequireItems(items, 10);
-	}
-	
-	IT("throws if start > end") {
-		REQUIRE_THROWS_WITH(Observable::range(10, 9), Contains("Invalid range"));
-	}
+#warning TODO
+}
+
+
+TEST_CASE("Observable::empty",
+		  "[Observable][Observable::empty]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::error",
+		  "[Observable][Observable::error]")
+{
+#warning TODO
 }
 
 
@@ -252,110 +333,6 @@ TEST_CASE("Observable::fromValue with a Slider",
 }
 
 
-TEST_CASE("Observable::create",
-		  "[Observable][Observable::create]")
-{
-	Array<var> items;
-	
-	IT("emits items when pushing items synchronously") {
-		auto observable = Observable::create([](Observer observer) {
-			observer.onNext("First");
-			observer.onNext("Second");
-		});
-		RxJUCECollectItems(observable, items);
-		
-		RxJUCERequireItems(items, "First", "Second");
-	}
-	
-	IT("emits items when pushing items asynchronously") {
-		auto observable = Observable::create([](Observer observer) {
-			MessageManager::getInstance()->callAsync([observer]() mutable {
-				observer.onNext("First");
-				observer.onNext("Second");
-			});
-		});
-		RxJUCECollectItems(observable, items);
-		
-		// There shouldn't be any items until the async callback is executed
-		CHECK(items.isEmpty());
-		
-		// The items should be there after running the dispatch loop
-		RxJUCERunDispatchLoop();
-		RxJUCERequireItems(items, "First", "Second");
-	}
-	
-	IT("emits can emit items asynchronously after being destroyed") {
-		auto observable = std::make_shared<Observable>(Observable::create([](Observer observer) {
-			MessageManager::getInstance()->callAsync([observer]() mutable {
-				observer.onNext("First");
-				observer.onNext("Second");
-			});
-		}));
-		
-		IT("emits when there's still a disposable") {
-			auto disposable = observable->subscribe([&](var next){ items.add(next); });
-			observable.reset();
-			RxJUCERunDispatchLoop();
-			
-			RxJUCERequireItems(items, "First", "Second");
-		}
-		
-		IT("doesn't emit when the disposable has unsubscribed") {
-			auto disposable = observable->subscribe([&](var next){ items.add(next); });
-			observable.reset();
-			disposable.dispose();
-			RxJUCERunDispatchLoop();
-			
-			REQUIRE(items.isEmpty());
-		}
-		
-	}
-	
-	IT("calls onSubscribe again for each new disposable") {
-		auto observable = Observable::create([](Observer observer) {
-			observer.onNext("onSubscribe called");
-		});
-		RxJUCECollectItems(observable, items);
-		RxJUCECollectItems(observable, items);
-		RxJUCECollectItems(observable, items);
-		
-		RxJUCERequireItems(items, "onSubscribe called", "onSubscribe called", "onSubscribe called");
-	}
-	
-	IT("captures an object until the Observable is destroyed") {
-		// Create a ref counted object
-		class Dummy : public ReferenceCountedObject
-		{
-		public:
-			Dummy()
-			: ReferenceCountedObject() {}
-		};
-		ReferenceCountedObjectPtr<ReferenceCountedObject> pointer(new Dummy());
-		
-		// Capture it in the Observable
-		auto observable = std::make_shared<Observable>(Observable::create([pointer](Observer observer) {}));
-		
-		// There should be 2 references: From pointer and from the Observable
-		CHECK(pointer->getReferenceCount() == 2);
-		
-		// If a copy of the Observable is made, it should still be 2
-		auto copy = std::make_shared<Observable>(*observable);
-		CHECK(pointer->getReferenceCount() == 2);
-		
-		// After the first Observable is destroyed, there should still be 2
-		observable.reset();
-		CHECK(pointer->getReferenceCount() == 2);
-		
-		// Creating a copy should not increase the ref count
-		Disposable s = copy->subscribe([](var){});
-		CHECK(pointer->getReferenceCount() == 2);
-		
-		// After the copy is destroyed, there should be just 1 (from the pointer)
-		copy.reset();
-		REQUIRE(pointer->getReferenceCount() == 1);
-	}
-}
-
 TEST_CASE("Observable::interval",
 		  "[Observable][Observable::interval]")
 {
@@ -378,4 +355,65 @@ TEST_CASE("Observable::interval",
 		
 		RxJUCERequireItems(ints, 1, 2, 3);
 	}
+}
+
+
+TEST_CASE("Observable::just",
+		  "[Observable][Observable::just]")
+{
+	Array<var> items;
+	
+	IT("emits a single value on subscribe") {
+		RxJUCECollectItems(Observable::just(18.3), items);
+		
+		RxJUCERequireItems(items, 18.3);
+	}
+	
+	IT("notifies multiple disposables") {
+		Observable o = Observable::just("Hello");
+		RxJUCECollectItems(o, items);
+		RxJUCECollectItems(o, items);
+		
+		RxJUCERequireItems(items, "Hello", "Hello");
+	}
+}
+
+
+TEST_CASE("Observable::never",
+		  "[Observable][Observable::never]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::range",
+		  "[Observable][Observable::range]")
+{
+	Array<var> items;
+	
+	IT("emits integer numbers with an integer range") {
+		RxJUCECollectItems(Observable::range(3, 7, 3), items);
+		RxJUCERequireItems(items, 3, 6, 7);
+	}
+	
+	IT("emits double numbers with a double range") {
+		RxJUCECollectItems(Observable::range(17.5, 22.8, 2), items);
+		RxJUCERequireItems(items, 17.5, 19.5, 21.5, 22.8);
+	}
+	
+	IT("emits just start if start == end") {
+		RxJUCECollectItems(Observable::range(10, 10), items);
+		RxJUCERequireItems(items, 10);
+	}
+	
+	IT("throws if start > end") {
+		REQUIRE_THROWS_WITH(Observable::range(10, 9), Contains("Invalid range"));
+	}
+}
+
+
+TEST_CASE("Observable::repeat",
+		  "[Observable][Observable::repeat]")
+{
+#warning TODO
 }

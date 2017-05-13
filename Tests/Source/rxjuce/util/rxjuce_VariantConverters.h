@@ -69,6 +69,9 @@ namespace juce {
 	struct VariantConverter<juce::Image> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Image> {};
 	
 	template<>
+	struct VariantConverter<juce::RectanglePlacement> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::RectanglePlacement> {};
+	
+	template<>
 	struct VariantConverter<Button::ButtonState>
 	{
 		static Button::ButtonState fromVar(const var &v);

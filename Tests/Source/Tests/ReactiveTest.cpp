@@ -14,8 +14,99 @@
 #include "rxjuce_VariantConverters.h"
 
 
-TEST_CASE("Reactive<Button> stateChanged",
-		  "[Reactive<Button>]")
+TEST_CASE("Reactive<Value> conversion",
+		  "[Reactive<Value>][ValueExtension]")
+{
+	Reactive<Value> value;
+	
+	IT("supports copy assignment from var-compatible types") {
+		value = 3;
+		value = Array<var>({6, 7, 5});
+		value = "Some String";
+		REQUIRE(value.getValue() == "Some String");
+	}
+	
+	IT("can be implicitly converted to var") {
+		value.setValue("Testing");
+		var v = value;
+		REQUIRE(v == "Testing");
+	}
+	
+	IT("supports == and != with var-compatible types") {
+		value.setValue("Hello!");
+		REQUIRE(value == "Hello!");
+		REQUIRE(value != "World");
+		REQUIRE(value != 3.45);
+		REQUIRE(value != 2);
+	}
+}
+
+
+TEST_CASE("Reactive<Value> Observable",
+		  "[Reactive<Value>][ValueExtension]")
+{
+	auto value = std::make_shared<Reactive<Value>>("Initial");
+	Array<var> items;
+	RxJUCECollectItems(value->rx.subject, items);
+	
+	IT("emits items asynchronously when the Value changes") {
+		value->setValue("Second");
+		RxJUCECheckItems(items, "Initial");
+		RxJUCERunDispatchLoop();
+		RxJUCECheckItems(items, "Initial", "Second");
+		value->setValue("Third");
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireItems(items, "Initial", "Second", "Third");
+	}
+	
+	IT("stops emitting items immediately when being destroyed") {
+		value->setValue("Should not arrive");
+		value.reset();
+		RxJUCERunDispatchLoop();
+		
+		RxJUCERequireItems(items, "Initial");
+	}
+}
+
+TEST_CASE("Reactive<Component>",
+		  "[Reactive<Component>][ComponentExtension]")
+{
+	Array<var> items;
+	Reactive<Component> component;
+	RxJUCECollectItems(component.rx.visible, items);
+	
+	IT("initially has the same value as the getter") {
+		REQUIRE(component.isVisible() == fromVar<bool>(component.rx.visible.getLatestItem()));
+	}
+	
+	IT("emits when visibility is changed through setter") {
+		for (bool visible : {false, false, true, true, false}) {
+			component.setVisible(visible);
+		}
+		
+		RxJUCERequireItems(items, false, true, false);
+	}
+	
+	IT("changes visiblility when pushing items") {
+		for (bool visible : {false, false, true, true, false}) {
+			component.rx.visible.onNext(visible);
+			
+			REQUIRE(component.isVisible() == visible);
+		}
+	}
+}
+
+
+TEST_CASE("Reactive<ImageComponent>",
+		  "[Reactive<ImageComponent>][ImageComponentExtension]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Reactive<Button> buttonState",
+		  "[Reactive<Button>][ButtonExtension]")
 {
 	Reactive<TextButton> button("Click Here");
 	Array<var> items;
@@ -45,7 +136,7 @@ TEST_CASE("Reactive<Button> stateChanged",
 
 
 TEST_CASE("Reactive<Button> clicked",
-		  "[Reactive<Button>]")
+		  "[Reactive<Button>][ButtonExtension]")
 {
 	Reactive<TextButton> button("Click Here");
 	Array<var> items;
@@ -71,7 +162,7 @@ TEST_CASE("Reactive<Button> clicked",
 
 
 TEST_CASE("Reactive<Button> with custom TextButton subclass",
-		  "[Reactive<Button>]")
+		  "[Reactive<Button>][ButtonExtension]")
 {
 	class MyButton : public TextButton
 	{
@@ -108,89 +199,6 @@ TEST_CASE("Reactive<Button> with custom TextButton subclass",
 }
 
 
-TEST_CASE("Reactive<Value> conversion",
-		  "[Reactive<Value>]")
-{
-	Reactive<Value> value;
-	
-	IT("supports copy assignment from var-compatible types") {
-		value = 3;
-		value = Array<var>({6, 7, 5});
-		value = "Some String";
-		REQUIRE(value.getValue() == "Some String");
-	}
-	
-	IT("can be implicitly converted to var") {
-		value.setValue("Testing");
-		var v = value;
-		REQUIRE(v == "Testing");
-	}
-	
-	IT("supports == and != with var-compatible types") {
-		value.setValue("Hello!");
-		REQUIRE(value == "Hello!");
-		REQUIRE(value != "World");
-		REQUIRE(value != 3.45);
-		REQUIRE(value != 2);
-	}
-}
-
-
-TEST_CASE("Reactive<Value> Observable",
-		  "[Reactive<Value>]")
-{
-	auto value = std::make_shared<Reactive<Value>>("Initial");
-	Array<var> items;
-	RxJUCECollectItems(value->rx.subject, items);
-	
-	IT("emits items asynchronously when the Value changes") {
-		value->setValue("Second");
-		RxJUCECheckItems(items, "Initial");
-		RxJUCERunDispatchLoop();
-		RxJUCECheckItems(items, "Initial", "Second");
-		value->setValue("Third");
-		RxJUCERunDispatchLoop();
-		
-		RxJUCERequireItems(items, "Initial", "Second", "Third");
-	}
-	
-	IT("stops emitting items immediately when being destroyed") {
-		value->setValue("Should not arrive");
-		value.reset();
-		RxJUCERunDispatchLoop();
-		
-		RxJUCERequireItems(items, "Initial");
-	}
-}
-
-TEST_CASE("ComponentConnection")
-{
-	Array<var> items;
-	Reactive<Component> component;
-	RxJUCECollectItems(component.rx.visible, items);
-	
-	IT("initially has the same value as the getter") {
-		REQUIRE(component.isVisible() == fromVar<bool>(component.rx.visible.getLatestItem()));
-	}
-	
-	IT("emits when visibility is changed through setter") {
-		for (bool visible : {false, false, true, true, false}) {
-			component.setVisible(visible);
-		}
-		
-		RxJUCERequireItems(items, false, true, false);
-	}
-	
-	IT("changes visiblility when pushing items") {
-		for (bool visible : {false, false, true, true, false}) {
-			component.rx.visible.onNext(visible);
-			
-			REQUIRE(component.isVisible() == visible);
-		}
-	}
-}
-
-
 template<typename T1, typename T2>
 using isSame = typename std::is_same<typename std::decay<T1>::type, T2>;
 
@@ -200,13 +208,13 @@ TEST_CASE("Template ambiguities")
 	
 	IT("chooses the correct template for a juce::Component") {
 		Reactive<Component> myComponent;
-		static_assert(isSame<decltype(myComponent.rx), ComponentConnection>::value, "rx Member has wrong type.");
+		static_assert(isSame<decltype(myComponent.rx), ComponentExtension>::value, "rx Member has wrong type.");
 	}
 	
 	IT("chooses the correct template for a Component subclass") {
 		class MyCustomComponent : public Component {};
 		Reactive<MyCustomComponent> myCustomComponent;
-		static_assert(isSame<decltype(myCustomComponent.rx), ComponentConnection>::value, "rx Member has wrong type.");
+		static_assert(isSame<decltype(myCustomComponent.rx), ComponentExtension>::value, "rx Member has wrong type.");
 	}
 	
 	IT("chooses the correct template for a Button subclass") {
@@ -217,11 +225,11 @@ TEST_CASE("Template ambiguities")
 			void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override {}
 		};
 		Reactive<MyButton> myButton;
-		static_assert(isSame<decltype(myButton.rx), ButtonConnection>::value, "rx Member has wrong type.");
+		static_assert(isSame<decltype(myButton.rx), ButtonExtension>::value, "rx Member has wrong type.");
 	}
 	
 	IT("chooses the correct template for a juce::ImageComponent") {
 		Reactive<ImageComponent> myImageComponent;
-		static_assert(isSame<decltype(myImageComponent.rx), ImageComponentConnection>::value, "rx Member has wrong type.");
+		static_assert(isSame<decltype(myImageComponent.rx), ImageComponentExtension>::value, "rx Member has wrong type.");
 	}
 }

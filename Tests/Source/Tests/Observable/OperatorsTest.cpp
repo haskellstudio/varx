@@ -86,6 +86,20 @@ TEST_CASE("Observable::concat",
 }
 
 
+TEST_CASE("Observable::distinctUntilChanged",
+		  "[Observable][Observable::distinctUntilChanged]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::elementAt",
+		  "[Observable][Observable::elementAt]")
+{
+#warning TODO
+}
+
+
 TEST_CASE("Observable::filter",
 		  "[Observable][Observable::filter]")
 {
@@ -203,10 +217,18 @@ TEST_CASE("Interaction between Observable::map and Observable::switchOnNext",
 		auto onError = [&](Error) {
 			onErrorCalled = true;
 		};
-		auto disposable = o.subscribe([](var) {}, onError);
+		DisposeBag disposeBag;
+		o.subscribe([](var) {}, onError).disposedBy(disposeBag);
 		
 		REQUIRE(onErrorCalled);
 	}
+}
+
+
+TEST_CASE("Observable::reduce",
+		  "[Observable][Observable::reduce]")
+{
+#warning TODO
 }
 
 
@@ -223,4 +245,53 @@ TEST_CASE("Observable::scan",
 		
 		RxJUCERequireItems(items, 11, 13, 16, 20, 25);
 	}
+}
+
+
+TEST_CASE("Observable::skip",
+		  "[Observable][Observable::skip]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::skipUntil",
+		  "[Observable][Observable::skipUntil]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::startWith",
+		  "[Observable][Observable::startWith]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::takeLast",
+		  "[Observable][Observable::takeLast]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::takeUntil",
+		  "[Observable][Observable::takeUntil]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::takeWhile",
+		  "[Observable][Observable::takeWhile]")
+{
+#warning TODO
+}
+
+
+TEST_CASE("Observable::zip",
+		  "[Observable][Observable::zip]")
+{
+#warning TODO
 }

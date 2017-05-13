@@ -1,31 +1,31 @@
 /*
   ==============================================================================
 
-    rxjuce_Connections.cpp
+    rxjuce_Extensions.cpp
     Created: 11 May 2017 8:15:44am
     Author:  Martin Finke
 
   ==============================================================================
 */
 
-#include "rxjuce_Connections.h"
+#include "rxjuce_Extensions.h"
 #include "rxjuce_VariantConverters.h"
 
 RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-ConnectionBase::ConnectionBase()
+ExtensionBase::ExtensionBase()
 : _deallocated(1),
   deallocated(_deallocated.asObservable()) {}
 
-ConnectionBase::~ConnectionBase()
+ExtensionBase::~ExtensionBase()
 {
 	_deallocated.onNext(var::undefined());
 	_deallocated.onCompleted();
 }
 
-ValueConnection::ValueConnection(const Value& inputValue)
+ValueExtension::ValueExtension(const Value& inputValue)
 : subject(inputValue.getValue()),
   value(inputValue)
 {
@@ -33,13 +33,13 @@ ValueConnection::ValueConnection(const Value& inputValue)
 	subject.takeUntil(deallocated).subscribe(std::bind(&Value::setValue, value, _1));
 }
 
-void ValueConnection::valueChanged(Value&)
+void ValueExtension::valueChanged(Value&)
 {
 	subject.onNext(value.getValue());
 }
 
 
-ComponentConnection::ComponentConnection(Component& parent)
+ComponentExtension::ComponentExtension(Component& parent)
 : visible(parent.isVisible())
 {
 	parent.addComponentListener(this);
@@ -49,7 +49,7 @@ ComponentConnection::ComponentConnection(Component& parent)
 	});
 }
 
-void ComponentConnection::componentVisibilityChanged(Component& component)
+void ComponentExtension::componentVisibilityChanged(Component& component)
 {
 	const bool latestItem = visible.getLatestItem();
 	if (component.isVisible() != latestItem) {
@@ -58,8 +58,8 @@ void ComponentConnection::componentVisibilityChanged(Component& component)
 }
 
 
-ButtonConnection::ButtonConnection(Button& parent)
-: ComponentConnection(parent),
+ButtonExtension::ButtonExtension(Button& parent)
+: ComponentExtension(parent),
   _toggleState(parent.getToggleStateValue()),
   clicked(_clicked.asObservable()),
   buttonState(parent.getState()),
@@ -77,23 +77,28 @@ ButtonConnection::ButtonConnection(Button& parent)
 	});
 }
 
-void ButtonConnection::buttonClicked(Button *)
+void ButtonExtension::buttonClicked(Button *)
 {
 	_clicked.onNext(var::undefined());
 }
 
-void ButtonConnection::buttonStateChanged(Button *button)
+void ButtonExtension::buttonStateChanged(Button *button)
 {
 	if (var(button->getState()) != buttonState.getLatestItem())
 		buttonState.onNext(button->getState());
 }
 
-ImageComponentConnection::ImageComponentConnection(juce::ImageComponent& parent)
-: rxjuce::ComponentConnection(parent),
-  image(_image.asObserver())
+ImageComponentExtension::ImageComponentExtension(juce::ImageComponent& parent)
+: rxjuce::ComponentExtension(parent),
+  image(_image.asObserver()),
+  imagePlacement(_imagePlacement.asObserver())
 {
 	_image.takeUntil(deallocated).subscribe([&parent](const var& image) {
 		parent.setImage(fromVar<Image>(image));
+	});
+	
+	_imagePlacement.takeUntil(deallocated).subscribe([&parent](const var& imagePlacement) {
+		parent.setImagePlacement(fromVar<RectanglePlacement>(imagePlacement));
 	});
 }
 

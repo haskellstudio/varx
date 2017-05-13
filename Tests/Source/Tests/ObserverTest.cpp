@@ -49,4 +49,8 @@ TEST_CASE("Observer",
 		
 		REQUIRE(completed);
 	}
+	
+	IT("can be bound to an Observable") {
+#warning TODO Test Observer::bindTo
+	}
 }
