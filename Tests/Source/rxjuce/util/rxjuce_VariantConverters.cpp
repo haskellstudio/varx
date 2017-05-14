@@ -13,20 +13,3 @@
 #include "rxjuce_Observable.h"
 
 RXJUCE_SOURCE_PREFIX
-
-namespace {
-	using namespace juce;
-	typedef Component::SafePointer<Component> ComponentPtr;
-}
-
-namespace juce {
-	Button::ButtonState VariantConverter<Button::ButtonState>::fromVar(const var &v)
-	{
-		return static_cast<Button::ButtonState>(int(v));
-	}
-	
-	var VariantConverter<Button::ButtonState>::toVar(const Button::ButtonState& buttonState)
-	{
-		return var(buttonState);
-	}
-}

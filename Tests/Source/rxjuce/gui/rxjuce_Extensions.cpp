@@ -104,6 +104,7 @@ ImageComponentExtension::ImageComponentExtension(ImageComponent& parent)
 LabelExtension::LabelExtension(Label& parent)
 : ComponentExtension(parent),
   _discardChangesWhenHidingEditor(false),
+  _textEditor(getTextEditor(parent)),
   text(parent.getText()),
   showEditor(parent.getCurrentTextEditor() != nullptr),
   discardChangesWhenHidingEditor(_discardChangesWhenHidingEditor.asObserver()),
@@ -113,9 +114,11 @@ LabelExtension::LabelExtension(Label& parent)
   attachedComponent(_attachedComponent.asObserver()),
   attachedOnLeft(_attachedOnLeft.asObserver()),
   minimumHorizontalScale(_minimumHorizontalScale.asObserver()),
+  keyboardType(_keyboardType.asObserver()),
   editableOnSingleClick(_editableOnSingleClick.asObserver()),
   editableOnDoubleClick(_editableOnDoubleClick.asObserver()),
-  lossOfFocusDiscardsChanges(_lossOfFocusDiscardsChanges.asObserver())
+  lossOfFocusDiscardsChanges(_lossOfFocusDiscardsChanges.asObserver()),
+  textEditor(_textEditor.asObservable().distinctUntilChanged())
 {
 	parent.addListener(this);
 	
@@ -150,6 +153,15 @@ LabelExtension::LabelExtension(Label& parent)
 	
 	_minimumHorizontalScale.takeUntil(deallocated).subscribe(std::bind(&Label::setMinimumHorizontalScale, &parent, _1));
 	
+	_keyboardType.takeUntil(deallocated).subscribe([&parent](var v) {
+		const auto keyboardType = fromVar<TextInputTarget::VirtualKeyboardType>(v);
+		parent.setKeyboardType(keyboardType);
+		
+		if (auto editor = parent.getCurrentTextEditor()) {
+			editor->setKeyboardType(keyboardType);
+		}
+	});
+	
 	_editableOnSingleClick.takeUntil(deallocated).subscribe([&parent](bool editable) {
 		parent.setEditable(editable, parent.isEditableOnDoubleClick(), parent.doesLossOfFocusDiscardChanges());
 	});
@@ -175,6 +187,8 @@ void LabelExtension::editorShown(Label *parent, TextEditor&)
 	if (!showEditor.getLatestItem()) {
 		showEditor.onNext(true);
 	}
+	
+	_textEditor.onNext(getTextEditor(*parent));
 }
 
 void LabelExtension::editorHidden(Label *parent, TextEditor&)
@@ -182,6 +196,16 @@ void LabelExtension::editorHidden(Label *parent, TextEditor&)
 	if (showEditor.getLatestItem()) {
 		showEditor.onNext(false);
 	}
+	
+	_textEditor.onNext(getTextEditor(*parent));
+}
+
+var LabelExtension::getTextEditor(juce::Label& label)
+{
+	if (auto editor = label.getCurrentTextEditor())
+		return toVar(WeakReference<Component>(editor));
+	else
+		return var::undefined();
 }
 
 RXJUCE_NAMESPACE_END

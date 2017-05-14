@@ -143,9 +143,11 @@ class LabelExtension : public ComponentExtension, private juce::Label::Listener
 	const PublishSubject _attachedComponent;
 	const PublishSubject _attachedOnLeft;
 	const PublishSubject _minimumHorizontalScale;
+	const PublishSubject _keyboardType;
 	const PublishSubject _editableOnSingleClick;
 	const PublishSubject _editableOnDoubleClick;
 	const PublishSubject _lossOfFocusDiscardsChanges;
+	const BehaviorSubject _textEditor;
 	
 public:
 	/** Creates a new instance for a given Label. */
@@ -169,7 +171,7 @@ public:
 	/** Controls the Label's border size.​ **Type: BorderSize<int>** */
 	const Observer borderSize;
 	
-	/** Attaches the Label to another Component.​ **Type: SafePointer<Component>, or `var()` or `var::undefined()` if no Component should be attached.** */
+	/** Attaches the Label to another Component.​ **Type: WeakReference<Component>, or `var::undefined()` if no Component should be attached.** */
 	const Observer attachedComponent;
 	
 	/** Controls whether the attachedComponent should be attached on the left.​ **Type: bool** */
@@ -177,6 +179,9 @@ public:
 	
 	/** Controls  the minimum amount that the Label font can be squashed horizontally before it starts using ellipsis.​ **Type: float** */
 	const Observer minimumHorizontalScale;
+	
+	/** Controls the keyboard type to use in the TextEditor. If the editor is currently open, the type is changed anyway.​ **Type: TextInputTarget::VirtualKeyboardType** */
+	const Observer keyboardType;
 	
 	/** Controls whether clicking the Label opens a TextEditor.​ **Type: bool** */
 	const Observer editableOnSingleClick;
@@ -187,10 +192,15 @@ public:
 	/** Controls whether unfocussing the TextEditor discards changes.​ **Type: bool** */
 	const Observer lossOfFocusDiscardsChanges;
 	
+	/** The currently visible TextEditor.​ **Type: WeakReference<Component>, or `var::undefined()` if no TextEditor is showing.** */
+	const Observable textEditor;
+	
 private:
 	void labelTextChanged(juce::Label *) override;
 	void editorShown(juce::Label *, juce::TextEditor&) override;
 	void editorHidden(juce::Label *, juce::TextEditor&) override;
+	
+	static juce::var getTextEditor(juce::Label& label);
 };
 
 RXJUCE_NAMESPACE_END

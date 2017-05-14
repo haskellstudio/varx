@@ -27,16 +27,18 @@ namespace detail {
 			if (auto wrapper = dynamic_cast<Wrapped *>(ptr.get()))
 				return wrapper->t;
 			
+			// Type mismatch. Determine expected and actual type:
 			static const std::string ExpectedType = typeid(Wrapped).name();
 			std::string actualType;
-			auto pointer = ptr.get();
-			if (pointer == nullptr) {
-				actualType = "nullptr";
-			}
-			else {
+			
+			if (auto pointer = ptr.get()) {
 				actualType = typeid(*pointer).name();
 			}
+			else {
+				actualType = "nullptr";
+			}
 			
+			// Throw error
 			throw std::runtime_error("Error unwrapping type from var. Expected: " + ExpectedType + ". Actual: " + actualType + ".");
 		}
 		
@@ -90,13 +92,26 @@ namespace juce {
 	template<>
 	struct VariantConverter<juce::Font> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Font> {};
 	
-	template<>
-	struct VariantConverter<Button::ButtonState>
+	template<typename Enum>
+	struct EnumVariantConverter
 	{
-		static Button::ButtonState fromVar(const var &v);
-		static var toVar(const Button::ButtonState& buttonState);
+		static Enum fromVar(const var &v)
+		{
+			return static_cast<Enum>(v.operator int());
+		}
+		
+		static var toVar(const Enum& enumValue)
+		{
+			return var(enumValue);
+		}
 	};
 	
+	template<>
+	struct VariantConverter<Button::ButtonState> : public EnumVariantConverter<Button::ButtonState> {};
+	
+	template<>
+	struct VariantConverter<TextInputTarget::VirtualKeyboardType> : public EnumVariantConverter<TextInputTarget::VirtualKeyboardType> {};
+
 	template<typename T>
 	struct VariantConverter<WeakReference<T>>
 	{

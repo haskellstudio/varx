@@ -251,14 +251,21 @@ TEST_CASE("Reactive<Label>",
 		}
 	}
 	
-	CONTEXT("showEditor and discardChangesWhenHidingEditor") {
+	CONTEXT("showEditor, discardChangesWhenHidingEditor and textEditor") {
+		DisposeBag disposeBag;
 		RxJUCECollectItems(label.rx.showEditor, items);
+		
+		Array<Component *> editors;
+		label.rx.textEditor.subscribe([&](var editor) {
+			editors.add(fromVar<WeakReference<Component>>(editor));
+		}).disposedBy(disposeBag);
 		
 		// The label must be on the screen to show an editor (asserts otherwise)
 		TestWindow::getInstance().addAndMakeVisible(label);
 		
-		IT("is is initially false") {
+		IT("is is initially false/nullptr") {
 			CHECK(label.getCurrentTextEditor() == nullptr);
+			CHECK(editors == Array<Component *>({nullptr}));
 			
 			RxJUCERequireItems(items, false);
 		}
@@ -267,22 +274,28 @@ TEST_CASE("Reactive<Label>",
 			label.rx.discardChangesWhenHidingEditor.onNext(true);
 			CHECK(label.getCurrentTextEditor() == nullptr);
 			RxJUCECheckItems(items, false);
+			CHECK(editors == Array<Component *>({nullptr}));
 			
 			label.rx.discardChangesWhenHidingEditor.onNext(false);
 			REQUIRE(label.getCurrentTextEditor() == nullptr);
+			CHECK(editors == Array<Component *>({nullptr}));
 			
 			RxJUCERequireItems(items, false);
 		}
 		
-		IT("becomes true when calling Label::showEditor") {
+		IT("becomes true/non-null when calling Label::showEditor") {
 			label.showEditor();
 			CHECK(label.getCurrentTextEditor() != nullptr);
+			CHECK(editors.size() == 2);
+			CHECK(editors.getLast() != nullptr);
 			
 			RxJUCERequireItems(items, false, true);
 			
-			IT("becomes false when calling Label::hideEditor") {
+			IT("becomes false/nullptr when calling Label::hideEditor") {
 				label.hideEditor(true);
 				CHECK(label.getCurrentTextEditor() == nullptr);
+				CHECK(editors.size() == 3);
+				CHECK(editors.getLast() == nullptr);
 				
 				RxJUCERequireItems(items, false, true, false);
 			}
@@ -291,6 +304,8 @@ TEST_CASE("Reactive<Label>",
 		IT("shows the editor when pushing true") {
 			label.rx.showEditor.onNext(true);
 			RxJUCECheckItems(items, false, true);
+			CHECK(editors.size() == 2);
+			CHECK(editors.getLast() != nullptr);
 			
 			REQUIRE(label.getCurrentTextEditor() != nullptr);
 			
@@ -298,6 +313,8 @@ TEST_CASE("Reactive<Label>",
 				label.rx.discardChangesWhenHidingEditor.onNext(false);
 				label.rx.discardChangesWhenHidingEditor.onNext(true);
 				RxJUCECheckItems(items, false, true);
+				CHECK(editors.size() == 2);
+				CHECK(editors.getLast() != nullptr);
 				
 				REQUIRE(label.getCurrentTextEditor() != nullptr);
 			}
@@ -305,6 +322,8 @@ TEST_CASE("Reactive<Label>",
 			IT("hides the editor when pushing false") {
 				label.rx.showEditor.onNext(false);
 				RxJUCECheckItems(items, false, true, false);
+				CHECK(editors.size() == 3);
+				CHECK(editors.getLast() == nullptr);
 				
 				REQUIRE(label.getCurrentTextEditor() == nullptr);
 			}
@@ -408,6 +427,33 @@ TEST_CASE("Reactive<Label>",
 			for (auto scale : {0.f, 15.f, 0.33f, 0.f, 4.24f}) {
 				label.rx.minimumHorizontalScale.onNext(scale);
 				REQUIRE(label.getMinimumHorizontalScale() == scale);
+			}
+		}
+	}
+	
+	CONTEXT("keyboardType") {
+		// The label must be on the screen to show an editor (asserts otherwise)
+		TestWindow::getInstance().addAndMakeVisible(label);
+		
+		IT("changes the keyboard type when pushing items") {
+			label.rx.keyboardType.onNext(toVar(TextInputTarget::emailAddressKeyboard));
+			label.showEditor();
+			CHECK(label.getCurrentTextEditor() != nullptr);
+			
+			REQUIRE(label.getCurrentTextEditor()->getKeyboardType() == TextInputTarget::emailAddressKeyboard);
+			
+			IT("can change the type while an editor is showing") {
+				label.rx.keyboardType.onNext(toVar(TextInputTarget::decimalKeyboard));
+				
+				REQUIRE(label.getCurrentTextEditor()->getKeyboardType() == TextInputTarget::decimalKeyboard);
+			}
+			
+			IT("remembers the type when hiding and showing again") {
+				label.hideEditor(true);
+				CHECK(label.getCurrentTextEditor() == nullptr);
+				label.showEditor();
+				
+				REQUIRE(label.getCurrentTextEditor()->getKeyboardType() == TextInputTarget::emailAddressKeyboard);
 			}
 		}
 	}
