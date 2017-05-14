@@ -136,6 +136,7 @@ class LabelExtension : public ComponentExtension, private juce::Label::Listener
 	const BehaviorSubject _discardChangesWhenHidingEditor;
 	const PublishSubject _font;
 	const PublishSubject _justificationType;
+	const PublishSubject _borderSize;
 	
 public:
 	/** Creates a new instance for a given Label. */
@@ -155,6 +156,9 @@ public:
 	
 	/** Controls the Label's justification.​ **Type: Justification** */
 	const Observer justificationType;
+	
+	/** Controls the Label's border size.​ **Type: BorderSize<int>** */
+	const Observer borderSize;
 	
 private:
 	void labelTextChanged(juce::Label *) override;

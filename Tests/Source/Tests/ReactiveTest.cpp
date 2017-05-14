@@ -336,6 +336,19 @@ TEST_CASE("Reactive<Label>",
 			REQUIRE(label.getJustificationType() == justification2);
 		}
 	}
+	
+	CONTEXT("borderSize") {
+		const BorderSize<int> borderSize1(1, 5, 8, 2);
+		const BorderSize<int> borderSize2(33, 108, 47, 0);
+		
+		IT("changes the border size when pushing items") {
+			label.rx.borderSize.onNext(toVar(borderSize1));
+			CHECK(label.getBorderSize() == borderSize1);
+			label.rx.borderSize.onNext(toVar(borderSize2));
+			
+			REQUIRE(label.getBorderSize() == borderSize2);
+		}
+	}
 }
 
 

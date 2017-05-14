@@ -108,7 +108,8 @@ LabelExtension::LabelExtension(Label& parent)
   showEditor(parent.getCurrentTextEditor() != nullptr),
   discardChangesWhenHidingEditor(_discardChangesWhenHidingEditor.asObserver()),
   font(_font.asObserver()),
-  justificationType(_justificationType.asObserver())
+  justificationType(_justificationType.asObserver()),
+  borderSize(_borderSize.asObserver())
 {
 	parent.addListener(this);
 	
@@ -127,6 +128,10 @@ LabelExtension::LabelExtension(Label& parent)
 	
 	_justificationType.takeUntil(deallocated).subscribe([&parent](var justificationType) {
 		parent.setJustificationType(fromVar<Justification>(justificationType));
+	});
+	
+	_borderSize.takeUntil(deallocated).subscribe([&parent](var borderSize) {
+		parent.setBorderSize(fromVar<BorderSize<int>>(borderSize));
 	});
 }
 

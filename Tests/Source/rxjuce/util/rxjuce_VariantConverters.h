@@ -85,6 +85,9 @@ namespace juce {
 	struct VariantConverter<juce::RectanglePlacement> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::RectanglePlacement> {};
 	
 	template<>
+	struct VariantConverter<juce::BorderSize<int>> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::BorderSize<int>> {};
+	
+	template<>
 	struct VariantConverter<juce::Font> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Font> {};
 	
 	template<>
