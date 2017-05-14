@@ -162,20 +162,24 @@ public:
 	///@{
 	/**
 		Returns an Observable that emits **whenever** an item is emitted by either this Observable **or** o1, o2, …. It combines the **latest** item from each Observable via the given function and emits the result of this function.
+	 
+		This is different from Observable::withLatestFrom because it emits whenever this Observable or o1, o2, … emits an item.
+	 
+		@see Observable::withLatestFrom
 	 */
-	Observable combineLatest(Observable o1, Function2 f) const;
+	Observable combineLatest(Observable o1, Function2 f = &Observable::CombineIntoArray2) const;
 	/** \overload */
-	Observable combineLatest(Observable o1, Observable o2, Function3 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Function3 f = &Observable::CombineIntoArray3) const;
 	/** \overload */
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Function4 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Function4 f = &Observable::CombineIntoArray4) const;
 	/** \overload */
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f = &Observable::CombineIntoArray5) const;
 	/** \overload */
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f = &Observable::CombineIntoArray6) const;
 	/** \overload */
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f = &Observable::CombineIntoArray7) const;
 	/** \overload */
-	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const;
+	Observable combineLatest(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f = &Observable::CombineIntoArray8) const;
 	///@}
 
 	///@{
@@ -347,25 +351,46 @@ public:
 	
 	///@{
 	/**
+		Returns an Observable that emits whenever an item is emitted by this Observable. It combines the latest item from each Observable via the given function and emits the result of this function.
+	 
+		This is different from Observable::combineLatest because it only emits when this Observable emits an item (not when o1, o2, … emit items).
+	 */
+	Observable withLatestFrom(Observable o1, Function2 f = &Observable::CombineIntoArray2) const;
+	/** \overload */
+	Observable withLatestFrom(Observable o1, Observable o2, Function3 f = &Observable::CombineIntoArray3) const;
+	/** \overload */
+	Observable withLatestFrom(Observable o1, Observable o2, Observable o3, Function4 f = &Observable::CombineIntoArray4) const;
+	/** \overload */
+	Observable withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f = &Observable::CombineIntoArray5) const;
+	/** \overload */
+	Observable withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f = &Observable::CombineIntoArray6) const;
+	/** \overload */
+	Observable withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f = &Observable::CombineIntoArray7) const;
+	/** \overload */
+	Observable withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f = &Observable::CombineIntoArray8) const;
+	///@}
+	
+	///@{
+	/**
 		Returns an Observable that emits **whenever** an item is emitted by either this Observable **or** o1, o2, …. It combines the **latest** item from each Observable via the given function and emits the result of this function.
 	 
 		It applies this function in strict sequence, so the first item emitted by the returned Observable is the result of `f` applied to the first item emitted by this Observable and the first item emitted by `o1`; the second item emitted by the returned Observable is the result of `f` applied to the second item emitted by this Observable and the second item emitted by `o1`; and so on.
 	 
 		The returned Observable only emits as many items as the number of items emitted by the source Observable that emits the fewest items.
 	 */
-	Observable zip(Observable o1, Function2 f) const;
+	Observable zip(Observable o1, Function2 f = &Observable::CombineIntoArray2) const;
 	/** \overload */
-	Observable zip(Observable o1, Observable o2, Function3 f) const;
+	Observable zip(Observable o1, Observable o2, Function3 f = &Observable::CombineIntoArray3) const;
 	/** \overload */
-	Observable zip(Observable o1, Observable o2, Observable o3, Function4 f) const;
+	Observable zip(Observable o1, Observable o2, Observable o3, Function4 f = &Observable::CombineIntoArray4) const;
 	/** \overload */
-	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const;
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f = &Observable::CombineIntoArray5) const;
 	/** \overload */
-	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const;
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f = &Observable::CombineIntoArray6) const;
 	/** \overload */
-	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const;
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f = &Observable::CombineIntoArray7) const;
 	/** \overload */
-	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const;
+	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f = &Observable::CombineIntoArray8) const;
 	///@}
 	
 	
@@ -421,6 +446,14 @@ private:
 	struct Impl;
 	Observable(const std::shared_ptr<Impl>&);
 	std::shared_ptr<Impl> impl;
+
+	static var CombineIntoArray2(const var&, const var&);
+	static var CombineIntoArray3(const var&, const var&, const var&);
+	static var CombineIntoArray4(const var&, const var&, const var&, const var&);
+	static var CombineIntoArray5(const var&, const var&, const var&, const var&, const var&);
+	static var CombineIntoArray6(const var&, const var&, const var&, const var&, const var&, const var&);
+	static var CombineIntoArray7(const var&, const var&, const var&, const var&, const var&, const var&, const var&);
+	static var CombineIntoArray8(const var&, const var&, const var&, const var&, const var&, const var&, const var&, const var&);
 	
 	static const std::function<void(Error)> TerminateOnError;
 	static const std::function<void()> EmptyOnCompleted;

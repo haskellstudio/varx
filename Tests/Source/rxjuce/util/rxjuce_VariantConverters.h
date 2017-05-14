@@ -24,22 +24,32 @@ namespace detail {
 		{
 			juce::ReferenceCountedObjectPtr<juce::ReferenceCountedObject> ptr(v.getObject());
 			
-			if (auto wrapper = dynamic_cast<ReferenceCountedWrapper *>(ptr.get()))
+			if (auto wrapper = dynamic_cast<Wrapped *>(ptr.get()))
 				return wrapper->t;
-			else
-				throw std::runtime_error("Error unwrapping type from var. You might be trying to extract a different type than the type that was inserted.");
+			
+			static const std::string ExpectedType = typeid(Wrapped).name();
+			std::string actualType;
+			auto pointer = ptr.get();
+			if (pointer == nullptr) {
+				actualType = "nullptr";
+			}
+			else {
+				actualType = typeid(*pointer).name();
+			}
+			
+			throw std::runtime_error("Error unwrapping type from var. Expected: " + ExpectedType + ". Actual: " + actualType + ".");
 		}
 		
 		static juce::var toVar(const T& t)
 		{
-			return new ReferenceCountedWrapper(t);
+			return new Wrapped(t);
 		}
 		
 	private:
 		// Wraps a copyable type as a ReferenceCountedObject, so it can be stored in a juce var
-		struct ReferenceCountedWrapper : public juce::ReferenceCountedObject
+		struct Wrapped : public juce::ReferenceCountedObject
 		{
-			ReferenceCountedWrapper(const T& t)
+			Wrapped(const T& t)
 			: t(t) {}
 			
 			const T t;
@@ -70,6 +80,9 @@ namespace juce {
 	
 	template<>
 	struct VariantConverter<juce::RectanglePlacement> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::RectanglePlacement> {};
+	
+	template<>
+	struct VariantConverter<juce::Font> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Font> {};
 	
 	template<>
 	struct VariantConverter<Button::ButtonState>

@@ -353,6 +353,35 @@ Observable Observable::takeWhile(const std::function<bool(const var&)>& predicat
 	return Impl::fromRxCpp(impl->wrapped->take_while(predicate));
 }
 
+Observable Observable::withLatestFrom(Observable o1, Function2& f) const
+{
+	return impl->withLatestFrom(f, o1);
+}
+Observable Observable::withLatestFrom(Observable o1, Observable o2, Function3 f) const
+{
+	return impl->withLatestFrom(f, o1, o2);
+}
+Observable Observable::withLatestFrom(Observable o1, Observable o2, Observable o3, Function4 f) const
+{
+	return impl->withLatestFrom(f, o1, o2, o3);
+}
+Observable Observable::withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Function5 f) const
+{
+	return impl->withLatestFrom(f, o1, o2, o3, o4);
+}
+Observable Observable::withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Function6 f) const
+{
+	return impl->withLatestFrom(f, o1, o2, o3, o4, o5);
+}
+Observable Observable::withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Function7 f) const
+{
+	return impl->withLatestFrom(f, o1, o2, o3, o4, o5, o6);
+}
+Observable Observable::withLatestFrom(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const
+{
+	return impl->withLatestFrom(f, o1, o2, o3, o4, o5, o6, o7);
+}
+
 Observable Observable::zip(Observable o1, Function2& f) const
 {
 	return impl->zip(f, o1);
@@ -428,6 +457,38 @@ juce::Array<var> Observable::toArray(const std::function<void(Error)>& onError) 
 		items.add(item);
 	}, onError);
 	return items;
+}
+
+
+#pragma mark - Private
+
+var Observable::CombineIntoArray2(const var& v1, const var& v2)
+{
+	return Array<var>({v1, v2});
+}
+var Observable::CombineIntoArray3(const var& v1, const var& v2, const var& v3)
+{
+	return Array<var>({v1, v2, v3});
+}
+var Observable::CombineIntoArray4(const var& v1, const var& v2, const var& v3, const var& v4)
+{
+	return Array<var>({v1, v2, v3, v4});
+}
+var Observable::CombineIntoArray5(const var& v1, const var& v2, const var& v3, const var& v4, const var& v5)
+{
+	return Array<var>({v1, v2, v3, v4, v5});
+}
+var Observable::CombineIntoArray6(const var& v1, const var& v2, const var& v3, const var& v4, const var& v5, const var& v6)
+{
+	return Array<var>({v1, v2, v3, v4, v5, v6});
+}
+var Observable::CombineIntoArray7(const var& v1, const var& v2, const var& v3, const var& v4, const var& v5, const var& v6, const var& v7)
+{
+	return Array<var>({v1, v2, v3, v4, v5, v6, v7});
+}
+var Observable::CombineIntoArray8(const var& v1, const var& v2, const var& v3, const var& v4, const var& v5, const var& v6, const var& v7, const var& v8)
+{
+	return Array<var>({v1, v2, v3, v4, v5, v6, v7, v8});
 }
 
 RXJUCE_NAMESPACE_END

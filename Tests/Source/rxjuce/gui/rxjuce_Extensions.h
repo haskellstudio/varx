@@ -131,4 +131,31 @@ public:
 	const Observer imagePlacement;
 };
 
+class LabelExtension : public ComponentExtension, private juce::Label::Listener
+{
+	const BehaviorSubject _discardChangesWhenHidingEditor;
+	const PublishSubject _font;
+	
+public:
+	/** Creates a new instance for a given Label. */
+	LabelExtension(juce::Label& parent);
+	
+	/** Controls the label text. Setting a new string notifies all Label::Listeners.​ **Type: String** */
+	const BehaviorSubject text;
+	
+	/** Controls whether the label is showing a TextEditor.​ **Type: bool** */
+	const BehaviorSubject showEditor;
+	
+	/** Controls whether changes are discarded when hiding the TextEditor. The default is false.​ **Type: bool** */
+	const Observer discardChangesWhenHidingEditor;
+	
+	/** Controls the Label font.​ **Type: Font** */
+	const Observer font;
+	
+private:
+	void labelTextChanged(juce::Label *) override;
+	void editorShown(juce::Label *, juce::TextEditor&) override;
+	void editorHidden(juce::Label *, juce::TextEditor&) override;
+};
+
 RXJUCE_NAMESPACE_END

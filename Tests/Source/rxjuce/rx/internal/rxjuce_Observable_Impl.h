@@ -60,6 +60,12 @@ public:
 	}
 	
 	template<typename Transform, typename... Os>
+	std::shared_ptr<Impl> withLatestFrom(Transform&& transform, Os&&... observables)
+	{
+		return fromRxCpp(wrapped->with_latest_from(transform, *observables.impl->wrapped...));
+	}
+	
+	template<typename Transform, typename... Os>
 	std::shared_ptr<Impl> zip(Transform&& transform, Os&&... observables)
 	{
 		return fromRxCpp(wrapped->zip(transform, *observables.impl->wrapped...));

@@ -36,3 +36,28 @@ inline void RxJUCERunDispatchLoop(int millisecondsToRunFor = 0)
 {
 	MessageManager::getInstance()->runDispatchLoopUntil(millisecondsToRunFor);
 }
+
+class TestWindow : public DocumentWindow, private DeletedAtShutdown
+{
+public:
+	static TestWindow& getInstance()
+	{
+		static TestWindow *window = new TestWindow();
+		return *window;
+	}
+	
+	void addAndMakeVisible(Component& component)
+	{
+		getContentComponent()->addAndMakeVisible(component);
+	}
+	
+private:
+	TestWindow()
+	: DocumentWindow("RxJUCE-Tests", Colours::white, DocumentWindow::TitleBarButtons::closeButton, true)
+	{
+		ScopedPointer<Component> component(new Component());
+		component->setSize(1, 1);
+		setContentOwned(component.release(), true);
+		setVisible(true);
+	}
+};

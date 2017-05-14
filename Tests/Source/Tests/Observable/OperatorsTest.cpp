@@ -69,6 +69,8 @@ TEST_CASE("Observable::combineLatest",
 		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[2], *os[3], *os[4], *os[5], *os[6], *os[7], transform<var, var, var, var, var, var, var, var>), items);
 		RxJUCERequireItems(items, "0 1 2 3 4 5 6 7 ");
 	}
+	
+#warning TODO Test that it combines items into an array by default
 }
 
 
@@ -409,6 +411,14 @@ TEST_CASE("Observable::takeWhile",
 		
 		RxJUCERequireItems(items, 4, 7, 10);
 	}
+}
+
+
+TEST_CASE("Observable::withLatestFrom",
+		  "[Observable][Observable::withLatestFrom]")
+{
+#warning TODO Test with a combinator function
+#warning TODO Test that it combines items into an array by default
 }
 
 

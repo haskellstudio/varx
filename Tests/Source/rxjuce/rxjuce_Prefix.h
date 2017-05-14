@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <utility>
 #include <initializer_list>
+#include <typeinfo>
 
 #define RXJUCE_NAMESPACE_BEGIN namespace rxjuce {
 #define RXJUCE_NAMESPACE_END }
@@ -26,6 +27,8 @@ using unique_ptr = std::unique_ptr<T, D>; \
 
 typedef std::exception_ptr Error;
 
+
+#warning Move this to source prefix
 #if __cplusplus == 201103L
 // make_unique by Stephan T. Lavavej, Revision 1
 // https://isocpp.org/files/papers/N3656.txt

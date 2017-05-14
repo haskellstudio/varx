@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="ggJgza" name="RxJUCE-Tests" projectType="consoleapp" version="1.0.0"
+<JUCERPROJECT id="ggJgza" name="RxJUCE-Tests" projectType="guiapp" version="1.0.0"
               bundleIdentifier="de.martin-finke.RxJUCE-Tests" includeBinaryInAppConfig="1"
               jucerVersion="5.0.0" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de"
               displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark">

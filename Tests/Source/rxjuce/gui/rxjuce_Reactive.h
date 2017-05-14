@@ -25,10 +25,13 @@ namespace detail {
 	using IsImageComponent = typename std::enable_if<std::is_base_of<juce::ImageComponent, T>::value>::type;
 	
 	template<typename T>
-	using IsSimpleComponent = typename std::enable_if<std::is_base_of<juce::Component, T>::value && !std::is_base_of<juce::ImageComponent, T>::value && !std::is_base_of<juce::Button, T>::value>::type;
+	using IsSimpleComponent = typename std::enable_if<std::is_base_of<juce::Component, T>::value && !std::is_base_of<juce::ImageComponent, T>::value && !std::is_base_of<juce::Button, T>::value && !std::is_base_of<juce::Label, T>::value>::type;
 	
 	template<typename T>
 	using IsButton = typename std::enable_if<std::is_base_of<juce::Button, T>::value>::type;
+	
+	template<typename T>
+	using IsLabel = typename std::enable_if<std::is_base_of<juce::Label, T>::value>::type;
 }
 
 // If you get an error here, it means that you are trying to use an unsupported type T.
@@ -120,6 +123,23 @@ public:
 	
 	/** The reactive extension object. */
 	const ButtonExtension rx;
+};
+
+/**
+	Adds reactive extensions to a juce::Label (or subclass).
+ */
+template<typename Label>
+class Reactive<Label, detail::IsLabel<Label>> : public Label
+{
+public:
+	/** Creates a new instance. @see juce::Label::Label. */
+	template<typename... Args>
+	Reactive(Args&&... args)
+	: Label(std::forward<Args>(args)...),
+	  rx(*this) {}
+	
+	/** The reactive extension object. */
+	const LabelExtension rx;
 };
 
 RXJUCE_NAMESPACE_END

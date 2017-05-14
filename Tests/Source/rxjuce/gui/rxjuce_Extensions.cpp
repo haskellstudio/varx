@@ -35,7 +35,9 @@ ValueExtension::ValueExtension(const Value& inputValue)
 
 void ValueExtension::valueChanged(Value&)
 {
-	subject.onNext(value.getValue());
+	if (value.getValue() != subject.getLatestItem()) {
+		subject.onNext(value.getValue());
+	}
 }
 
 
@@ -43,16 +45,12 @@ ComponentExtension::ComponentExtension(Component& parent)
 : visible(parent.isVisible())
 {
 	parent.addComponentListener(this);
-	
-	visible.takeUntil(deallocated).subscribe([&parent](bool visible) {
-		parent.setVisible(visible);
-	});
+	visible.takeUntil(deallocated).subscribe(std::bind(&Component::setVisible, &parent, _1));
 }
 
 void ComponentExtension::componentVisibilityChanged(Component& component)
 {
-	const bool latestItem = visible.getLatestItem();
-	if (component.isVisible() != latestItem) {
+	if (component.isVisible() != visible.getLatestItem().operator bool()) {
 		visible.onNext(component.isVisible());
 	}
 }
@@ -84,12 +82,13 @@ void ButtonExtension::buttonClicked(Button *)
 
 void ButtonExtension::buttonStateChanged(Button *button)
 {
-	if (var(button->getState()) != buttonState.getLatestItem())
+	if (var(button->getState()) != buttonState.getLatestItem()) {
 		buttonState.onNext(button->getState());
+	}
 }
 
-ImageComponentExtension::ImageComponentExtension(juce::ImageComponent& parent)
-: rxjuce::ComponentExtension(parent),
+ImageComponentExtension::ImageComponentExtension(ImageComponent& parent)
+: ComponentExtension(parent),
   image(_image.asObserver()),
   imagePlacement(_imagePlacement.asObserver())
 {
@@ -100,6 +99,51 @@ ImageComponentExtension::ImageComponentExtension(juce::ImageComponent& parent)
 	_imagePlacement.takeUntil(deallocated).subscribe([&parent](const var& imagePlacement) {
 		parent.setImagePlacement(fromVar<RectanglePlacement>(imagePlacement));
 	});
+}
+
+LabelExtension::LabelExtension(Label& parent)
+: ComponentExtension(parent),
+  _discardChangesWhenHidingEditor(false),
+  text(parent.getText()),
+  showEditor(parent.getCurrentTextEditor() != nullptr),
+  discardChangesWhenHidingEditor(_discardChangesWhenHidingEditor.asObserver()),
+  font(_font.asObserver())
+{
+	parent.addListener(this);
+	
+	text.takeUntil(deallocated).subscribe(std::bind(&Label::setText, &parent, _1, sendNotificationSync));
+	
+	showEditor.withLatestFrom(_discardChangesWhenHidingEditor).takeUntil(deallocated).subscribe([&parent](var items) {
+		if (items[0])
+			parent.showEditor();
+		else
+			parent.hideEditor(items[1]);
+	});
+	
+	_font.takeUntil(deallocated).subscribe([&parent](var font) {
+		parent.setFont(fromVar<Font>(font));
+	});
+}
+
+void LabelExtension::labelTextChanged(Label *parent)
+{
+	if (parent->getText() != text.getLatestItem().operator String()) {
+		text.onNext(parent->getText());
+	}
+}
+
+void LabelExtension::editorShown(Label *parent, TextEditor&)
+{
+	if (!showEditor.getLatestItem()) {
+		showEditor.onNext(true);
+	}
+}
+
+void LabelExtension::editorHidden(Label *parent, TextEditor&)
+{
+	if (showEditor.getLatestItem()) {
+		showEditor.onNext(false);
+	}
 }
 
 RXJUCE_NAMESPACE_END

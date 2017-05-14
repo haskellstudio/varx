@@ -8,7 +8,6 @@ class TestRunnerApplication : public JUCEApplication
 public:
 	void initialise (const String& commandLine) override
 	{
-		
 		Catch::ConfigData config;
 		config.shouldDebugBreak = true;
 //		config.testsOrTags = {"ComponentExtension"};
@@ -23,15 +22,9 @@ public:
 	void shutdown() override
 	{}
 	
-	const String getApplicationName() override
-	{
-		return "RxJUCE-Tests";
-	}
-	
-	const String getApplicationVersion() override
-	{
-		return "1.0";
-	}
+	const String getApplicationName() override       { return ProjectInfo::projectName; }
+	const String getApplicationVersion() override    { return ProjectInfo::versionString; }
+	bool moreThanOneInstanceAllowed() override       { return true; }
 };
 
 START_JUCE_APPLICATION(TestRunnerApplication)

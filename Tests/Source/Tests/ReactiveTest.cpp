@@ -220,6 +220,112 @@ TEST_CASE("Reactive<Button> with custom TextButton subclass",
 }
 
 
+TEST_CASE("Reactive<Label>",
+		  "[Reactive<Label>][LabelExtension]")
+{
+	Reactive<Label> label;
+	Array<var> items;
+	
+	CONTEXT("text") {
+		RxJUCECollectItems(label.rx.text, items);
+		
+		IT("initially emits the empty String") {
+			CHECK(label.getText().isEmpty());
+			
+			RxJUCERequireItems(items, label.getText());
+		}
+		
+		IT("emits a items when the Label changes its text") {
+			label.setText("Foo", sendNotificationSync);
+			label.setText("Bar", sendNotificationSync);
+			
+			RxJUCERequireItems(items, "", "Foo", "Bar");
+		}
+		
+		IT("changes the Label text synchronously when calling onNext") {
+			for (auto text : {"Hello", "World!"}) {
+				label.rx.text.onNext(text);
+			}
+			
+			RxJUCERequireItems(items, "", "Hello", "World!");
+		}
+	}
+	
+	CONTEXT("showEditor and discardChangesWhenHidingEditor") {
+		RxJUCECollectItems(label.rx.showEditor, items);
+		
+		// The label must be on the screen to show an editor (asserts otherwise)
+		TestWindow::getInstance().addAndMakeVisible(label);
+		
+		IT("is is initially false") {
+			CHECK(label.getCurrentTextEditor() == nullptr);
+			
+			RxJUCERequireItems(items, false);
+		}
+		
+		IT("remains false if the discard setting is changed") {
+			label.rx.discardChangesWhenHidingEditor.onNext(true);
+			CHECK(label.getCurrentTextEditor() == nullptr);
+			RxJUCECheckItems(items, false);
+			
+			label.rx.discardChangesWhenHidingEditor.onNext(false);
+			REQUIRE(label.getCurrentTextEditor() == nullptr);
+			
+			RxJUCERequireItems(items, false);
+		}
+		
+		IT("becomes true when calling Label::showEditor") {
+			label.showEditor();
+			CHECK(label.getCurrentTextEditor() != nullptr);
+			
+			RxJUCERequireItems(items, false, true);
+			
+			IT("becomes false when calling Label::hideEditor") {
+				label.hideEditor(true);
+				CHECK(label.getCurrentTextEditor() == nullptr);
+				
+				RxJUCERequireItems(items, false, true, false);
+			}
+		}
+		
+		IT("shows the editor when pushing true") {
+			label.rx.showEditor.onNext(true);
+			RxJUCECheckItems(items, false, true);
+			
+			REQUIRE(label.getCurrentTextEditor() != nullptr);
+			
+			IT("keeps showing the editor even if the discard setting changes") {
+				label.rx.discardChangesWhenHidingEditor.onNext(false);
+				label.rx.discardChangesWhenHidingEditor.onNext(true);
+				RxJUCECheckItems(items, false, true);
+				
+				REQUIRE(label.getCurrentTextEditor() != nullptr);
+			}
+			
+			IT("hides the editor when pushing false") {
+				label.rx.showEditor.onNext(false);
+				RxJUCECheckItems(items, false, true, false);
+				
+				REQUIRE(label.getCurrentTextEditor() == nullptr);
+			}
+		}
+	}
+	
+	CONTEXT("font") {
+		const Font font1(18.43, Font::bold | Font::underlined);
+		const Font font2(4.3, Font::italic);
+		
+		IT("changes the Label font when pushing an item") {
+			label.rx.font.onNext(toVar(font1));
+			CHECK(label.getFont() == font1);
+			label.rx.font.onNext(toVar(font2));
+			
+			REQUIRE(label.getFont() == font2);
+		}
+	}
+}
+
+
 template<typename T1, typename T2>
 using isSame = typename std::is_same<typename std::decay<T1>::type, T2>;
 
