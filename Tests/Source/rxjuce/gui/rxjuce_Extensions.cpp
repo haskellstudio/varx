@@ -109,7 +109,11 @@ LabelExtension::LabelExtension(Label& parent)
   discardChangesWhenHidingEditor(_discardChangesWhenHidingEditor.asObserver()),
   font(_font.asObserver()),
   justificationType(_justificationType.asObserver()),
-  borderSize(_borderSize.asObserver())
+  borderSize(_borderSize.asObserver()),
+  minimumHorizontalScale(_minimumHorizontalScale.asObserver()),
+  editableOnSingleClick(_editableOnSingleClick.asObserver()),
+  editableOnDoubleClick(_editableOnDoubleClick.asObserver()),
+  lossOfFocusDiscardsChanges(_lossOfFocusDiscardsChanges.asObserver())
 {
 	parent.addListener(this);
 	
@@ -132,6 +136,20 @@ LabelExtension::LabelExtension(Label& parent)
 	
 	_borderSize.takeUntil(deallocated).subscribe([&parent](var borderSize) {
 		parent.setBorderSize(fromVar<BorderSize<int>>(borderSize));
+	});
+	
+	_minimumHorizontalScale.takeUntil(deallocated).subscribe(std::bind(&Label::setMinimumHorizontalScale, &parent, _1));
+	
+	_editableOnSingleClick.takeUntil(deallocated).subscribe([&parent](bool editable) {
+		parent.setEditable(editable, parent.isEditableOnDoubleClick(), parent.doesLossOfFocusDiscardChanges());
+	});
+	
+	_editableOnDoubleClick.takeUntil(deallocated).subscribe([&parent](bool editable) {
+		parent.setEditable(parent.isEditableOnSingleClick(), editable, parent.doesLossOfFocusDiscardChanges());
+	});
+	
+	_lossOfFocusDiscardsChanges.takeUntil(deallocated).subscribe([&parent](bool lossOfFocusDiscardsChanges) {
+		parent.setEditable(parent.isEditableOnSingleClick(), parent.isEditableOnDoubleClick(), lossOfFocusDiscardsChanges);
 	});
 }
 

@@ -349,6 +349,56 @@ TEST_CASE("Reactive<Label>",
 			REQUIRE(label.getBorderSize() == borderSize2);
 		}
 	}
+	
+	CONTEXT("minimumHorizontalScale") {
+		IT("changes the scale when pushing items") {
+			CHECK(label.getMinimumHorizontalScale() == 0);
+			
+			for (auto scale : {0.f, 15.f, 0.33f, 0.f, 4.24f}) {
+				label.rx.minimumHorizontalScale.onNext(scale);
+				REQUIRE(label.getMinimumHorizontalScale() == scale);
+			}
+		}
+	}
+	
+	CONTEXT("editable") {
+		CHECK(!label.isEditableOnSingleClick());
+		CHECK(!label.isEditableOnDoubleClick());
+		CHECK(!label.doesLossOfFocusDiscardChanges());
+		
+		IT("changes only single click when pushing to single click") {
+			label.rx.editableOnSingleClick.onNext(true);
+			REQUIRE(label.isEditableOnSingleClick());
+			
+			CHECK(!label.isEditableOnDoubleClick());
+			CHECK(!label.doesLossOfFocusDiscardChanges());
+			
+			label.rx.editableOnSingleClick.onNext(false);
+			REQUIRE(!label.isEditableOnSingleClick());
+		}
+		
+		IT("changes only double click when pushing to double click") {
+			label.rx.editableOnDoubleClick.onNext(true);
+			REQUIRE(label.isEditableOnDoubleClick());
+			
+			CHECK(!label.isEditableOnSingleClick());
+			CHECK(!label.doesLossOfFocusDiscardChanges());
+			
+			label.rx.editableOnDoubleClick.onNext(false);
+			REQUIRE(!label.isEditableOnDoubleClick());
+		}
+		
+		IT("changes only the discard setting when pushing to it") {
+			label.rx.lossOfFocusDiscardsChanges.onNext(true);
+			REQUIRE(label.doesLossOfFocusDiscardChanges());
+			
+			CHECK(!label.isEditableOnSingleClick());
+			CHECK(!label.isEditableOnDoubleClick());
+			
+			label.rx.lossOfFocusDiscardsChanges.onNext(false);
+			REQUIRE(!label.doesLossOfFocusDiscardChanges());
+		}
+	}
 }
 
 

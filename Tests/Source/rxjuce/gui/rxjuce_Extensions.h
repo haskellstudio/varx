@@ -131,12 +131,19 @@ public:
 	const Observer imagePlacement;
 };
 
+/**
+	Adds reactive extensions to a juce::Label.
+ */
 class LabelExtension : public ComponentExtension, private juce::Label::Listener
 {
 	const BehaviorSubject _discardChangesWhenHidingEditor;
 	const PublishSubject _font;
 	const PublishSubject _justificationType;
 	const PublishSubject _borderSize;
+	const PublishSubject _minimumHorizontalScale;
+	const PublishSubject _editableOnSingleClick;
+	const PublishSubject _editableOnDoubleClick;
+	const PublishSubject _lossOfFocusDiscardsChanges;
 	
 public:
 	/** Creates a new instance for a given Label. */
@@ -159,6 +166,18 @@ public:
 	
 	/** Controls the Label's border size.​ **Type: BorderSize<int>** */
 	const Observer borderSize;
+	
+	/** Controls  the minimum amount that the Label font can be squashed horizontally before it starts using ellipsis.​ **Type: float** */
+	const Observer minimumHorizontalScale;
+	
+	/** Controls whether clicking the Label opens a TextEditor.​ **Type: bool** */
+	const Observer editableOnSingleClick;
+	
+	/** Controls whether double-clicking the Label opens a TextEditor.​ **Type: bool** */
+	const Observer editableOnDoubleClick;
+	
+	/** Controls whether unfocussing the TextEditor discards changes.​ **Type: bool** */
+	const Observer lossOfFocusDiscardsChanges;
 	
 private:
 	void labelTextChanged(juce::Label *) override;
