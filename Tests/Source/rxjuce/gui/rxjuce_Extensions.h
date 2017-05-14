@@ -135,22 +135,26 @@ class LabelExtension : public ComponentExtension, private juce::Label::Listener
 {
 	const BehaviorSubject _discardChangesWhenHidingEditor;
 	const PublishSubject _font;
+	const PublishSubject _justificationType;
 	
 public:
 	/** Creates a new instance for a given Label. */
 	LabelExtension(juce::Label& parent);
 	
-	/** Controls the label text. Setting a new string notifies all Label::Listeners.​ **Type: String** */
+	/** Controls the Label's text. Setting a new string notifies all Label::Listeners.​ **Type: String** */
 	const BehaviorSubject text;
 	
-	/** Controls whether the label is showing a TextEditor.​ **Type: bool** */
+	/** Controls whether the Label is showing a TextEditor.​ **Type: bool** */
 	const BehaviorSubject showEditor;
 	
 	/** Controls whether changes are discarded when hiding the TextEditor. The default is false.​ **Type: bool** */
 	const Observer discardChangesWhenHidingEditor;
 	
-	/** Controls the Label font.​ **Type: Font** */
+	/** Controls the Label's font.​ **Type: Font** */
 	const Observer font;
+	
+	/** Controls the Label's justification.​ **Type: Justification** */
+	const Observer justificationType;
 	
 private:
 	void labelTextChanged(juce::Label *) override;

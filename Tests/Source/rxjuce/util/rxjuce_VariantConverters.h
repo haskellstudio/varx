@@ -79,6 +79,9 @@ namespace juce {
 	struct VariantConverter<juce::Image> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Image> {};
 	
 	template<>
+	struct VariantConverter<juce::Justification> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Justification> {};
+	
+	template<>
 	struct VariantConverter<juce::RectanglePlacement> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::RectanglePlacement> {};
 	
 	template<>

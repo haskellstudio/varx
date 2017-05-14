@@ -315,12 +315,25 @@ TEST_CASE("Reactive<Label>",
 		const Font font1(18.43, Font::bold | Font::underlined);
 		const Font font2(4.3, Font::italic);
 		
-		IT("changes the Label font when pushing an item") {
+		IT("changes the Label font when pushing items") {
 			label.rx.font.onNext(toVar(font1));
 			CHECK(label.getFont() == font1);
 			label.rx.font.onNext(toVar(font2));
 			
 			REQUIRE(label.getFont() == font2);
+		}
+	}
+	
+	CONTEXT("justificationType") {
+		const Justification justification1(Justification::horizontallyJustified | Justification::top);
+		const Justification justification2(Justification::bottom | Justification::left);
+		
+		IT("changes the justification type when pushing items") {
+			label.rx.justificationType.onNext(toVar(justification1));
+			CHECK(label.getJustificationType() == justification1);
+			label.rx.justificationType.onNext(toVar(justification2));
+			
+			REQUIRE(label.getJustificationType() == justification2);
 		}
 	}
 }

@@ -107,7 +107,8 @@ LabelExtension::LabelExtension(Label& parent)
   text(parent.getText()),
   showEditor(parent.getCurrentTextEditor() != nullptr),
   discardChangesWhenHidingEditor(_discardChangesWhenHidingEditor.asObserver()),
-  font(_font.asObserver())
+  font(_font.asObserver()),
+  justificationType(_justificationType.asObserver())
 {
 	parent.addListener(this);
 	
@@ -122,6 +123,10 @@ LabelExtension::LabelExtension(Label& parent)
 	
 	_font.takeUntil(deallocated).subscribe([&parent](var font) {
 		parent.setFont(fromVar<Font>(font));
+	});
+	
+	_justificationType.takeUntil(deallocated).subscribe([&parent](var justificationType) {
+		parent.setJustificationType(fromVar<Justification>(justificationType));
 	});
 }
 
