@@ -110,6 +110,8 @@ LabelExtension::LabelExtension(Label& parent)
   font(_font.asObserver()),
   justificationType(_justificationType.asObserver()),
   borderSize(_borderSize.asObserver()),
+  attachedComponent(_attachedComponent.asObserver()),
+  attachedOnLeft(_attachedOnLeft.asObserver()),
   minimumHorizontalScale(_minimumHorizontalScale.asObserver()),
   editableOnSingleClick(_editableOnSingleClick.asObserver()),
   editableOnDoubleClick(_editableOnDoubleClick.asObserver()),
@@ -136,6 +138,14 @@ LabelExtension::LabelExtension(Label& parent)
 	
 	_borderSize.takeUntil(deallocated).subscribe([&parent](var borderSize) {
 		parent.setBorderSize(fromVar<BorderSize<int>>(borderSize));
+	});
+	
+	_attachedComponent.takeUntil(deallocated).subscribe([&parent](var component) {
+		parent.attachToComponent(fromVar<WeakReference<Component>>(component), parent.isAttachedOnLeft());
+	});
+	
+	_attachedOnLeft.takeUntil(deallocated).subscribe([&parent](bool attachedOnLeft) {
+		parent.attachToComponent(parent.getAttachedComponent(), attachedOnLeft);
 	});
 	
 	_minimumHorizontalScale.takeUntil(deallocated).subscribe(std::bind(&Label::setMinimumHorizontalScale, &parent, _1));

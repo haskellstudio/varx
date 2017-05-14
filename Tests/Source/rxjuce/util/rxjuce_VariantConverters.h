@@ -96,4 +96,21 @@ namespace juce {
 		static Button::ButtonState fromVar(const var &v);
 		static var toVar(const Button::ButtonState& buttonState);
 	};
+	
+	template<typename T>
+	struct VariantConverter<WeakReference<T>>
+	{
+		static WeakReference<T> fromVar(const var &v)
+		{
+			if (v.isUndefined() || v.isVoid())
+				return nullptr;
+			else
+				return rxjuce::detail::ReferenceCountingVariantConverter<WeakReference<T>>::fromVar(v);
+		}
+		
+		static var toVar(const WeakReference<T>& weakReference)
+		{
+			return rxjuce::detail::ReferenceCountingVariantConverter<WeakReference<T>>::toVar(weakReference);
+		}
+	};
 }

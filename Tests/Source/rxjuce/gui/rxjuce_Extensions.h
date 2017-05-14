@@ -140,6 +140,8 @@ class LabelExtension : public ComponentExtension, private juce::Label::Listener
 	const PublishSubject _font;
 	const PublishSubject _justificationType;
 	const PublishSubject _borderSize;
+	const PublishSubject _attachedComponent;
+	const PublishSubject _attachedOnLeft;
 	const PublishSubject _minimumHorizontalScale;
 	const PublishSubject _editableOnSingleClick;
 	const PublishSubject _editableOnDoubleClick;
@@ -166,6 +168,12 @@ public:
 	
 	/** Controls the Label's border size.​ **Type: BorderSize<int>** */
 	const Observer borderSize;
+	
+	/** Attaches the Label to another Component.​ **Type: SafePointer<Component>, or `var()` or `var::undefined()` if no Component should be attached.** */
+	const Observer attachedComponent;
+	
+	/** Controls whether the attachedComponent should be attached on the left.​ **Type: bool** */
+	const Observer attachedOnLeft;
 	
 	/** Controls  the minimum amount that the Label font can be squashed horizontally before it starts using ellipsis.​ **Type: float** */
 	const Observer minimumHorizontalScale;

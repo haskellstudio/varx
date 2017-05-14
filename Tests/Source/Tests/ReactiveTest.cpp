@@ -350,6 +350,57 @@ TEST_CASE("Reactive<Label>",
 		}
 	}
 	
+	CONTEXT("attachedComponent") {
+		label.attachToComponent(nullptr, false);
+		CHECK(label.getAttachedComponent() == nullptr);
+		CHECK(label.isAttachedOnLeft() == false);
+		
+		IT("attaches to another Component") {
+			Component other;
+			label.rx.attachedComponent.onNext(toVar(WeakReference<Component>(&other)));
+			
+			CHECK(label.isAttachedOnLeft() == false);
+			REQUIRE(label.getAttachedComponent() == &other);
+			
+			IT("can change the attachment side and keeps the Component") {
+				label.rx.attachedOnLeft.onNext(true);
+				label.rx.attachedOnLeft.onNext(false);
+				label.rx.attachedOnLeft.onNext(true);
+				
+				CHECK(label.isAttachedOnLeft() == true);
+				REQUIRE(label.getAttachedComponent() == &other);
+			}
+			
+			IT("can remove the attachment again via var::undefined()") {
+				label.rx.attachedComponent.onNext(var::undefined());
+				
+				REQUIRE(label.getAttachedComponent() == nullptr);
+			}
+			
+			IT("can remove the attachment again via var()") {
+				label.rx.attachedComponent.onNext(var());
+				
+				REQUIRE(label.getAttachedComponent() == nullptr);
+			}
+			
+			IT("can remove the attachment again via an empty weak reference") {
+				label.rx.attachedComponent.onNext(toVar(WeakReference<Component>()));
+				
+				REQUIRE(label.getAttachedComponent() == nullptr);
+			}
+		}
+		
+		IT("loses the attachment when the other component is destroyed") {
+			auto other = std::make_shared<Component>();
+			label.rx.attachedComponent.onNext(toVar(WeakReference<Component>(other.get())));
+			CHECK(label.getAttachedComponent() == other.get());
+			
+			other.reset();
+			
+			REQUIRE(label.getAttachedComponent() == nullptr);
+		}
+	}
+	
 	CONTEXT("minimumHorizontalScale") {
 		IT("changes the scale when pushing items") {
 			CHECK(label.getMinimumHorizontalScale() == 0);
