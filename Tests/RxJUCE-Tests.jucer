@@ -24,6 +24,8 @@
                 file="Source/rxjuce/gui/rxjuce_Reactive.h"/>
         </GROUP>
         <GROUP id="{AD8089E2-1815-3BBD-C046-CA92D277ED4D}" name="util">
+          <FILE id="pSH67g" name="rxjuce_PrintFunctions.cpp" compile="1" resource="0"
+                file="Source/rxjuce/util/rxjuce_PrintFunctions.cpp"/>
           <FILE id="mkwt56" name="rxjuce_PrintFunctions.h" compile="0" resource="0"
                 file="Source/rxjuce/util/rxjuce_PrintFunctions.h"/>
           <FILE id="o2B7Ay" name="rxjuce_VariantConverters.cpp" compile="1" resource="0"

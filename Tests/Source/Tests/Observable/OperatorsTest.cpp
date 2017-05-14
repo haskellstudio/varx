@@ -70,7 +70,11 @@ TEST_CASE("Observable::combineLatest",
 		RxJUCERequireItems(items, "0 1 2 3 4 5 6 7 ");
 	}
 	
-#warning TODO Test that it combines items into an array by default
+	IT("combines items into an array by default") {
+		RxJUCECollectItems(os[0]->combineLatest(*os[1], *os[3]), items);
+		
+		RxJUCERequireItems(items, Array<var>({"0 ", "1 ", "3 "}));
+	}
 }
 
 

@@ -25,6 +25,12 @@ namespace juce {\
 	}\
 }
 
+namespace rxjuce {
+	namespace util {
+		juce::String arrayDesc(const juce::Array<juce::var>& array);
+	}
+}
+
 RXJUCE_DEFINE_PRINT_FUNCTION(juce::var, {
 	if (value.isBool())
 		return (value ? "true" : "false");
@@ -34,6 +40,8 @@ RXJUCE_DEFINE_PRINT_FUNCTION(juce::var, {
 		return "undefined";
 	else if (value.isString())
 		return "\"" + value.toString() + "\"";
+	else if (value.isArray())
+		return rxjuce::util::arrayDesc(*value.getArray());
 	else
 		return value.toString();
 })
@@ -43,11 +51,7 @@ RXJUCE_DEFINE_PRINT_FUNCTION(juce::StringArray, {
 })
 
 RXJUCE_DEFINE_PRINT_FUNCTION(juce::Array<juce::var>, {
-	juce::StringArray strings;
-	for (juce::var v : value)
-		strings.add(rxjuce::util::desc(v));
-	
-	return rxjuce::util::desc(strings);
+	return rxjuce::util::arrayDesc(value);
 })
 
 #undef RXJUCE_DEFINE_PRINT_FUNCTION
