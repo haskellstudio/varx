@@ -180,7 +180,7 @@ public:
 	/** Controls  the minimum amount that the Label font can be squashed horizontally before it starts using ellipsis.​ **Type: float** */
 	const Observer minimumHorizontalScale;
 	
-	/** Controls the keyboard type to use in the TextEditor. If the editor is currently open, the type is changed anyway.​ **Type: TextInputTarget::VirtualKeyboardType** */
+	/** Controls the keyboard type to use in the TextEditor. If the editor is currently open, the type is changed for the open editor.​ **Type: TextInputTarget::VirtualKeyboardType** */
 	const Observer keyboardType;
 	
 	/** Controls whether clicking the Label opens a TextEditor.​ **Type: bool** */
