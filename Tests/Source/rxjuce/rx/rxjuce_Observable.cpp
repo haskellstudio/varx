@@ -55,7 +55,7 @@ Observable Observable::create(const std::function<void(Observer)>& onSubscribe)
 Observable Observable::defer(const std::function<Observable()>& factory)
 {
 	return Impl::fromRxCpp(rxcpp::observable<>::defer([factory]() {
-		return factory().impl->wrapped;
+		return *factory().impl->wrapped;
 	}));
 }
 
@@ -132,7 +132,7 @@ Disposable Observable::subscribe(const std::function<void(const var&)>& onNext,
 								   const std::function<void(Error)>& onError,
 								   const std::function<void()>& onCompleted) const
 {
-	auto disposable = impl->wrapped.subscribe(onNext, onError, onCompleted);
+	auto disposable = impl->wrapped->subscribe(onNext, onError, onCompleted);
 	
 	return Disposable(std::make_shared<Disposable::Impl>(disposable));
 }
@@ -207,34 +207,34 @@ Observable Observable::concat(Observable o1, Observable o2, Observable o3, Obser
 
 Observable Observable::debounce(const juce::RelativeTime& period) const
 {
-	return Impl::fromRxCpp(impl->wrapped.debounce(durationFromRelativeTime(period)));
+	return Impl::fromRxCpp(impl->wrapped->debounce(durationFromRelativeTime(period)));
 }
 
 Observable Observable::distinctUntilChanged() const
 {
-	return Impl::fromRxCpp(impl->wrapped.distinct_until_changed());
+	return Impl::fromRxCpp(impl->wrapped->distinct_until_changed());
 }
 
 Observable Observable::elementAt(int index) const
 {
-	return Impl::fromRxCpp(impl->wrapped.element_at(index));
+	return Impl::fromRxCpp(impl->wrapped->element_at(index));
 }
 
 Observable Observable::filter(const std::function<bool(const var&)>& predicate) const
 {
-	return Impl::fromRxCpp(impl->wrapped.filter(predicate));
+	return Impl::fromRxCpp(impl->wrapped->filter(predicate));
 }
 
 Observable Observable::flatMap(const std::function<Observable(const var&)>& f) const
 {
-	return Impl::fromRxCpp(impl->wrapped.flat_map([f](const var& value) {
-		return f(value).impl->wrapped;
+	return Impl::fromRxCpp(impl->wrapped->flat_map([f](const var& value) {
+		return *f(value).impl->wrapped;
 	}));
 }
 
 Observable Observable::map(Function1 f) const
 {
-	return Impl::fromRxCpp(impl->wrapped.map(f));
+	return Impl::fromRxCpp(impl->wrapped->map(f));
 }
 
 Observable Observable::merge(Observable o1) const
@@ -268,27 +268,27 @@ Observable Observable::merge(Observable o1, Observable o2, Observable o3, Observ
 
 Observable Observable::reduce(const var& startValue, Function2 f) const
 {
-	return Impl::fromRxCpp(impl->wrapped.reduce(startValue, f));
+	return Impl::fromRxCpp(impl->wrapped->reduce(startValue, f));
 }
 
 Observable Observable::sample(const juce::RelativeTime& interval)
 {
-	return Impl::fromRxCpp(impl->wrapped.sample_with_time(durationFromRelativeTime(interval)));
+	return Impl::fromRxCpp(impl->wrapped->sample_with_time(durationFromRelativeTime(interval)));
 }
 
 Observable Observable::scan(const var& startValue, Function2 f) const
 {
-	return Impl::fromRxCpp(impl->wrapped.scan(startValue, f));
+	return Impl::fromRxCpp(impl->wrapped->scan(startValue, f));
 }
 
 Observable Observable::skip(unsigned int numItems) const
 {
-	return Impl::fromRxCpp(impl->wrapped.skip(numItems));
+	return Impl::fromRxCpp(impl->wrapped->skip(numItems));
 }
 
 Observable Observable::skipUntil(Observable other) const
 {
-	return Impl::fromRxCpp(impl->wrapped.skip_until(other.impl->wrapped));
+	return Impl::fromRxCpp(impl->wrapped->skip_until(*other.impl->wrapped));
 }
 
 Observable Observable::startWith(const var& item1) const
@@ -326,8 +326,8 @@ Observable Observable::startWith(const var& item1, const var& item2, const var& 
 
 Observable Observable::switchOnNext() const
 {
-	rxcpp::observable<rxcpp::observable<var>> unwrapped = impl->wrapped.map([](var observable) {
-		return fromVar<Observable>(observable).impl->wrapped;
+	rxcpp::observable<rxcpp::observable<var>> unwrapped = impl->wrapped->map([](var observable) {
+		return *fromVar<Observable>(observable).impl->wrapped;
 	});
 	
 	return Impl::fromRxCpp(unwrapped.switch_on_next());
@@ -335,22 +335,22 @@ Observable Observable::switchOnNext() const
 
 Observable Observable::take(unsigned int numItems) const
 {
-	return Impl::fromRxCpp(impl->wrapped.take(numItems));
+	return Impl::fromRxCpp(impl->wrapped->take(numItems));
 }
 
 Observable Observable::takeLast(unsigned int numItems) const
 {
-	return Impl::fromRxCpp(impl->wrapped.take_last(numItems));
+	return Impl::fromRxCpp(impl->wrapped->take_last(numItems));
 }
 
 Observable Observable::takeUntil(Observable other) const
 {
-	return Impl::fromRxCpp(impl->wrapped.take_until(other.impl->wrapped));
+	return Impl::fromRxCpp(impl->wrapped->take_until(*other.impl->wrapped));
 }
 
 Observable Observable::takeWhile(const std::function<bool(const var&)>& predicate) const
 {
-	return Impl::fromRxCpp(impl->wrapped.take_while(predicate));
+	return Impl::fromRxCpp(impl->wrapped->take_while(predicate));
 }
 
 Observable Observable::zip(Observable o1, Function2& f) const
@@ -387,17 +387,17 @@ Observable Observable::zip(Observable o1, Observable o2, Observable o3, Observab
 
 Observable Observable::publish() const
 {
-	return Impl::fromRxCpp(impl->wrapped.publish());
+	return Impl::fromRxCpp(impl->wrapped->publish());
 }
 
 Observable Observable::replay() const
 {
-	return Impl::fromRxCpp(impl->wrapped.replay());
+	return Impl::fromRxCpp(impl->wrapped->replay());
 }
 
 Observable Observable::multicast(Subject& subject)
 {
-	return Impl::fromRxCpp(subject.impl->multicast(impl->wrapped));
+	return Impl::fromRxCpp(subject.impl->multicast(*impl->wrapped));
 }
 
 Disposable Observable::connect() const
@@ -410,7 +410,7 @@ Disposable Observable::connect() const
 
 Observable Observable::observeOn(const Scheduler& scheduler) const
 {
-	return Impl::fromRxCpp(scheduler.impl->schedule(impl->wrapped));
+	return Impl::fromRxCpp(scheduler.impl->schedule(*impl->wrapped));
 }
 
 
@@ -424,7 +424,7 @@ Observable::operator var() const
 juce::Array<var> Observable::toArray(const std::function<void(Error)>& onError) const
 {
 	Array<var> items;
-	impl->wrapped.as_blocking().subscribe([&](const var& item) {
+	impl->wrapped->as_blocking().subscribe([&](const var& item) {
 		items.add(item);
 	}, onError);
 	return items;

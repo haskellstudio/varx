@@ -20,7 +20,7 @@ RXJUCE_NAMESPACE_BEGIN
 
 Subject::Subject(const std::shared_ptr<Impl>& impl)
 : Observer(std::make_shared<Observer::Impl>(impl->getSubscriber())),
-  Observable(std::make_shared<Observable::Impl>(impl->asObservable())),
+Observable(std::make_shared<Observable::Impl>(std::make_unique<rxcpp::observable<var>>(impl->asObservable()))),
   impl(impl) {}
 
 Observable Subject::asObservable() const
