@@ -200,12 +200,43 @@ void LabelExtension::editorHidden(Label *parent, TextEditor&)
 	_textEditor.onNext(getTextEditor(*parent));
 }
 
-var LabelExtension::getTextEditor(juce::Label& label)
+var LabelExtension::getTextEditor(Label& label)
 {
 	if (auto editor = label.getCurrentTextEditor())
 		return toVar(WeakReference<Component>(editor));
 	else
 		return var::undefined();
+}
+
+
+SliderExtension::SliderExtension(Slider& parent)
+: ComponentExtension(parent),
+  _dragging(false),
+  value(parent.getValue()),
+  dragging(_dragging.asObservable().distinctUntilChanged())
+{
+	parent.addListener(this);
+	
+	value.takeUntil(deallocated).subscribe([&parent](double value) {
+		parent.setValue(value, sendNotificationSync);
+	});
+}
+
+void SliderExtension::sliderValueChanged(Slider *slider)
+{
+	if (slider->getValue() != value.getLatestItem().operator double()) {
+		value.onNext(slider->getValue());
+	}
+}
+
+void SliderExtension::sliderDragStarted(Slider *)
+{
+	_dragging.onNext(true);
+}
+
+void SliderExtension::sliderDragEnded(Slider *)
+{
+	_dragging.onNext(false);
 }
 
 RXJUCE_NAMESPACE_END

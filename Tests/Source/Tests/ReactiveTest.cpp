@@ -499,6 +499,38 @@ TEST_CASE("Reactive<Label>",
 }
 
 
+TEST_CASE("Reactive<Slider>",
+		  "[Reactive<Slider>][SliderExtension]")
+{
+	Reactive<Slider> slider;
+	slider.setValue(10, sendNotificationSync);
+	Array<var> items;
+	
+	CONTEXT("value") {
+		RxJUCECollectItems(slider.rx.value, items);
+		
+		IT("initially has the Slider value") {
+			RxJUCERequireItems(items, 10);
+		}
+		
+		IT("emits items when the Slider value changes") {
+			slider.setValue(3, sendNotificationSync);
+			slider.setValue(7.45, sendNotificationSync);
+			
+			RxJUCERequireItems(items, 10.0, 3.0, 7.45);
+		}
+	}
+	
+	CONTEXT("dragging") {
+		RxJUCECollectItems(slider.rx.dragging, items);
+		
+		IT("is initially false") {
+			RxJUCERequireItems(items, false);
+		}
+	}
+}
+
+
 template<typename T1, typename T2>
 using isSame = typename std::is_same<typename std::decay<T1>::type, T2>;
 

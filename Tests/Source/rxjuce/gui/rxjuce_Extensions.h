@@ -26,7 +26,7 @@ class ExtensionBase
 	const ReplaySubject _deallocated;
 	
 public:
-	/** Notifies the ExtensionBase::deallocated with an item, and onCompleted. */
+	/** Notifies the ExtensionBase::deallocated Observable with an item, and onCompleted. */
 	virtual ~ExtensionBase();
 	
 	/**
@@ -201,6 +201,31 @@ private:
 	void editorHidden(juce::Label *, juce::TextEditor&) override;
 	
 	static juce::var getTextEditor(juce::Label& label);
+};
+
+
+
+/**
+	Adds reactive extensions to a juce::Slider.
+ */
+class SliderExtension : public ComponentExtension, private juce::Slider::Listener
+{
+	BehaviorSubject _dragging;
+	
+public:
+	/** Creates a new instance for a given Slider. */
+	SliderExtension(juce::Slider& parent);
+	
+	/** Controls the current Slider value.​ **Type: double** */
+	const BehaviorSubject value;
+	
+	/** Whether the Slider is currently being dragged.​ **Type: bool** */
+	const Observable dragging;
+	
+private:
+	void sliderValueChanged(juce::Slider *slider) override;
+	void sliderDragStarted(juce::Slider *) override;
+	void sliderDragEnded(juce::Slider *) override;
 };
 
 RXJUCE_NAMESPACE_END

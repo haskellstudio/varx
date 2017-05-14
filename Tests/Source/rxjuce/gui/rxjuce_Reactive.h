@@ -25,13 +25,16 @@ namespace detail {
 	using IsImageComponent = typename std::enable_if<std::is_base_of<juce::ImageComponent, T>::value>::type;
 	
 	template<typename T>
-	using IsSimpleComponent = typename std::enable_if<std::is_base_of<juce::Component, T>::value && !std::is_base_of<juce::ImageComponent, T>::value && !std::is_base_of<juce::Button, T>::value && !std::is_base_of<juce::Label, T>::value>::type;
+	using IsSimpleComponent = typename std::enable_if<std::is_base_of<juce::Component, T>::value && !std::is_base_of<juce::ImageComponent, T>::value && !std::is_base_of<juce::Button, T>::value && !std::is_base_of<juce::Label, T>::value && !std::is_base_of<juce::Slider, T>::value>::type;
 	
 	template<typename T>
 	using IsButton = typename std::enable_if<std::is_base_of<juce::Button, T>::value>::type;
 	
 	template<typename T>
 	using IsLabel = typename std::enable_if<std::is_base_of<juce::Label, T>::value>::type;
+	
+	template<typename T>
+	using IsSlider = typename std::enable_if<std::is_base_of<juce::Slider, T>::value>::type;
 }
 
 // If you get an error here, it means that you are trying to use an unsupported type T.
@@ -140,6 +143,23 @@ public:
 	
 	/** The reactive extension object. */
 	const LabelExtension rx;
+};
+
+/**
+	Adds reactive extensions to a juce::Slider (or subclass).
+ */
+template<typename Slider>
+class Reactive<Slider, detail::IsSlider<Slider>> : public Slider
+{
+public:
+	/** Creates a new instance. @see juce::Slider::Slider. */
+	template<typename... Args>
+	Reactive(Args&&... args)
+	: Slider(std::forward<Args>(args)...),
+	rx(*this) {}
+	
+	/** The reactive extension object. */
+	const SliderExtension rx;
 };
 
 RXJUCE_NAMESPACE_END
