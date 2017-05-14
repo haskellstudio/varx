@@ -37,11 +37,12 @@ public:
 	
 private:
 	friend class BehaviorSubject;
-	friend class PublishSubject;
-	friend class ReplaySubject;
 	friend class BehaviorSubjectImpl;
+	friend class PublishSubject;
 	friend class PublishSubjectImpl;
+	friend class ReplaySubject;
 	friend class ReplaySubjectImpl;
+	friend class Observable;
 	struct Impl;
 	explicit Subject(const std::shared_ptr<Impl>& impl);
 	std::shared_ptr<Impl> impl;

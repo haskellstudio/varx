@@ -12,10 +12,11 @@
 
 #include "rxjuce_Observable.h"
 
+#include "rxjuce_Disposable_Impl.h"
 #include "rxjuce_Observable_Impl.h"
 #include "rxjuce_Observer_Impl.h"
 #include "rxjuce_Scheduler_Impl.h"
-#include "rxjuce_Disposable_Impl.h"
+#include "rxjuce_Subjects_Impl.h"
 #include "rxjuce_VariantConverters.h"
 
 RXJUCE_SOURCE_PREFIX
@@ -379,6 +380,29 @@ Observable Observable::zip(Observable o1, Observable o2, Observable o3, Observab
 Observable Observable::zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const
 {
 	return impl->zip(f, o1, o2, o3, o4, o5, o6, o7);
+}
+
+
+#pragma mark – Connecting
+
+Observable Observable::publish() const
+{
+	return Impl::fromRxCpp(impl->wrapped.publish());
+}
+
+Observable Observable::replay() const
+{
+	return Impl::fromRxCpp(impl->wrapped.replay());
+}
+
+Observable Observable::multicast(Subject& subject)
+{
+	return Impl::fromRxCpp(subject.impl->multicast(impl->wrapped));
+}
+
+Disposable Observable::connect() const
+{
+	
 }
 
 

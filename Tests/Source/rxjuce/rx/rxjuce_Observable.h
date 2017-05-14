@@ -18,6 +18,7 @@ RXJUCE_NAMESPACE_BEGIN
 
 class Observer;
 class Scheduler;
+class Subject;
 
 /**
 	An Observable is a value that changes over time.
@@ -366,6 +367,16 @@ public:
 	/** \overload */
 	Observable zip(Observable o1, Observable o2, Observable o3, Observable o4, Observable o5, Observable o6, Observable o7, Function8 f) const;
 	///@}
+	
+	
+#pragma mark - Connecting
+	Observable publish() const;
+	
+	Observable replay() const;
+	
+	Observable multicast(Subject& subject);
+	
+	Disposable connect() const;
 	
 	
 #pragma mark - Scheduling

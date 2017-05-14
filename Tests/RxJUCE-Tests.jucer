@@ -51,6 +51,10 @@
                   file="Source/rxjuce/rx/internal/rxjuce_Scheduler_Impl.cpp"/>
             <FILE id="uh4iiO" name="rxjuce_Scheduler_Impl.h" compile="0" resource="0"
                   file="Source/rxjuce/rx/internal/rxjuce_Scheduler_Impl.h"/>
+            <FILE id="MX10JJ" name="rxjuce_Subjects_Impl.cpp" compile="1" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Subjects_Impl.cpp"/>
+            <FILE id="aDOhyP" name="rxjuce_Subjects_Impl.h" compile="0" resource="0"
+                  file="Source/rxjuce/rx/internal/rxjuce_Subjects_Impl.h"/>
           </GROUP>
           <FILE id="Mm9AB1" name="rxjuce_Disposable.cpp" compile="1" resource="0"
                 file="Source/rxjuce/rx/rxjuce_Disposable.cpp"/>
