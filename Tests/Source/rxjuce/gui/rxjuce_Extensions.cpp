@@ -213,12 +213,22 @@ SliderExtension::SliderExtension(Slider& parent)
 : ComponentExtension(parent),
   _dragging(false),
   value(parent.getValue()),
+  minimum(_minimum.asObserver()),
+  maximum(_maximum.asObserver()),
   dragging(_dragging.asObservable().distinctUntilChanged())
 {
 	parent.addListener(this);
 	
 	value.takeUntil(deallocated).subscribe([&parent](double value) {
 		parent.setValue(value, sendNotificationSync);
+	});
+	
+	_minimum.takeUntil(deallocated).subscribe([&parent](double minimum) {
+		parent.setRange(minimum, parent.getMaximum());
+	});
+	
+	_maximum.takeUntil(deallocated).subscribe([&parent](double maximum) {
+		parent.setRange(parent.getMinimum(), maximum);
 	});
 }
 

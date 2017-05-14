@@ -528,6 +528,20 @@ TEST_CASE("Reactive<Slider>",
 			RxJUCERequireItems(items, false);
 		}
 	}
+	
+	IT("sets the minimum") {
+		slider.rx.minimum.onNext(11);
+		
+		REQUIRE(slider.getMinimum() == 11);
+		CHECK(slider.getValue() == 11);
+	}
+	
+	IT("sets the maximum") {
+		slider.rx.maximum.onNext(5.43);
+		
+		REQUIRE(slider.getMaximum() == 5.43);
+		CHECK(slider.getValue() == 5.43);
+	}
 }
 
 

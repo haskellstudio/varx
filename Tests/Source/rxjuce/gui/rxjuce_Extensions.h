@@ -210,14 +210,22 @@ private:
  */
 class SliderExtension : public ComponentExtension, private juce::Slider::Listener
 {
+	PublishSubject _minimum;
+	PublishSubject _maximum;
 	BehaviorSubject _dragging;
 	
 public:
 	/** Creates a new instance for a given Slider. */
 	SliderExtension(juce::Slider& parent);
 	
-	/** Controls the current Slider value.​ **Type: double** */
+	/** Controls the Slider value.​ **Type: double** */
 	const BehaviorSubject value;
+	
+	/** Controls the minimum Slider value.​ **Type: double** */
+	const Observer minimum;
+	
+	/** Controls the maximum Slider value.​ **Type: double** */
+	const Observer maximum;
 	
 	/** Whether the Slider is currently being dragged.​ **Type: bool** */
 	const Observable dragging;
