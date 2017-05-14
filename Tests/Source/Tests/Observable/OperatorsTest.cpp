@@ -421,8 +421,29 @@ TEST_CASE("Observable::takeWhile",
 TEST_CASE("Observable::withLatestFrom",
 		  "[Observable][Observable::withLatestFrom]")
 {
-#warning TODO Test with a combinator function
-#warning TODO Test that it combines items into an array by default
+	Array<var> items;
+	PublishSubject s1;
+	PublishSubject s2;
+	
+	IT("only emits when the first Observable emits") {
+		RxJUCECollectItems(s1.withLatestFrom(s2, transform<var, var>), items);
+		CHECK(items.isEmpty());
+		s2.onNext("World!");
+		CHECK(items.isEmpty());
+		s1.onNext("Hello ");
+		
+		RxJUCERequireItems(items, "Hello World!");
+	}
+	
+	IT("combines items into an array by default") {
+		RxJUCECollectItems(s1.withLatestFrom(s2), items);
+		s1.onNext(1.578);
+		s2.onNext(3.145);
+		CHECK(items.isEmpty());
+		s1.onNext(18.45);
+		
+		RxJUCERequireItems(items, Array<var>({18.45, 3.145}));
+	}
 }
 
 
