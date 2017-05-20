@@ -14,19 +14,12 @@ RXJUCE_SOURCE_PREFIX
 
 RXJUCE_NAMESPACE_BEGIN
 
-std::shared_ptr<Observable::Impl> Observable::Impl::fromConnectableRxCpp(const rxcpp::connectable_observable<var>& wrapped)
+Observable::Impl::Impl(const rxcpp::observable<var>& wrapped)
+: wrapped(wrapped) {}
+
+std::shared_ptr<Observable::Impl> Observable::Impl::fromRxCpp(const rxcpp::observable<var>& wrapped)
 {
-//	std::unique_ptr<rxcpp::observable<var>> ptr;
-	rxcpp::connectable_observable<int> connectable;
-	rxcpp::observable<int> o = connectable;
-	
-//	rxcpp::connectable_observable<int> *connectable_ptr;
-//	rxcpp::observable<int> *ptr = connectable_ptr;
-//	ptr = std::make_unique<rxcpp::connectable_observable<var>>(wrapped);
-//	class Test : public rxcpp::observable<var> {};
-	
-//	std::unique_ptr<rxcpp::observable<var>> ptr(new Test());
-//	return std::make_shared<Impl>(std::move(ptr));
+	return std::make_shared<Impl>(wrapped);
 }
 
 shared_ptr<Observable::Impl> Observable::Impl::fromValue(const Value& value)
@@ -38,7 +31,7 @@ shared_ptr<Observable::Impl> Observable::Impl::fromValue(const Value& value)
 		: value(inputValue),
 		  subject(inputValue)
 		{
-			wrapped = std::make_unique<rxcpp::observable<var>>(subject.get_observable());
+			wrapped = subject.get_observable();
 			value.addListener(this);
 		}
 		

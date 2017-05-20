@@ -394,16 +394,6 @@ public:
 	///@}
 	
 	
-#pragma mark - Connecting
-	Observable publish() const;
-	
-	Observable replay() const;
-	
-	Observable multicast(Subject& subject);
-	
-	Disposable connect() const;
-	
-	
 #pragma mark - Scheduling
 	/**
 		Returns an Observable that will be observed on a specified scheduler, for example the JUCE Message Thread or a background thread.

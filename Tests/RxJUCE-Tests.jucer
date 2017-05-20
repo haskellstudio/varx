@@ -265,8 +265,6 @@
           <FILE id="ShEoW4" name="SchedulingTest.cpp" compile="1" resource="0"
                 file="Source/Tests/Observable/SchedulingTest.cpp"/>
         </GROUP>
-        <FILE id="Gs8Vom" name="ConnectionsTest.cpp" compile="1" resource="0"
-              file="Source/Tests/ConnectionsTest.cpp"/>
         <FILE id="K3FGg8" name="DisposableTest.cpp" compile="1" resource="0"
               file="Source/Tests/DisposableTest.cpp"/>
         <FILE id="vc7e2E" name="ObserverTest.cpp" compile="1" resource="0"

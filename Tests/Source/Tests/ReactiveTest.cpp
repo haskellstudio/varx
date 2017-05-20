@@ -249,6 +249,7 @@ TEST_CASE("Reactive<Label>",
 			
 			RxJUCERequireItems(items, "", "Hello", "World!");
 		}
+#warning check getText() when pushing items
 	}
 	
 	CONTEXT("showEditor, discardChangesWhenHidingEditor and textEditor") {
