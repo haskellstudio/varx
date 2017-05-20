@@ -10,7 +10,6 @@ public:
 	{
 		Catch::ConfigData config;
 		config.shouldDebugBreak = true;
-//		config.testsOrTags = {"ComponentExtension"};
 		
 		Catch::Session session;
 		session.useConfigData(config);

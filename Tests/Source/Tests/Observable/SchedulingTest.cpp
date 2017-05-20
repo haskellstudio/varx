@@ -8,11 +8,7 @@
   ==============================================================================
 */
 
-#include "rxjuce_TestPrefix.h"
-
-#include "rxjuce_Observable.h"
-#include "rxjuce_Observer.h"
-#include "rxjuce_Scheduler.h"
+#include "TestPrefix.h"
 
 
 TEST_CASE("Observable::observeOn",

@@ -8,10 +8,7 @@
   ==============================================================================
 */
 
-#include "rxjuce_TestPrefix.h"
-
-#include "rxjuce_Reactive.h"
-#include "rxjuce_VariantConverters.h"
+#include "TestPrefix.h"
 
 
 TEST_CASE("Reactive<Value> conversion",
