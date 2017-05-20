@@ -216,7 +216,13 @@ class SliderExtension : public ComponentExtension, private juce::Slider::Listene
 {
 	PublishSubject _minimum;
 	PublishSubject _maximum;
+	PublishSubject _doubleClickReturnValue;
+	PublishSubject _interval;
+	PublishSubject _skewFactorMidPoint;
 	BehaviorSubject _dragging;
+	BehaviorSubject _discardChangesWhenHidingTextBox;
+	PublishSubject _showTextBox;
+	PublishSubject _textBoxIsEditable;
 	
 public:
 	/** Creates a new instance for a given Slider. */
@@ -231,13 +237,42 @@ public:
 	/** Controls the maximum Slider value.​ **Type: double** */
 	const Observer maximum;
 	
+	/** Control the lowest value in a Slider with multiple thumbs. **Do not push items if the Slider has just one thumb.**​ **Type: double** */
+	const BehaviorSubject minValue;
+	
+	/** Control the highest value in a Slider with multiple thumbs.​ **Do not push items if the Slider has just one thumb.**​ **Type: double** */
+	const BehaviorSubject maxValue;
+	
+	/** Controls the default value of the slider.​ **Type: double, or var::undefined() if double-clicking the Slider should not reset it** */
+	const Observer doubleClickReturnValue;
+	
+	/** Controls the step size for values.​ **Type: double** */
+	const Observer interval;
+	
+	/** Sets the mid point for the Slider's skew factor.​ **Type: double** */
+	const Observer skewFactorMidPoint;
+	
 	/** Whether the Slider is currently being dragged.​ **Type: bool** */
 	const Observable dragging;
+	
+	/** The thumb that is currently being dragged.​ **Type: int, or var::undefined() if no thumb is being dragged**. 0 is the main thumb, 1 is the minValue thumb, 2 is the maxValue thumb. */
+	const Observable thumbBeingDragged;
+	
+	/** Controls whether the text-box is visible.​ **Type: bool** */
+	const Observer showTextBox;
+	
+	/** Controls whether the text-box is editable.​ **Type: bool** */
+	const Observer textBoxIsEditable;
+	
+	/** Controls whether changes are discarded when hiding the text-box. The default is false.​ **Type: bool** */
+	const Observer discardChangesWhenHidingTextBox;
 	
 private:
 	void sliderValueChanged(juce::Slider *slider) override;
 	void sliderDragStarted(juce::Slider *) override;
 	void sliderDragEnded(juce::Slider *) override;
+	
+	static bool hasMultipleThumbs(const juce::Slider& parent);
 };
 
 RXJUCE_NAMESPACE_END

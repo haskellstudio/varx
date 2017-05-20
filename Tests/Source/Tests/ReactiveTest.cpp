@@ -603,18 +603,106 @@ TEST_CASE("Reactive<Slider>",
 		}
 	}
 	
-	IT("sets the minimum") {
-		slider.rx.minimum.onNext(11);
+	CONTEXT("minimum, maximum") {
+		IT("sets the minimum") {
+			slider.rx.minimum.onNext(11);
+			
+			REQUIRE(slider.getMinimum() == 11);
+			CHECK(slider.getValue() == 11);
+		}
 		
-		REQUIRE(slider.getMinimum() == 11);
-		CHECK(slider.getValue() == 11);
+		IT("sets the maximum") {
+			slider.rx.maximum.onNext(5.43);
+			
+			REQUIRE(slider.getMaximum() == 5.43);
+			CHECK(slider.getValue() == 5.43);
+		}
+		
+		IT("does not overwrite the interval") {
+			slider.rx.interval.onNext(1.445);
+			slider.rx.maximum.onNext(13.23);
+			slider.rx.minimum.onNext(1.2);
+			
+			REQUIRE(slider.getInterval() == 1.445);
+		}
 	}
 	
-	IT("sets the maximum") {
-		slider.rx.maximum.onNext(5.43);
+	IT("sets the skew factor") {
+		CHECK(slider.getSkewFactor() == 1);
+		slider.rx.skewFactorMidPoint.onNext(7.5);
+		REQUIRE(slider.getSkewFactor() == Approx(2.4094208397));
+	}
+	
+	IT("sets the interval") {
+		CHECK(slider.getInterval() == 0.0);
+		slider.rx.interval.onNext(2.565);
+		REQUIRE(slider.getInterval() == 2.565);
+	}
+	
+	CONTEXT("minValue / maxValue") {
+		slider.setValue(5, sendNotificationSync);
+		slider.setSliderStyle(Slider::ThreeValueHorizontal);
+		slider.setMinValue(1, sendNotificationSync);
+		slider.setMaxValue(8.45, sendNotificationSync);
 		
-		REQUIRE(slider.getMaximum() == 5.43);
-		CHECK(slider.getValue() == 5.43);
+		Array<var> minValues;
+		RxJUCECollectItems(slider.rx.minValue, minValues);
+		Array<var> maxValues;
+		RxJUCECollectItems(slider.rx.maxValue, maxValues);
+		
+		IT("initially has the values set on the slider") {
+			REQUIRE(slider.rx.minValue.getLatestItem() == var(1));
+			REQUIRE(slider.rx.maxValue.getLatestItem() == var(8.45));
+		}
+		
+		IT("emits items when calling the JUCE setters") {
+			slider.setMinAndMaxValues(0.3, 6.77, sendNotificationSync);
+			slider.setMinValue(1.344, sendNotificationSync);
+			slider.setMaxValue(8, sendNotificationSync);
+			slider.setValue(6, sendNotificationSync);
+			
+			RxJUCERequireItems(minValues, 1.0, 0.3, 1.344);
+			RxJUCERequireItems(maxValues, 8.45, 6.77, 8.0);
+		}
+		
+		IT("calls setMinValue when pushing min values") {
+			slider.setValue(10);
+			for (auto value : {5.6, 4.25, 7.4}) {
+				slider.rx.minValue.onNext(value);
+				
+				REQUIRE(slider.getMinValue() == value);
+			}
+		}
+		
+		IT("calls setMaxValue when pushing max values") {
+			slider.setValue(0);
+			for (auto value : {5.6, 4.25, 7.4}) {
+				slider.rx.maxValue.onNext(value);
+				
+				REQUIRE(slider.getMaxValue() == value);
+			}
+		}
+	}
+	
+	CONTEXT("double click return value") {
+		IT("sets the value to a double (if provided)") {
+			slider.setDoubleClickReturnValue(false, 0);
+			CHECK_FALSE(slider.isDoubleClickReturnEnabled());
+			
+			slider.rx.doubleClickReturnValue.onNext(1.323);
+			
+			CHECK(slider.isDoubleClickReturnEnabled());
+			REQUIRE(slider.getDoubleClickReturnValue() == 1.323);
+		}
+		
+		IT("disables the double click return value when pushing undefined") {
+			slider.setDoubleClickReturnValue(true, 4.2);
+			CHECK(slider.isDoubleClickReturnEnabled());
+			
+			slider.rx.doubleClickReturnValue.onNext(var::undefined());
+			
+			REQUIRE_FALSE(slider.isDoubleClickReturnEnabled());
+		}
 	}
 }
 
