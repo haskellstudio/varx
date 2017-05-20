@@ -231,7 +231,7 @@ var LabelExtension::getTextEditor(Label& label)
 }
 
 
-SliderExtension::SliderExtension(Slider& parent)
+SliderExtension::SliderExtension(Slider& parent, Observer getValueFromText, Observer getTextFromValue)
 : ComponentExtension(parent),
   _dragging(false),
   _discardChangesWhenHidingTextBox(false),
@@ -247,7 +247,9 @@ SliderExtension::SliderExtension(Slider& parent)
   thumbBeingDragged(dragging.map([&parent](bool dragging) { return (dragging ? var(parent.getThumbBeingDragged()) : var::undefined()); })),
   showTextBox(_showTextBox),
   textBoxIsEditable(_textBoxIsEditable),
-  discardChangesWhenHidingTextBox(_discardChangesWhenHidingTextBox)
+  discardChangesWhenHidingTextBox(_discardChangesWhenHidingTextBox),
+  getValueFromText(getValueFromText),
+  getTextFromValue(getTextFromValue)
 {
 	parent.addListener(this);
 	

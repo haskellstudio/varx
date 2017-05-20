@@ -226,7 +226,7 @@ class SliderExtension : public ComponentExtension, private juce::Slider::Listene
 	
 public:
 	/** Creates a new instance for a given Slider. */
-	SliderExtension(juce::Slider& parent);
+	SliderExtension(juce::Slider& parent, Observer getValueFromText, Observer getTextFromValue);
 	
 	/** Controls the Slider value.​ **Type: double** */
 	const BehaviorSubject value;
@@ -266,6 +266,12 @@ public:
 	
 	/** Controls whether changes are discarded when hiding the text-box. The default is false.​ **Type: bool** */
 	const Observer discardChangesWhenHidingTextBox;
+	
+	/** Controls how a String that has been entered into the text-box is converted to a Slider value.​ **Type: std::function<double(String)>** If you don't use this, the slider will use its getValueFromText member function. */
+	const Observer getValueFromText;
+	
+	/** Controls how a Slider value is displayed as a String.​ **Type: std::function<String(double)>** If you don't use this, the slider will use its getTextFromValue member function. */
+	const Observer getTextFromValue;
 	
 private:
 	void sliderValueChanged(juce::Slider *slider) override;

@@ -14,6 +14,7 @@
 #include "rxjuce_Prefix.h"
 
 #include "rxjuce_Extensions.h"
+#include "rxjuce_VariantConverters.h"
 
 RXJUCE_NAMESPACE_BEGIN
 
@@ -88,7 +89,7 @@ public:
 	template<typename... Args>
 	Reactive(Args&&... args)
 	: Component(std::forward<Args>(args)...),
-	rx(*this) {}
+	  rx(*this) {}
 	
 	/** The reactive extension object. */
 	const ComponentExtension rx;
@@ -105,7 +106,7 @@ public:
 	template<typename... Args>
 	Reactive(Args&&... args)
 	: ImageComponent(std::forward<Args>(args)...),
-	rx(*this) {}
+	  rx(*this) {}
 	
 	/** The reactive extension object. */
 	const ImageComponentExtension rx;
@@ -151,15 +152,48 @@ public:
 template<typename Slider>
 class Reactive<Slider, detail::IsSlider<Slider>> : public Slider
 {
+	typedef std::function<double(const juce::String&)> GetValueFromText_Function;
+	typedef std::function<juce::String(double)> GetTextFromValue_Function;
+	
+	GetValueFromText_Function getValueFromText_Function;
+	GetTextFromValue_Function getTextFromValue_Function;
+	
+	PublishSubject getValueFromText_Subject;
+	PublishSubject getTextFromValue_Subject;
 public:
 	/** Creates a new instance. @see juce::Slider::Slider. */
 	template<typename... Args>
 	Reactive(Args&&... args)
 	: Slider(std::forward<Args>(args)...),
-	rx(*this) {}
+	  rx(*this, getValueFromText_Subject.asObserver(), getTextFromValue_Subject.asObserver())
+	{
+		getValueFromText_Subject.takeUntil(rx.deallocated).subscribe([this](juce::var function) {
+			this->getValueFromText_Function = fromVar<GetValueFromText_Function>(function);
+		});
+		
+		getTextFromValue_Subject.takeUntil(rx.deallocated).subscribe([this](juce::var function) {
+			this->getTextFromValue_Function = fromVar<GetTextFromValue_Function>(function);
+		});
+	}
 	
 	/** The reactive extension object. */
 	const SliderExtension rx;
+	
+	double getValueFromText(const juce::String& text) override
+	{
+		if (getValueFromText_Function)
+			return getValueFromText_Function(text);
+		else
+			return Slider::getValueFromText(text);
+	}
+	
+	juce::String getTextFromValue(double value) override
+	{
+		if (getTextFromValue_Function)
+			return getTextFromValue_Function(value);
+		else
+			return Slider::getTextFromValue(value);
+	}
 };
 
 RXJUCE_NAMESPACE_END

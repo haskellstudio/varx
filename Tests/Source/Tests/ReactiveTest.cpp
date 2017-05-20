@@ -704,6 +704,44 @@ TEST_CASE("Reactive<Slider>",
 			REQUIRE_FALSE(slider.isDoubleClickReturnEnabled());
 		}
 	}
+	
+	CONTEXT("getValueFromText") {
+		IT("initially parses a string as a number") {
+			REQUIRE(slider.getValueFromText("10.33") == 10.33);
+		}
+		
+		IT("parses a value using the pushed function") {
+			std::function<double(String)> function = [](String s) {
+				if (s == "4.464") {
+					return 4.464;
+				}
+				else if (s == "3") {
+					return 3.0;
+				}
+				else {
+					return 0.1;
+				}
+			};
+			
+			slider.rx.getValueFromText.onNext(toVar(function));
+		}
+	}
+	
+	CONTEXT("getTextFromValue") {
+		IT("initially stringifies its value as just a number") {
+			REQUIRE(slider.getTextFromValue(slider.getValue()) == "10");
+		}
+		
+		IT("stringifies its value using the pushed function") {
+			std::function<String(double)> function = [](double value) {
+				return value > 5 ? "BIG!" : "small";
+			};
+			slider.rx.getTextFromValue.onNext(toVar(function));
+			
+			REQUIRE(slider.getTextFromValue(2) == "small");
+			REQUIRE(slider.getTextFromValue(8.4) == "BIG!");
+		}
+	}
 }
 
 

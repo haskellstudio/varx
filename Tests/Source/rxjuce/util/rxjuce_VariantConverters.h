@@ -95,6 +95,9 @@ namespace juce {
 	template<>
 	struct VariantConverter<juce::Colour> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Colour> {};
 	
+	template<typename ReturnType, typename... Args>
+	struct VariantConverter<std::function<ReturnType(Args...)>> : public rxjuce::detail::ReferenceCountingVariantConverter<std::function<typename std::decay<ReturnType>::type(typename std::decay<Args>::type...)>> {};
+	
 	template<typename Enum>
 	struct EnumVariantConverter
 	{
