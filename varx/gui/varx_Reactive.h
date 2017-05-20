@@ -173,6 +173,7 @@ public:
 	/** The reactive extension object. */
 	const SliderExtension rx;
 	
+	///@cond INTERNAL
 	double getValueFromText(const juce::String& text) override
 	{
 		if (getValueFromText_Function)
@@ -188,6 +189,7 @@ public:
 		else
 			return Slider::getTextFromValue(value);
 	}
+	///@endcond
 };
 
 
