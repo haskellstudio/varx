@@ -166,6 +166,7 @@ public:
 		
 		getTextFromValue_Subject.takeUntil(rx.deallocated).subscribe([this](juce::var function) {
 			this->getTextFromValue_Function = fromVar<GetTextFromValue_Function>(function);
+			this->updateText();
 		});
 	}
 	
