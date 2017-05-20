@@ -126,58 +126,131 @@ TEST_CASE("Reactive<ImageComponent>",
 }
 
 
-TEST_CASE("Reactive<Button> buttonState",
+TEST_CASE("Reactive<Button>",
 		  "[Reactive<Button>][ButtonExtension]")
 {
 	Reactive<TextButton> button("Click Here");
 	Array<var> items;
-	RxJUCECollectItems(button.rx.buttonState, items);
 	
-	IT("emits the normal state on subscribe") {
-		RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
+	CONTEXT("clicked") {
+		RxJUCECollectItems(button.rx.clicked, items);
+		
+		IT("doesn't emit an item on subscribe") {
+			REQUIRE(items.isEmpty());
+		}
+		
+		IT("emits void vars asynchronously when the Button is clicked") {
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			
+			RxJUCECheckItems(items, var::undefined());
+			
+			button.triggerClick();
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			
+			RxJUCERequireItems(items, var::undefined(), var::undefined(), var::undefined());
+		}
 	}
 	
-	IT("emits items synchronously when the Button state changes") {
-		button.setState(Button::ButtonState::buttonDown);
+	CONTEXT("buttonState") {
+		RxJUCECollectItems(button.rx.buttonState, items);
 		
-		RxJUCECheckItems(items,
-						 Button::ButtonState::buttonNormal,
-						 Button::ButtonState::buttonDown);
+		IT("emits the normal state on subscribe") {
+			RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
+		}
 		
-		button.setState(Button::ButtonState::buttonNormal);
-		button.setState(Button::ButtonState::buttonOver);
-		
-		RxJUCERequireItems(items,
-						   Button::ButtonState::buttonNormal,
-						   Button::ButtonState::buttonDown,
-						   Button::ButtonState::buttonNormal,
-						   Button::ButtonState::buttonOver);
-	}
-}
-
-
-TEST_CASE("Reactive<Button> clicked",
-		  "[Reactive<Button>][ButtonExtension]")
-{
-	Reactive<TextButton> button("Click Here");
-	Array<var> items;
-	RxJUCECollectItems(button.rx.clicked, items);
-	
-	IT("doesn't emit an item on subscribe") {
-		REQUIRE(items.isEmpty());
+		IT("emits items synchronously when the Button state changes") {
+			button.setState(Button::ButtonState::buttonDown);
+			
+			RxJUCECheckItems(items,
+							 Button::ButtonState::buttonNormal,
+							 Button::ButtonState::buttonDown);
+			
+			button.setState(Button::ButtonState::buttonNormal);
+			button.setState(Button::ButtonState::buttonOver);
+			
+			RxJUCERequireItems(items,
+							   Button::ButtonState::buttonNormal,
+							   Button::ButtonState::buttonDown,
+							   Button::ButtonState::buttonNormal,
+							   Button::ButtonState::buttonOver);
+		}
 	}
 	
-	IT("emits void vars asynchronously when the Button is clicked") {
-		button.triggerClick();
-		RxJUCERunDispatchLoop();
+	CONTEXT("toggleState") {
+		RxJUCECollectItems(button.rx.toggleState, items);
 		
-		RxJUCECheckItems(items, var::undefined());
+		IT("emits false on subscribe") {
+			RxJUCERequireItems(items, false);
+		}
 		
-		button.triggerClick();
-		button.triggerClick();
-		RxJUCERunDispatchLoop();
+		IT("emits values when calling the JUCE setter") {
+			button.setToggleState(true, sendNotificationSync);
+			button.setToggleState(false, sendNotificationSync);
+			button.setToggleState(false, sendNotificationSync);
+			button.setToggleState(true, sendNotificationSync);
+			
+			RxJUCERequireItems(items, false, true, false, true);
+		}
 		
-		RxJUCERequireItems(items, var::undefined(), var::undefined(), var::undefined());
+		IT("sets the value when pushing items") {
+			for (auto toggled : {false, true, true, false, true}) {
+				button.rx.toggleState.onNext(toggled);
+				REQUIRE(button.getToggleState() == toggled);
+			}
+		}
+		
+		IT("emits values when clicking, if clicking toggles state") {
+			button.setClickingTogglesState(true);
+			
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			CHECK(button.rx.toggleState.getLatestItem() == var(true));
+		
+			button.triggerClick();
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			CHECK(button.rx.toggleState.getLatestItem() == var(true));
+			
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			CHECK(button.rx.toggleState.getLatestItem() == var(false));
+			
+			RxJUCERequireItems(items, false, true, false, true, false);
+		}
+	}
+	
+	CONTEXT("text") {
+		IT("sets the button text when pushing a String") {
+			button.rx.text.onNext("Hello!");
+			CHECK(button.getButtonText() == "Hello!");
+			button.rx.text.onNext("How Are You?");
+			REQUIRE(button.getButtonText() == "How Are You?");
+		}
+	}
+	
+	CONTEXT("tooltip") {
+		IT("sets the tooltip when pushing a String") {
+			button.rx.tooltip.onNext("Hello!");
+			CHECK(button.getTooltip() == "Hello!");
+			button.rx.tooltip.onNext("Click me!");
+			REQUIRE(button.getTooltip() == "Click me!");
+		}
+	}
+	
+	CONTEXT("colour()") {
+		IT("sets the colours for different colour ids") {
+			for (auto colourId : {TextButton::buttonColourId, TextButton::buttonOnColourId, TextButton::textColourOffId}) {
+				auto observer = button.rx.colour(colourId);
+				
+				for (auto colour : {Colours::red, Colour::fromFloatRGBA(0.3, 0.47, 0.11, 0.575), Colours::white}) {
+					observer.onNext(toVar(colour));
+					REQUIRE(button.isColourSpecified(colourId));
+					REQUIRE(button.findColour(colourId) == colour);
+				}
+			}
+		}
 	}
 }
 
@@ -235,7 +308,7 @@ TEST_CASE("Reactive<Label>",
 			RxJUCERequireItems(items, label.getText());
 		}
 		
-		IT("emits a items when the Label changes its text") {
+		IT("emits items when the Label changes its text") {
 			label.setText("Foo", sendNotificationSync);
 			label.setText("Bar", sendNotificationSync);
 			
@@ -245,6 +318,7 @@ TEST_CASE("Reactive<Label>",
 		IT("changes the Label text synchronously when calling onNext") {
 			for (auto text : {"Hello", "World!"}) {
 				label.rx.text.onNext(text);
+				REQUIRE(label.getText() == text);
 			}
 			
 			RxJUCERequireItems(items, "", "Hello", "World!");
@@ -494,6 +568,178 @@ TEST_CASE("Reactive<Label>",
 			
 			label.rx.lossOfFocusDiscardsChanges.onNext(false);
 			REQUIRE(!label.doesLossOfFocusDiscardChanges());
+		}
+	}
+}
+
+
+TEST_CASE("Reactive<Slider>",
+		  "[Reactive<Slider>][SliderExtension]")
+{
+	Reactive<Slider> slider;
+	slider.setValue(10, sendNotificationSync);
+	Array<var> items;
+	
+	CONTEXT("value") {
+		RxJUCECollectItems(slider.rx.value, items);
+		
+		IT("initially has the Slider value") {
+			RxJUCERequireItems(items, 10);
+		}
+		
+		IT("emits items when the Slider value changes") {
+			slider.setValue(3, sendNotificationSync);
+			slider.setValue(7.45, sendNotificationSync);
+			
+			RxJUCERequireItems(items, 10.0, 3.0, 7.45);
+		}
+	}
+	
+	CONTEXT("dragging") {
+		RxJUCECollectItems(slider.rx.dragging, items);
+		
+		IT("is initially false") {
+			RxJUCERequireItems(items, false);
+		}
+	}
+	
+	CONTEXT("minimum, maximum") {
+		IT("sets the minimum") {
+			slider.rx.minimum.onNext(11);
+			
+			REQUIRE(slider.getMinimum() == 11);
+			CHECK(slider.getValue() == 11);
+		}
+		
+		IT("sets the maximum") {
+			slider.rx.maximum.onNext(5.43);
+			
+			REQUIRE(slider.getMaximum() == 5.43);
+			CHECK(slider.getValue() == 5.43);
+		}
+		
+		IT("does not overwrite the interval") {
+			slider.rx.interval.onNext(1.445);
+			slider.rx.maximum.onNext(13.23);
+			slider.rx.minimum.onNext(1.2);
+			
+			REQUIRE(slider.getInterval() == 1.445);
+		}
+	}
+	
+	IT("sets the skew factor") {
+		CHECK(slider.getSkewFactor() == 1);
+		slider.rx.skewFactorMidPoint.onNext(7.5);
+		REQUIRE(slider.getSkewFactor() == Approx(2.4094208397));
+	}
+	
+	IT("sets the interval") {
+		CHECK(slider.getInterval() == 0.0);
+		slider.rx.interval.onNext(2.565);
+		REQUIRE(slider.getInterval() == 2.565);
+	}
+	
+	CONTEXT("minValue / maxValue") {
+		slider.setValue(5, sendNotificationSync);
+		slider.setSliderStyle(Slider::ThreeValueHorizontal);
+		slider.setMinValue(1, sendNotificationSync);
+		slider.setMaxValue(8.45, sendNotificationSync);
+		
+		Array<var> minValues;
+		RxJUCECollectItems(slider.rx.minValue, minValues);
+		Array<var> maxValues;
+		RxJUCECollectItems(slider.rx.maxValue, maxValues);
+		
+		IT("initially has the values set on the slider") {
+			REQUIRE(slider.rx.minValue.getLatestItem() == var(1));
+			REQUIRE(slider.rx.maxValue.getLatestItem() == var(8.45));
+		}
+		
+		IT("emits items when calling the JUCE setters") {
+			slider.setMinAndMaxValues(0.3, 6.77, sendNotificationSync);
+			slider.setMinValue(1.344, sendNotificationSync);
+			slider.setMaxValue(8, sendNotificationSync);
+			slider.setValue(6, sendNotificationSync);
+			
+			RxJUCERequireItems(minValues, 1.0, 0.3, 1.344);
+			RxJUCERequireItems(maxValues, 8.45, 6.77, 8.0);
+		}
+		
+		IT("calls setMinValue when pushing min values") {
+			slider.setValue(10);
+			for (auto value : {5.6, 4.25, 7.4}) {
+				slider.rx.minValue.onNext(value);
+				
+				REQUIRE(slider.getMinValue() == value);
+			}
+		}
+		
+		IT("calls setMaxValue when pushing max values") {
+			slider.setValue(0);
+			for (auto value : {5.6, 4.25, 7.4}) {
+				slider.rx.maxValue.onNext(value);
+				
+				REQUIRE(slider.getMaxValue() == value);
+			}
+		}
+	}
+	
+	CONTEXT("double click return value") {
+		IT("sets the value to a double (if provided)") {
+			slider.setDoubleClickReturnValue(false, 0);
+			CHECK_FALSE(slider.isDoubleClickReturnEnabled());
+			
+			slider.rx.doubleClickReturnValue.onNext(1.323);
+			
+			CHECK(slider.isDoubleClickReturnEnabled());
+			REQUIRE(slider.getDoubleClickReturnValue() == 1.323);
+		}
+		
+		IT("disables the double click return value when pushing undefined") {
+			slider.setDoubleClickReturnValue(true, 4.2);
+			CHECK(slider.isDoubleClickReturnEnabled());
+			
+			slider.rx.doubleClickReturnValue.onNext(var::undefined());
+			
+			REQUIRE_FALSE(slider.isDoubleClickReturnEnabled());
+		}
+	}
+	
+	CONTEXT("getValueFromText") {
+		IT("initially parses a string as a number") {
+			REQUIRE(slider.getValueFromText("10.33") == 10.33);
+		}
+		
+		IT("parses a value using the pushed function") {
+			std::function<double(String)> function = [](String s) {
+				if (s == "4.464") {
+					return 4.464;
+				}
+				else if (s == "3") {
+					return 3.0;
+				}
+				else {
+					return 0.1;
+				}
+			};
+			
+			slider.rx.getValueFromText.onNext(toVar(function));
+		}
+	}
+	
+	CONTEXT("getTextFromValue") {
+		IT("initially stringifies its value as just a number") {
+			REQUIRE(slider.getTextFromValue(slider.getValue()) == "10");
+		}
+		
+		IT("stringifies its value using the pushed function") {
+			std::function<String(double)> function = [](double value) {
+				return value > 5 ? "BIG!" : "small";
+			};
+			slider.rx.getTextFromValue.onNext(toVar(function));
+			
+			REQUIRE(slider.getTextFromValue(2) == "small");
+			REQUIRE(slider.getTextFromValue(8.4) == "BIG!");
 		}
 	}
 }

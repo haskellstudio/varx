@@ -26,7 +26,7 @@ class ExtensionBase
 	const ReplaySubject _deallocated;
 	
 public:
-	/** Notifies the ExtensionBase::deallocated with an item, and onCompleted. */
+	/** Notifies the ExtensionBase::deallocated Observable with an item, and onCompleted. */
 	virtual ~ExtensionBase();
 	
 	/**
@@ -67,12 +67,17 @@ private:
  */
 class ComponentExtension : public ExtensionBase, private juce::ComponentListener
 {
+	juce::Component& parent;
+	std::function<void(const Subject&)> storeSubject;
 public:
 	/** Creates a new instance for a given juce::Component */
 	ComponentExtension(juce::Component& parent);
 	
 	/** Controls the visibility of the Component, and emits an item whenever it changes.​ **Type: bool** */
 	const BehaviorSubject visible;
+	
+	/** Returns an Observer that controls the colour for the given colourId.​ **Type: Colour** */
+	Observer colour(int colourId) const;
 	
 private:
 	void componentVisibilityChanged(juce::Component &component) override;
@@ -84,7 +89,6 @@ private:
 class ButtonExtension : public ComponentExtension, private juce::Button::Listener
 {
 	const PublishSubject _clicked;
-	const ValueExtension _toggleState;
 	const PublishSubject _text;
 	const PublishSubject _tooltip;
 	
@@ -201,6 +205,80 @@ private:
 	void editorHidden(juce::Label *, juce::TextEditor&) override;
 	
 	static juce::var getTextEditor(juce::Label& label);
+};
+
+
+
+/**
+	Adds reactive extensions to a juce::Slider.
+ */
+class SliderExtension : public ComponentExtension, private juce::Slider::Listener
+{
+	PublishSubject _minimum;
+	PublishSubject _maximum;
+	PublishSubject _doubleClickReturnValue;
+	PublishSubject _interval;
+	PublishSubject _skewFactorMidPoint;
+	BehaviorSubject _dragging;
+	BehaviorSubject _discardChangesWhenHidingTextBox;
+	PublishSubject _showTextBox;
+	PublishSubject _textBoxIsEditable;
+	
+public:
+	/** Creates a new instance for a given Slider. */
+	SliderExtension(juce::Slider& parent, Observer getValueFromText, Observer getTextFromValue);
+	
+	/** Controls the Slider value.​ **Type: double** */
+	const BehaviorSubject value;
+	
+	/** Controls the minimum Slider value.​ **Type: double** */
+	const Observer minimum;
+	
+	/** Controls the maximum Slider value.​ **Type: double** */
+	const Observer maximum;
+	
+	/** Control the lowest value in a Slider with multiple thumbs. **Do not push items if the Slider has just one thumb.**​ **Type: double** */
+	const BehaviorSubject minValue;
+	
+	/** Control the highest value in a Slider with multiple thumbs.​ **Do not push items if the Slider has just one thumb.**​ **Type: double** */
+	const BehaviorSubject maxValue;
+	
+	/** Controls the default value of the slider.​ **Type: double, or var::undefined() if double-clicking the Slider should not reset it** */
+	const Observer doubleClickReturnValue;
+	
+	/** Controls the step size for values.​ **Type: double** */
+	const Observer interval;
+	
+	/** Sets the mid point for the Slider's skew factor.​ **Type: double** */
+	const Observer skewFactorMidPoint;
+	
+	/** Whether the Slider is currently being dragged.​ **Type: bool** */
+	const Observable dragging;
+	
+	/** The thumb that is currently being dragged.​ **Type: int, or var::undefined() if no thumb is being dragged**. 0 is the main thumb, 1 is the minValue thumb, 2 is the maxValue thumb. */
+	const Observable thumbBeingDragged;
+	
+	/** Controls whether the text-box is visible.​ **Type: bool** */
+	const Observer showTextBox;
+	
+	/** Controls whether the text-box is editable.​ **Type: bool** */
+	const Observer textBoxIsEditable;
+	
+	/** Controls whether changes are discarded when hiding the text-box. The default is false.​ **Type: bool** */
+	const Observer discardChangesWhenHidingTextBox;
+	
+	/** Controls how a String that has been entered into the text-box is converted to a Slider value.​ **Type: std::function<double(String)>** If you don't use this, the slider will use its getValueFromText member function. */
+	const Observer getValueFromText;
+	
+	/** Controls how a Slider value is displayed as a String.​ **Type: std::function<String(double)>** If you don't use this, the slider will use its getTextFromValue member function. */
+	const Observer getTextFromValue;
+	
+private:
+	void sliderValueChanged(juce::Slider *slider) override;
+	void sliderDragStarted(juce::Slider *) override;
+	void sliderDragEnded(juce::Slider *) override;
+	
+	static bool hasMultipleThumbs(const juce::Slider& parent);
 };
 
 RXJUCE_NAMESPACE_END
