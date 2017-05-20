@@ -67,12 +67,17 @@ private:
  */
 class ComponentExtension : public ExtensionBase, private juce::ComponentListener
 {
+	juce::Component& parent;
+	std::function<void(const Subject&)> storeSubject;
 public:
 	/** Creates a new instance for a given juce::Component */
 	ComponentExtension(juce::Component& parent);
 	
 	/** Controls the visibility of the Component, and emits an item whenever it changes.​ **Type: bool** */
 	const BehaviorSubject visible;
+	
+	/** Returns an Observer that controls the colour for the given colourId.​ **Type: Colour** */
+	Observer colour(int colourId) const;
 	
 private:
 	void componentVisibilityChanged(juce::Component &component) override;
@@ -84,7 +89,6 @@ private:
 class ButtonExtension : public ComponentExtension, private juce::Button::Listener
 {
 	const PublishSubject _clicked;
-	const ValueExtension _toggleState;
 	const PublishSubject _text;
 	const PublishSubject _tooltip;
 	

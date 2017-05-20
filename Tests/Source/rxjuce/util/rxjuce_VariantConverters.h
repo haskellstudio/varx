@@ -92,6 +92,9 @@ namespace juce {
 	template<>
 	struct VariantConverter<juce::Font> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Font> {};
 	
+	template<>
+	struct VariantConverter<juce::Colour> : public rxjuce::detail::ReferenceCountingVariantConverter<juce::Colour> {};
+	
 	template<typename Enum>
 	struct EnumVariantConverter
 	{

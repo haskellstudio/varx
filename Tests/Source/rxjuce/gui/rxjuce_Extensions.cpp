@@ -42,10 +42,26 @@ void ValueExtension::valueChanged(Value&)
 
 
 ComponentExtension::ComponentExtension(Component& parent)
-: visible(parent.isVisible())
+: parent(parent),
+  visible(parent.isVisible())
 {
+	Array<Subject> colourSubjects;
+	storeSubject = [colourSubjects](const Subject& subject) mutable { colourSubjects.add(subject); };
+	
 	parent.addComponentListener(this);
 	visible.takeUntil(deallocated).subscribe(std::bind(&Component::setVisible, &parent, _1));
+}
+
+Observer ComponentExtension::colour(int colourId) const
+{
+	PublishSubject subject;
+	
+	subject.takeUntil(deallocated).subscribe([colourId, this](const var& colour) {
+		this->parent.setColour(colourId, fromVar<Colour>(colour));
+	});
+	
+	storeSubject(subject);
+	return subject.asObserver();
 }
 
 void ComponentExtension::componentVisibilityChanged(Component& component)
@@ -58,10 +74,9 @@ void ComponentExtension::componentVisibilityChanged(Component& component)
 
 ButtonExtension::ButtonExtension(Button& parent)
 : ComponentExtension(parent),
-  _toggleState(parent.getToggleStateValue()),
   clicked(_clicked.asObservable()),
   buttonState(parent.getState()),
-  toggleState(_toggleState.subject),
+  toggleState(parent.getToggleState()),
   text(_text.asObserver()),
   tooltip(_tooltip.asObserver())
 {
@@ -72,6 +87,10 @@ ButtonExtension::ButtonExtension(Button& parent)
 	
 	buttonState.takeUntil(deallocated).subscribe([&parent](const var& v) {
 		parent.setState(fromVar<Button::ButtonState>(v));
+	});
+	
+	toggleState.takeUntil(deallocated).subscribe([&parent](bool toggled) {
+		parent.setToggleState(toggled, sendNotificationSync);
 	});
 }
 
@@ -84,6 +103,9 @@ void ButtonExtension::buttonStateChanged(Button *button)
 {
 	if (var(button->getState()) != buttonState.getLatestItem()) {
 		buttonState.onNext(button->getState());
+	}
+	if (var(button->getToggleState()) != toggleState.getLatestItem()) {
+		toggleState.onNext(button->getToggleState());
 	}
 }
 

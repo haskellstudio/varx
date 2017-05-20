@@ -126,58 +126,131 @@ TEST_CASE("Reactive<ImageComponent>",
 }
 
 
-TEST_CASE("Reactive<Button> buttonState",
+TEST_CASE("Reactive<Button>",
 		  "[Reactive<Button>][ButtonExtension]")
 {
 	Reactive<TextButton> button("Click Here");
 	Array<var> items;
-	RxJUCECollectItems(button.rx.buttonState, items);
 	
-	IT("emits the normal state on subscribe") {
-		RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
+	CONTEXT("clicked") {
+		RxJUCECollectItems(button.rx.clicked, items);
+		
+		IT("doesn't emit an item on subscribe") {
+			REQUIRE(items.isEmpty());
+		}
+		
+		IT("emits void vars asynchronously when the Button is clicked") {
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			
+			RxJUCECheckItems(items, var::undefined());
+			
+			button.triggerClick();
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			
+			RxJUCERequireItems(items, var::undefined(), var::undefined(), var::undefined());
+		}
 	}
 	
-	IT("emits items synchronously when the Button state changes") {
-		button.setState(Button::ButtonState::buttonDown);
+	CONTEXT("buttonState") {
+		RxJUCECollectItems(button.rx.buttonState, items);
 		
-		RxJUCECheckItems(items,
-						 Button::ButtonState::buttonNormal,
-						 Button::ButtonState::buttonDown);
+		IT("emits the normal state on subscribe") {
+			RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
+		}
 		
-		button.setState(Button::ButtonState::buttonNormal);
-		button.setState(Button::ButtonState::buttonOver);
-		
-		RxJUCERequireItems(items,
-						   Button::ButtonState::buttonNormal,
-						   Button::ButtonState::buttonDown,
-						   Button::ButtonState::buttonNormal,
-						   Button::ButtonState::buttonOver);
-	}
-}
-
-
-TEST_CASE("Reactive<Button> clicked",
-		  "[Reactive<Button>][ButtonExtension]")
-{
-	Reactive<TextButton> button("Click Here");
-	Array<var> items;
-	RxJUCECollectItems(button.rx.clicked, items);
-	
-	IT("doesn't emit an item on subscribe") {
-		REQUIRE(items.isEmpty());
+		IT("emits items synchronously when the Button state changes") {
+			button.setState(Button::ButtonState::buttonDown);
+			
+			RxJUCECheckItems(items,
+							 Button::ButtonState::buttonNormal,
+							 Button::ButtonState::buttonDown);
+			
+			button.setState(Button::ButtonState::buttonNormal);
+			button.setState(Button::ButtonState::buttonOver);
+			
+			RxJUCERequireItems(items,
+							   Button::ButtonState::buttonNormal,
+							   Button::ButtonState::buttonDown,
+							   Button::ButtonState::buttonNormal,
+							   Button::ButtonState::buttonOver);
+		}
 	}
 	
-	IT("emits void vars asynchronously when the Button is clicked") {
-		button.triggerClick();
-		RxJUCERunDispatchLoop();
+	CONTEXT("toggleState") {
+		RxJUCECollectItems(button.rx.toggleState, items);
 		
-		RxJUCECheckItems(items, var::undefined());
+		IT("emits false on subscribe") {
+			RxJUCERequireItems(items, false);
+		}
 		
-		button.triggerClick();
-		button.triggerClick();
-		RxJUCERunDispatchLoop();
+		IT("emits values when calling the JUCE setter") {
+			button.setToggleState(true, sendNotificationSync);
+			button.setToggleState(false, sendNotificationSync);
+			button.setToggleState(false, sendNotificationSync);
+			button.setToggleState(true, sendNotificationSync);
+			
+			RxJUCERequireItems(items, false, true, false, true);
+		}
 		
-		RxJUCERequireItems(items, var::undefined(), var::undefined(), var::undefined());
+		IT("sets the value when pushing items") {
+			for (auto toggled : {false, true, true, false, true}) {
+				button.rx.toggleState.onNext(toggled);
+				REQUIRE(button.getToggleState() == toggled);
+			}
+		}
+		
+		IT("emits values when clicking, if clicking toggles state") {
+			button.setClickingTogglesState(true);
+			
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			CHECK(button.rx.toggleState.getLatestItem() == var(true));
+		
+			button.triggerClick();
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			CHECK(button.rx.toggleState.getLatestItem() == var(true));
+			
+			button.triggerClick();
+			RxJUCERunDispatchLoop();
+			CHECK(button.rx.toggleState.getLatestItem() == var(false));
+			
+			RxJUCERequireItems(items, false, true, false, true, false);
+		}
+	}
+	
+	CONTEXT("text") {
+		IT("sets the button text when pushing a String") {
+			button.rx.text.onNext("Hello!");
+			CHECK(button.getButtonText() == "Hello!");
+			button.rx.text.onNext("How Are You?");
+			REQUIRE(button.getButtonText() == "How Are You?");
+		}
+	}
+	
+	CONTEXT("tooltip") {
+		IT("sets the tooltip when pushing a String") {
+			button.rx.tooltip.onNext("Hello!");
+			CHECK(button.getTooltip() == "Hello!");
+			button.rx.tooltip.onNext("Click me!");
+			REQUIRE(button.getTooltip() == "Click me!");
+		}
+	}
+	
+	CONTEXT("colour()") {
+		IT("sets the colours for different colour ids") {
+			for (auto colourId : {TextButton::buttonColourId, TextButton::buttonOnColourId, TextButton::textColourOffId}) {
+				auto observer = button.rx.colour(colourId);
+				
+				for (auto colour : {Colours::red, Colour::fromFloatRGBA(0.3, 0.47, 0.11, 0.575), Colours::white}) {
+					observer.onNext(toVar(colour));
+					REQUIRE(button.isColourSpecified(colourId));
+					REQUIRE(button.findColour(colourId) == colour);
+				}
+			}
+		}
 	}
 }
 
@@ -235,7 +308,7 @@ TEST_CASE("Reactive<Label>",
 			RxJUCERequireItems(items, label.getText());
 		}
 		
-		IT("emits a items when the Label changes its text") {
+		IT("emits items when the Label changes its text") {
 			label.setText("Foo", sendNotificationSync);
 			label.setText("Bar", sendNotificationSync);
 			
@@ -245,11 +318,11 @@ TEST_CASE("Reactive<Label>",
 		IT("changes the Label text synchronously when calling onNext") {
 			for (auto text : {"Hello", "World!"}) {
 				label.rx.text.onNext(text);
+				REQUIRE(label.getText() == text);
 			}
 			
 			RxJUCERequireItems(items, "", "Hello", "World!");
 		}
-#warning check getText() when pushing items
 	}
 	
 	CONTEXT("showEditor, discardChangesWhenHidingEditor and textEditor") {
