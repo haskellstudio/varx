@@ -23,9 +23,9 @@ TEST_CASE("Observable::create",
 			observer.onNext("First");
 			observer.onNext("Second");
 		});
-		RxJUCECollectItems(observable, items);
+		varxCollectItems(observable, items);
 		
-		RxJUCERequireItems(items, "First", "Second");
+		varxRequireItems(items, "First", "Second");
 	}
 	
 	IT("emits items when pushing items asynchronously") {
@@ -35,14 +35,14 @@ TEST_CASE("Observable::create",
 				observer.onNext("Second");
 			});
 		});
-		RxJUCECollectItems(observable, items);
+		varxCollectItems(observable, items);
 		
 		// There shouldn't be any items until the async callback is executed
 		CHECK(items.isEmpty());
 		
 		// The items should be there after running the dispatch loop
-		RxJUCERunDispatchLoop();
-		RxJUCERequireItems(items, "First", "Second");
+		varxRunDispatchLoop();
+		varxRequireItems(items, "First", "Second");
 	}
 	
 	IT("emits can emit items asynchronously after being destroyed") {
@@ -56,16 +56,16 @@ TEST_CASE("Observable::create",
 		IT("emits when there's still a disposable") {
 			auto disposable = observable->subscribe([&](var next){ items.add(next); });
 			observable.reset();
-			RxJUCERunDispatchLoop();
+			varxRunDispatchLoop();
 			
-			RxJUCERequireItems(items, "First", "Second");
+			varxRequireItems(items, "First", "Second");
 		}
 		
 		IT("doesn't emit when the disposable has unsubscribed") {
 			auto disposable = observable->subscribe([&](var next){ items.add(next); });
 			observable.reset();
 			disposable.dispose();
-			RxJUCERunDispatchLoop();
+			varxRunDispatchLoop();
 			
 			REQUIRE(items.isEmpty());
 		}
@@ -76,11 +76,11 @@ TEST_CASE("Observable::create",
 		auto observable = Observable::create([](Observer observer) {
 			observer.onNext("onSubscribe called");
 		});
-		RxJUCECollectItems(observable, items);
-		RxJUCECollectItems(observable, items);
-		RxJUCECollectItems(observable, items);
+		varxCollectItems(observable, items);
+		varxCollectItems(observable, items);
+		varxCollectItems(observable, items);
 		
-		RxJUCERequireItems(items, "onSubscribe called", "onSubscribe called", "onSubscribe called");
+		varxRequireItems(items, "onSubscribe called", "onSubscribe called", "onSubscribe called");
 	}
 	
 	IT("captures an object until the Observable is destroyed") {
@@ -131,11 +131,11 @@ TEST_CASE("Observable::defer",
 			return Observable::from({3, 4});
 		});
 		
-		RxJUCECollectItems(observable, items);
-		RxJUCECollectItems(observable, items);
-		RxJUCECollectItems(observable, items);
+		varxCollectItems(observable, items);
+		varxCollectItems(observable, items);
+		varxCollectItems(observable, items);
 		
-		RxJUCERequireItems(items, 3, 4, 3, 4, 3, 4);
+		varxRequireItems(items, 3, 4, 3, 4, 3, 4);
 		REQUIRE(numCalls == 3);
 	}
 }
@@ -148,8 +148,8 @@ TEST_CASE("Observable::empty",
 	auto o = Observable::empty();
 	
 	IT("doesn't emit any items") {
-		RxJUCECollectItems(o, items);
-		RxJUCERunDispatchLoop();
+		varxCollectItems(o, items);
+		varxRunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
@@ -177,7 +177,7 @@ TEST_CASE("Observable::error",
 		o.subscribe([&](var item){
 			items.add(item);
 		}, [](Error e){}).disposedBy(disposeBag);
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
@@ -199,27 +199,27 @@ TEST_CASE("Observable::from",
 	Array<var> items;
 	
 	IT("can be created from an Array<var>") {
-		RxJUCECollectItems(Observable::from(Array<var>({3, 6, 8})), items);
+		varxCollectItems(Observable::from(Array<var>({3, 6, 8})), items);
 		
-		RxJUCERequireItems(items, 3, 6, 8);
+		varxRequireItems(items, 3, 6, 8);
 	}
 	
 	IT("can be created from a std::initializer_list<var>") {
-		RxJUCECollectItems(Observable::from({var("Hello"), var(15.5)}), items);
+		varxCollectItems(Observable::from({var("Hello"), var(15.5)}), items);
 		
-		RxJUCERequireItems(items, var("Hello"), var(15.5));
+		varxRequireItems(items, var("Hello"), var(15.5));
 	}
 	
 	IT("can be created from a std::initializer_list<int>") {
-		RxJUCECollectItems(Observable::from({1, 4}), items);
+		varxCollectItems(Observable::from({1, 4}), items);
 		
-		RxJUCERequireItems(items, 1, 4);
+		varxRequireItems(items, 1, 4);
 	}
 	
 	IT("can be created from a std::initializer_list<String>") {
-		RxJUCECollectItems(Observable::from({"Hello", "Test"}), items);
+		varxCollectItems(Observable::from({"Hello", "Test"}), items);
 		
-		RxJUCERequireItems(items, "Hello", "Test");
+		varxRequireItems(items, "Hello", "Test");
 	}
 	
 }
@@ -231,40 +231,40 @@ TEST_CASE("Observable::fromValue",
 	Value value("Initial Item");
 	const auto observable = Observable::fromValue(value);
 	Array<var> items;
-	RxJUCECollectItems(observable, items);
+	varxCollectItems(observable, items);
 	
-	RxJUCECheckItems(items, "Initial Item");
+	varxCheckItems(items, "Initial Item");
 	
 	IT("emits if a copy of the Value sets a new value") {
 		Value copy(value);
 		copy.setValue("Set by copy");
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial Item", "Set by copy");
+		varxRequireItems(items, "Initial Item", "Set by copy");
 	}
 	
 	IT("emites only one item if the Value is set multiple times synchronously") {
 		value = "2";
 		value = "3";
 		value = "4";
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial Item", "4");
+		varxRequireItems(items, "Initial Item", "4");
 	}
 	
 	IT("notifies multiple Disposables on subscribe") {
 		Observable another = Observable::fromValue(value);
-		RxJUCECollectItems(another, items);
+		varxCollectItems(another, items);
 		
-		RxJUCERequireItems(items, "Initial Item", "Initial Item");
+		varxRequireItems(items, "Initial Item", "Initial Item");
 	}
 	
 	IT("notifies multiple Values referring to the same ValueSource") {
 		Value anotherValue(value);
 		Observable anotherObservable = Observable::fromValue(anotherValue);
-		RxJUCECollectItems(anotherObservable, items);
+		varxCollectItems(anotherObservable, items);
 		
-		RxJUCERequireItems(items, "Initial Item", "Initial Item");
+		varxRequireItems(items, "Initial Item", "Initial Item");
 	}
 	
 	IT("notifies multiple Disposables if a Value is set multiple times") {
@@ -274,10 +274,10 @@ TEST_CASE("Observable::fromValue",
 		}).disposedBy(disposeBag);
 		
 		value = "Bar";
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		value = "Baz";
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		CHECK(items.size() == 6);
 		
@@ -300,47 +300,47 @@ TEST_CASE("Observable::fromValue lifetime",
 	
 	// Collect items from the mapped Observable
 	Array<var> items;
-	RxJUCECollectItems(mapped, items);
+	varxCollectItems(mapped, items);
 	
-	RxJUCECheckItems(items, "Initial");
+	varxCheckItems(items, "Initial");
 	
 	IT("emits items when the source Observable is alive") {
 		value.setValue("New Value");
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial", "New Value");
+		varxRequireItems(items, "Initial", "New Value");
 	}
 	
 	IT("stops emitting items as soon as the source Observable is destroyed") {
 		source.reset();
 		value.setValue("Two");
 		value.setValue("Three");
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial");
+		varxRequireItems(items, "Initial");
 	}
 	
 	IT("does not emit an item if the Observable is destroyed immediately after calling setValue") {
 		value.setValue("New Value");
 		source.reset();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial");
+		varxRequireItems(items, "Initial");
 	}
 	
 	IT("continues to emit items if the source Observable is copied and then destroyed") {
 		auto copy = std::make_shared<Observable>(*source);
 		Array<var> copyItems;
-		RxJUCECollectItems(*copy, copyItems);
+		varxCollectItems(*copy, copyItems);
 		
-		RxJUCECheckItems(copyItems, "Initial");
+		varxCheckItems(copyItems, "Initial");
 		
 		source.reset();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		value.setValue("New");
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(copyItems, "Initial", "New");
+		varxRequireItems(copyItems, "Initial", "New");
 	}
 	
 	IT("notified onComplete when the Observable is destroyed") {
@@ -362,23 +362,23 @@ TEST_CASE("Observable::fromValue with a Slider",
 	slider.setValue(7.6);
 	Observable o = Observable::fromValue(slider.getValueObject());
 	Array<var> items;
-	RxJUCECollectItems(o, items);
-	RxJUCECheckItems(items, 7.6);
+	varxCollectItems(o, items);
+	varxCheckItems(items, 7.6);
 	
 	IT("emits once if the Slider is changed once") {
 		slider.setValue(0.45);
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, 7.6, 0.45);
+		varxRequireItems(items, 7.6, 0.45);
 	}
 	
 	IT("emits just once if the Slider value changes rapidly") {
 		for (double value : {3.41, 9.54, 4.67, 3.56})
 			slider.setValue(value);
 		
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, 7.6, 3.56);
+		varxRequireItems(items, 7.6, 3.56);
 	}
 }
 
@@ -403,7 +403,7 @@ TEST_CASE("Observable::interval",
 		REQUIRE(intervals[1].inSeconds() == Approx(0.003).epsilon(0.001));
 		REQUIRE(intervals[2].inSeconds() == Approx(0.003).epsilon(0.001));
 		
-		RxJUCERequireItems(ints, 1, 2, 3);
+		varxRequireItems(ints, 1, 2, 3);
 	}
 }
 
@@ -414,17 +414,17 @@ TEST_CASE("Observable::just",
 	Array<var> items;
 	
 	IT("emits a single value on subscribe") {
-		RxJUCECollectItems(Observable::just(18.3), items);
+		varxCollectItems(Observable::just(18.3), items);
 		
-		RxJUCERequireItems(items, 18.3);
+		varxRequireItems(items, 18.3);
 	}
 	
 	IT("notifies multiple disposables") {
 		Observable o = Observable::just("Hello");
-		RxJUCECollectItems(o, items);
-		RxJUCECollectItems(o, items);
+		varxCollectItems(o, items);
+		varxCollectItems(o, items);
 		
-		RxJUCERequireItems(items, "Hello", "Hello");
+		varxRequireItems(items, "Hello", "Hello");
 	}
 }
 
@@ -443,7 +443,7 @@ TEST_CASE("Observable::never",
 					[&](Error) { onErrorCalled = true; },
 					[&]() { onCompletedCalled = true; }).disposedBy(disposeBag);
 		
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		REQUIRE(!onNextCalled);
 		REQUIRE(!onErrorCalled);
@@ -458,18 +458,18 @@ TEST_CASE("Observable::range",
 	Array<var> items;
 	
 	IT("emits integer numbers with an integer range") {
-		RxJUCECollectItems(Observable::range(3, 7, 3), items);
-		RxJUCERequireItems(items, 3, 6, 7);
+		varxCollectItems(Observable::range(3, 7, 3), items);
+		varxRequireItems(items, 3, 6, 7);
 	}
 	
 	IT("emits double numbers with a double range") {
-		RxJUCECollectItems(Observable::range(17.5, 22.8, 2), items);
-		RxJUCERequireItems(items, 17.5, 19.5, 21.5, 22.8);
+		varxCollectItems(Observable::range(17.5, 22.8, 2), items);
+		varxRequireItems(items, 17.5, 19.5, 21.5, 22.8);
 	}
 	
 	IT("emits just start if start == end") {
-		RxJUCECollectItems(Observable::range(10, 10), items);
-		RxJUCERequireItems(items, 10);
+		varxCollectItems(Observable::range(10, 10), items);
+		varxRequireItems(items, 10);
 	}
 	
 	IT("throws if start > end") {
@@ -484,14 +484,14 @@ TEST_CASE("Observable::repeat",
 	Array<var> items;
 	
 	IT("repeats an item indefinitely") {
-		RxJUCECollectItems(Observable::repeat(8).take(9), items);
+		varxCollectItems(Observable::repeat(8).take(9), items);
 		
-		RxJUCERequireItems(items, 8, 8, 8, 8, 8, 8, 8, 8, 8);
+		varxRequireItems(items, 8, 8, 8, 8, 8, 8, 8, 8, 8);
 	}
 	
 	IT("repeats an items a limited number of times") {
-		RxJUCECollectItems(Observable::repeat("4", 7), items);
+		varxCollectItems(Observable::repeat("4", 7), items);
 		
-		RxJUCERequireItems(items, "4", "4", "4", "4", "4", "4", "4");
+		varxRequireItems(items, "4", "4", "4", "4", "4", "4", "4");
 	}
 }

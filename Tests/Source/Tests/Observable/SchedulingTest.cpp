@@ -55,21 +55,21 @@ TEST_CASE("Observable::observeOn",
 		threadIDs.add(nullptr);
 		
 		REQUIRE(threadIDs.size() == 5);
-		RxJUCERequireItems(items, 24, 48, 72);
+		varxRequireItems(items, 24, 48, 72);
 	}
 	
 	IT("can schedule to the message thread") {
 		auto onMessageThread = observable.observeOn(Scheduler::messageThread()).map([](int i) {
 			return i * 2;
 		});
-		RxJUCECollectItems(onMessageThread, items);
+		varxCollectItems(onMessageThread, items);
 		
 		// There shouldn't be any items yet, because observeOn is asynchronous
 		CHECK(items.isEmpty());
 		
 		// The message thread scheduler only runs with 60 Hz, so we have to wait about 16 ms
-		RxJUCERunDispatchLoop(20);
+		varxRunDispatchLoop(20);
 		
-		RxJUCERequireItems(items, 2, 4, 6);
+		varxRequireItems(items, 2, 4, 6);
 	}
 }

@@ -18,7 +18,7 @@ TEST_CASE("BehaviorSubject",
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
-	RxJUCECollectItems(subject.asObservable(), items);
+	varxCollectItems(subject.asObservable(), items);
 	
 	IT("changes value when changing the Observer") {
 		CHECK(subject.getLatestItem() == "Initial Item");
@@ -29,16 +29,16 @@ TEST_CASE("BehaviorSubject",
 	
 	IT("has the initial item after being created") {
 		CHECK(subject.getLatestItem() == "Initial Item");
-		RxJUCERequireItems(items, "Initial Item");
+		varxRequireItems(items, "Initial Item");
 	}
 	
 	IT("emits when pushing a new item") {
-		RxJUCECheckItems(items, "Initial Item");
+		varxCheckItems(items, "Initial Item");
 		
 		subject.onNext("New Item");
 		
 		CHECK(subject.getLatestItem() == "New Item");
-		RxJUCERequireItems(items, "Initial Item", "New Item");
+		varxRequireItems(items, "Initial Item", "New Item");
 	}
 	
 	IT("emits an error when calling onError") {
@@ -82,7 +82,7 @@ TEST_CASE("PublishSubject",
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
-	RxJUCECollectItems(subject.asObservable(), items);
+	varxCollectItems(subject.asObservable(), items);
 	
 	IT("does not emit an item if nothing has been pushed") {
 		REQUIRE(items.isEmpty());
@@ -93,16 +93,16 @@ TEST_CASE("PublishSubject",
 		
 		subject.onNext("First Item");
 	
-		RxJUCERequireItems(items, "First Item");
+		varxRequireItems(items, "First Item");
 	}
 	
 	IT("does not emit previous item(s) when subscribing") {
 		subject.onNext(1);
 		subject.onNext(2);
-		RxJUCECheckItems(items, 1, 2);
+		varxCheckItems(items, 1, 2);
 		
 		Array<var> laterItems;
-		RxJUCECollectItems(subject.asObservable(), laterItems);
+		varxCollectItems(subject.asObservable(), laterItems);
 		
 		REQUIRE(laterItems.isEmpty());
 	}
@@ -111,18 +111,18 @@ TEST_CASE("PublishSubject",
 		subject.asObserver().onNext(32.51);
 		subject.asObserver().onNext(3.0);
 		
-		RxJUCERequireItems(items, 32.51, 3.0);
+		varxRequireItems(items, 32.51, 3.0);
 	}
 	
 	IT("emits after destruction, if there's still an Observer pushing items") {
 		auto subject = std::make_shared<PublishSubject>();
 		auto observer = subject->asObserver();
 		
-		RxJUCECollectItems(subject->asObservable(), items);
+		varxCollectItems(subject->asObservable(), items);
 		subject.reset();
 		observer.onNext(12345);
 		
-		RxJUCERequireItems(items, 12345);
+		varxRequireItems(items, 12345);
 	}
 	
 	IT("emits an error when calling onError") {
@@ -169,7 +169,7 @@ TEST_CASE("ReplaySubject",
 	
 	// Subscribe to the subject's Observable
 	Array<var> items;
-	RxJUCECollectItems(subject.asObservable(), items);
+	varxCollectItems(subject.asObservable(), items);
 	
 	IT("does not emit an item if nothing has been pushed") {
 		REQUIRE(items.isEmpty());
@@ -180,18 +180,18 @@ TEST_CASE("ReplaySubject",
 		
 		subject.onNext("First Item");
 		
-		RxJUCERequireItems(items, "First Item");
+		varxRequireItems(items, "First Item");
 	}
 	
 	IT("emits previous items when subscribing") {
 		subject.onNext(1);
 		subject.onNext(2);
-		RxJUCECheckItems(items, 1, 2);
+		varxCheckItems(items, 1, 2);
 		
 		Array<var> laterItems;
-		RxJUCECollectItems(subject.asObservable(), laterItems);
+		varxCollectItems(subject.asObservable(), laterItems);
 		
-		RxJUCERequireItems(laterItems, 1, 2);
+		varxRequireItems(laterItems, 1, 2);
 	}
 	
 	IT("emits previous items limited by the max. buffer size") {
@@ -208,27 +208,27 @@ TEST_CASE("ReplaySubject",
 		subject->onNext(6);
 		
 		Array<var> items;
-		RxJUCECollectItems(*subject, items);
+		varxCollectItems(*subject, items);
 		
-		RxJUCERequireItems(items, 7, 28, 3, 6);
+		varxRequireItems(items, 7, 28, 3, 6);
 	}
 	
 	IT("changes value when changing the Observer") {
 		subject.asObserver().onNext(32.51);
 		subject.asObserver().onNext(3.0);
 		
-		RxJUCERequireItems(items, 32.51, 3.0);
+		varxRequireItems(items, 32.51, 3.0);
 	}
 	
 	IT("emits after destruction, if there's still an Observer pushing items") {
 		auto subject = std::make_shared<ReplaySubject>();
 		auto observer = subject->asObserver();
 		
-		RxJUCECollectItems(subject->asObservable(), items);
+		varxCollectItems(subject->asObservable(), items);
 		subject.reset();
 		observer.onNext(12345);
 		
-		RxJUCERequireItems(items, 12345);
+		varxRequireItems(items, 12345);
 	}
 	
 	IT("emits an error when calling onError") {

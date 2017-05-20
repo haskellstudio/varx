@@ -48,7 +48,7 @@ TEST_CASE("Observable onError",
 		});
 		
 		CHECK_FALSE(called);
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		REQUIRE(called);
 	}
 }

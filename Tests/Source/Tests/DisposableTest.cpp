@@ -28,14 +28,14 @@ TEST_CASE("Disposable",
 	}));
 	
 	IT("received items while being subscribed") {
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Item");
+		varxRequireItems(items, "Item");
 	}
 	
 	IT("does not receive items after disposing") {
 		disposable->dispose();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
@@ -43,23 +43,23 @@ TEST_CASE("Disposable",
 	IT("takes ownership when move constructing") {
 		Disposable other = std::move(*disposable);
 		other.dispose();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
 	
 	IT("does not dispose when being destroyed") {
 		disposable.reset();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Item");
+		varxRequireItems(items, "Item");
 	}
 	
 	IT("continues to receive items after the Observable is gone") {
 		observable.reset();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Item");
+		varxRequireItems(items, "Item");
 	}
 	
 	// Unsubscribe after each IT(), to prevent old disposables from filling the items array
@@ -87,14 +87,14 @@ TEST_CASE("DisposeBag",
 	}).disposedBy(*disposeBag);
 	
 	IT("received items while not destroyed") {
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Item");
+		varxRequireItems(items, "Item");
 	}
 	
 	IT("does not receive items after being destroyed") {
 		disposeBag.reset();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
@@ -107,7 +107,7 @@ TEST_CASE("DisposeBag",
 		}
 		
 		disposeBag.reset();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
 		REQUIRE(items.isEmpty());
 	}
