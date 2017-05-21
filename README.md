@@ -2,6 +2,10 @@
 
 varx brings [Reactive Extensions (Rx)](http://reactivex.io/intro.html) to [JUCE](https://www.juce.com). It helps to connect our app's user interface, parameters and audio processing in a simple, flexible and consistent way. It reduces boilerplate and prevents errors.
 
+**[Download Latest Version](https://github.com/martinfinke/varx/releases/download/v0.6.0/varx-v0.6.0.zip)**
+
+
+
 #### Table of Contents
 
 1. [Why Use varx?](#why-use-varx)
@@ -11,6 +15,8 @@ varx brings [Reactive Extensions (Rx)](http://reactivex.io/intro.html) to [JUCE]
 5. [Tests](#tests)
 6. [Credits](#credits)
 7. [License](#license)
+
+
 
 
 <a name="why-use-varx"/>
@@ -110,6 +116,8 @@ When we add more `Slider`s, we just declare them as `Reactive<Slider>` and conne
 
 To find out what `Observable`, `rx` and `map` is all about, continue with [Getting Started](#getting-started).
 
+
+
 <a name="installation"/>
 
 ## Installation
@@ -123,6 +131,8 @@ Now find the *varx* folder you just unzipped. It will then appear in the list of
 <img src="img/projucer-varx-module.png" width="242" height="184">
 
 Done! You can now use all the varx beauty in your code.
+
+
 
 <a name="getting-started"/>
 
@@ -213,6 +223,8 @@ Without the `DisposeBag`, our lambda will be called until the `Observable` stops
 
 We've just scratched the surface of how Rx can help build great apps. If you would like to learn more about Observables and Rx, I highly recommend [this guide](http://reactivex.io/documentation/observable.html).
 
+
+
 <a name="api-reference"/>
 
 ## API Reference
@@ -221,16 +233,22 @@ We've just scratched the surface of how Rx can help build great apps. If you wou
 
 <a name="tests"/>
 
+
+
 ## Tests
 
 varx is well-tested. To run the tests, please clone this repo and open `Tests/varx-Tests.jucer` in Projucer. Modify it to point to your local JUCE folder, and open the project in Xcode or Visual Studio. If you run it, you should see the output: `All tests passed`.
 
 <a name="credits"/>
 
+
+
 ## Credits
 
 - varx uses the great [RxCpp](https://github.com/Reactive-Extensions/RxCpp) under the hood. It would not be possible without it.
 - Documentation from [ReactiveX.io](http://reactivex.io) is used in the source code, under the terms of the [Creative Commons Attribution 3.0 License](https://creativecommons.org/licenses/by/3.0/). Documentation has been adopted and changed for the purpose of this project.
+
+
 
 
 <a name="license"/>
