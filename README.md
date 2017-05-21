@@ -1,6 +1,10 @@
-# varx - Reactive Extensions (Rx) for JUCE
+# varx – Reactive Extensions (Rx) for JUCE
 
 varx brings [Reactive Extensions (Rx)](http://reactivex.io/intro.html) to [JUCE](https://www.juce.com). It helps to connect our app's user interface, parameters and audio processing in a simple, flexible and consistent way. It reduces boilerplate and prevents errors.
+
+varx uses the great [RxCpp](https://github.com/Reactive-Extensions/RxCpp) under the hood.
+
+
 
 **[Download Latest Version](https://github.com/martinfinke/varx/releases/download/v0.6.0/varx-v0.6.0.zip)**
 
