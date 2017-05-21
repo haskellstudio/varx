@@ -114,13 +114,13 @@ To find out what `Observable`, `rx` and `map` is all about, continue with [Getti
 
 ## Installation
 
-[Download]() varx and un-zip it. In Projucer, expand the *Modules* section, click the `+` button and choose *“Add a module from a specified folder…”*:
+[Download](releases/download/v0.6.0/varx-v0.6.0.zip) varx and un-zip it. In Projucer, expand the *Modules* section, click the `+` button and choose *“Add a module from a specified folder…”*:
 
 <img src="img/projucer-add-module.png" width="603" height="503">
 
 Now find the *varx* folder you just unzipped. It will then appear in the list of modules:
 
-<img src="img/projucer-varx-module.png" width="484" height="368">
+<img src="img/projucer-varx-module.png" width="242" height="184">
 
 Done! You can now use all the varx beauty in your code.
 
