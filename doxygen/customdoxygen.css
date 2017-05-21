@@ -1,0 +1,204 @@
+/* open-sans-300 - latin-ext_latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url('open-sans-v13-latin-ext_latin-300.eot'); /* IE9 Compat Modes */
+  src: local('Open Sans Light'), local('OpenSans-Light'),
+       url('open-sans-v13-latin-ext_latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('open-sans-v13-latin-ext_latin-300.woff2') format('woff2'), /* Super Modern Browsers */
+       url('open-sans-v13-latin-ext_latin-300.woff') format('woff'), /* Modern Browsers */
+       url('open-sans-v13-latin-ext_latin-300.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('open-sans-v13-latin-ext_latin-300.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+/* open-sans-regular - latin-ext_latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('open-sans-v13-latin-ext_latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Open Sans'), local('OpenSans'),
+       url('open-sans-v13-latin-ext_latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('open-sans-v13-latin-ext_latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('open-sans-v13-latin-ext_latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('open-sans-v13-latin-ext_latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('open-sans-v13-latin-ext_latin-regular.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+/* open-sans-700 - latin-ext_latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('open-sans-v13-latin-ext_latin-700.eot'); /* IE9 Compat Modes */
+  src: local('Open Sans Bold'), local('OpenSans-Bold'),
+       url('open-sans-v13-latin-ext_latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('open-sans-v13-latin-ext_latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+       url('open-sans-v13-latin-ext_latin-700.woff') format('woff'), /* Modern Browsers */
+       url('open-sans-v13-latin-ext_latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('open-sans-v13-latin-ext_latin-700.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+
+body {
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#titlearea, #MSearchBox {
+    display: none;
+}
+
+#main-menu {
+    background: ;
+}
+
+.memtitle .permalink {
+	margin-right: 5px;
+}
+
+.permalink a .glyphicon.glyphicon-link {
+	font-size: 0.5em;
+	top: 0;
+}
+
+.permalink a {
+	color: #ccc;
+}
+
+.permalink a:hover {
+	color: #337ab7;
+}
+
+.header .summary {
+	display: none;
+}
+
+.sm-dox {
+	background: #eee;
+}
+
+.sm-dox a {
+	background: none;
+	color: #337ab7;
+}
+
+.sm-dox a:hover {
+	background: none;
+	text-shadow: none;
+	color: #23527c;
+}
+
+.sm-box li {
+	border: 0;
+}
+
+.contents .directory .levels {
+	display: none;
+}
+
+.entry .icon {
+	display: none;
+}
+
+.memtitle .overload {
+	color: #aaa;
+	font-weight: 200;
+}
+
+.memtitle {
+	font-size: 24px;
+}
+
+.memitem {
+	margin-bottom: 2em;
+}
+
+.memproto
+ {
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-size: 13px;
+	line-height: 1.42857143;
+	color: #333;
+	/*word-break: break-all;*/
+	/*word-wrap: break-word;*/
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	margin-bottom: 1em;
+	white-space: nowrap;
+}
+
+a.el {
+	font-weight: bold;
+}
+
+.memproto a.el,
+.memberdecls a.el,
+.directory .desc a.el {
+	font-weight: normal;
+}
+
+table.mlabels {
+	width: 100%;
+}
+
+.memname td {
+	vertical-align: top;
+}
+
+.mlabels-right {
+	display: none;
+}
+
+h2.groupheader {
+	padding-top: -5px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #ddd;
+}
+
+.memberdecls .memItemRight {
+	color: #777;
+}
+
+.memberdecls .memItemLeft,
+.memberdecls .memItemRight a {
+	opacity: 0.8;
+}
+
+.memberdecls .memItemRight a:first-child {
+	font-weight: bold;
+	opacity: 1;
+}
+
+.memberdecls .memSeparator::before {
+	content: '';
+	display: block;
+	padding-top: 0.5em;
+	border-bottom: 1px solid #ededed;
+}
+
+.directory tr:first-child {
+	border-top: none;
+}
+
+.directory tr {
+	border-top: 1px solid #ededed;
+}
+
+.directory td {
+	padding: 0.5em 0;
+}
+
+.memberdecls .memSeparator {
+	padding-bottom: 0.5em;
+}
+
+.contents {
+	margin-top: 2em;
+}
+
+.dyncontent {
+	margin: 1em 0 1em 5em;
+}
+
+.section.see dd {
+	margin-left: 1em;
+}
