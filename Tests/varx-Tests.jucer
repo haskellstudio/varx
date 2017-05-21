@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="ggJgza" name="varx-Tests" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="de.martin-finke.varx-Tests" includeBinaryInAppConfig="1"
+              jucerVersion="5.0.0" companyName="Martin Finke" companyWebsite="http://www.martin-finke.de"
+              displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark">
+  <MAINGROUP id="J6yVM5" name="varx-Tests">
+    <GROUP id="{3E021249-15C8-F098-B5C0-2A3DBD19388C}" name="Source">
+      <GROUP id="{BBCE1761-6AF0-DAE7-65CD-AE0365C41BE7}" name="Other">
+        <FILE id="Ct7vkg" name="catch.hpp" compile="0" resource="0" file="Source/Other/catch.hpp"/>
+        <FILE id="PO03Yc" name="main.cpp" compile="1" resource="0" file="Source/Other/main.cpp"/>
+        <FILE id="yUj2m2" name="TestPrefix.h" compile="0" resource="0" file="Source/Other/TestPrefix.h"/>
+      </GROUP>
+      <GROUP id="{10CA88C8-F94B-695D-F44B-6A2C94F559D1}" name="Tests">
+        <GROUP id="{70CE7456-91AD-546D-22A0-047F436E7D5A}" name="Observable">
+          <FILE id="xFwXZV" name="CreationTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/CreationTest.cpp"/>
+          <FILE id="Eb0bDA" name="OnErrorOnCompleteTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/OnErrorOnCompleteTest.cpp"/>
+          <FILE id="yKdbQK" name="OperatorsTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/OperatorsTest.cpp"/>
+          <FILE id="ShEoW4" name="SchedulingTest.cpp" compile="1" resource="0"
+                file="Source/Tests/Observable/SchedulingTest.cpp"/>
+        </GROUP>
+        <FILE id="K3FGg8" name="DisposableTest.cpp" compile="1" resource="0"
+              file="Source/Tests/DisposableTest.cpp"/>
+        <FILE id="vc7e2E" name="ObserverTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ObserverTest.cpp"/>
+        <FILE id="wJg0X6" name="ReactiveTest.cpp" compile="1" resource="0"
+              file="Source/Tests/ReactiveTest.cpp"/>
+        <FILE id="qEsfze" name="SubjectsTest.cpp" compile="1" resource="0"
+              file="Source/Tests/SubjectsTest.cpp"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" keepCustomXcodeSchemes="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="varx-Tests"
+                       osxCompatibility="10.7 SDK" cppLanguageStandard="c++11" cppLibType="libc++"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="varx-Tests"
+                       cppLanguageStandard="c++11" cppLibType="libc++" osxCompatibility="10.7 SDK"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="varx" path="../"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2017 targetFolder="Builds/VisualStudio2017">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="1" optimisation="1" targetName="varx-Tests"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="0" optimisation="3" targetName="varx-Tests"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="varx" path="../"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2017>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="varx" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_ASIO="disabled" JUCE_WASAPI="disabled" JUCE_WASAPI_EXCLUSIVE="disabled"
+               JUCE_DIRECTSOUND="disabled" JUCE_ALSA="disabled" JUCE_JACK="disabled"
+               JUCE_USE_ANDROID_OPENSLES="disabled" JUCE_USE_FLAC="disabled"
+               JUCE_USE_OGGVORBIS="disabled" JUCE_USE_MP3AUDIOFORMAT="disabled"
+               JUCE_USE_LAME_AUDIO_FORMAT="disabled" JUCE_USE_WINDOWS_MEDIA_FORMAT="disabled"
+               JUCE_PLUGINHOST_VST="disabled" JUCE_PLUGINHOST_VST3="disabled"
+               JUCE_PLUGINHOST_AU="disabled" JUCE_USE_CDREADER="disabled" JUCE_USE_CDBURNER="disabled"
+               JUCE_ALLOW_STATIC_NULL_VARIABLES="disabled" JUCE_WEB_BROWSER="disabled"
+               JUCE_DIRECTSHOW="disabled" JUCE_MEDIAFOUNDATION="disabled" JUCE_QUICKTIME="disabled"
+               JUCE_USE_CAMERA="disabled"/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>

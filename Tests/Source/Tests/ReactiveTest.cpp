@@ -44,25 +44,25 @@ TEST_CASE("Reactive<Value> Observable",
 {
 	auto value = std::make_shared<Reactive<Value>>("Initial");
 	Array<var> items;
-	RxJUCECollectItems(value->rx.subject, items);
+	varxCollectItems(value->rx.subject, items);
 	
 	IT("emits items asynchronously when the Value changes") {
 		value->setValue("Second");
-		RxJUCECheckItems(items, "Initial");
-		RxJUCERunDispatchLoop();
-		RxJUCECheckItems(items, "Initial", "Second");
+		varxCheckItems(items, "Initial");
+		varxRunDispatchLoop();
+		varxCheckItems(items, "Initial", "Second");
 		value->setValue("Third");
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial", "Second", "Third");
+		varxRequireItems(items, "Initial", "Second", "Third");
 	}
 	
 	IT("stops emitting items immediately when being destroyed") {
 		value->setValue("Should not arrive");
 		value.reset();
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items, "Initial");
+		varxRequireItems(items, "Initial");
 	}
 }
 
@@ -71,7 +71,7 @@ TEST_CASE("Reactive<Component>",
 {
 	Array<var> items;
 	Reactive<Component> component;
-	RxJUCECollectItems(component.rx.visible, items);
+	varxCollectItems(component.rx.visible, items);
 	
 	IT("initially has the same value as the getter") {
 		REQUIRE(component.isVisible() == fromVar<bool>(component.rx.visible.getLatestItem()));
@@ -82,7 +82,7 @@ TEST_CASE("Reactive<Component>",
 			component.setVisible(visible);
 		}
 		
-		RxJUCERequireItems(items, false, true, false);
+		varxRequireItems(items, false, true, false);
 	}
 	
 	IT("changes visiblility when pushing items") {
@@ -130,7 +130,7 @@ TEST_CASE("Reactive<Button>",
 	Array<var> items;
 	
 	CONTEXT("clicked") {
-		RxJUCECollectItems(button.rx.clicked, items);
+		varxCollectItems(button.rx.clicked, items);
 		
 		IT("doesn't emit an item on subscribe") {
 			REQUIRE(items.isEmpty());
@@ -138,36 +138,36 @@ TEST_CASE("Reactive<Button>",
 		
 		IT("emits void vars asynchronously when the Button is clicked") {
 			button.triggerClick();
-			RxJUCERunDispatchLoop();
+			varxRunDispatchLoop();
 			
-			RxJUCECheckItems(items, var::undefined());
+			varxCheckItems(items, var::undefined());
 			
 			button.triggerClick();
 			button.triggerClick();
-			RxJUCERunDispatchLoop();
+			varxRunDispatchLoop();
 			
-			RxJUCERequireItems(items, var::undefined(), var::undefined(), var::undefined());
+			varxRequireItems(items, var::undefined(), var::undefined(), var::undefined());
 		}
 	}
 	
 	CONTEXT("buttonState") {
-		RxJUCECollectItems(button.rx.buttonState, items);
+		varxCollectItems(button.rx.buttonState, items);
 		
 		IT("emits the normal state on subscribe") {
-			RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
+			varxRequireItems(items, Button::ButtonState::buttonNormal);
 		}
 		
 		IT("emits items synchronously when the Button state changes") {
 			button.setState(Button::ButtonState::buttonDown);
 			
-			RxJUCECheckItems(items,
+			varxCheckItems(items,
 							 Button::ButtonState::buttonNormal,
 							 Button::ButtonState::buttonDown);
 			
 			button.setState(Button::ButtonState::buttonNormal);
 			button.setState(Button::ButtonState::buttonOver);
 			
-			RxJUCERequireItems(items,
+			varxRequireItems(items,
 							   Button::ButtonState::buttonNormal,
 							   Button::ButtonState::buttonDown,
 							   Button::ButtonState::buttonNormal,
@@ -176,10 +176,10 @@ TEST_CASE("Reactive<Button>",
 	}
 	
 	CONTEXT("toggleState") {
-		RxJUCECollectItems(button.rx.toggleState, items);
+		varxCollectItems(button.rx.toggleState, items);
 		
 		IT("emits false on subscribe") {
-			RxJUCERequireItems(items, false);
+			varxRequireItems(items, false);
 		}
 		
 		IT("emits values when calling the JUCE setter") {
@@ -188,7 +188,7 @@ TEST_CASE("Reactive<Button>",
 			button.setToggleState(false, sendNotificationSync);
 			button.setToggleState(true, sendNotificationSync);
 			
-			RxJUCERequireItems(items, false, true, false, true);
+			varxRequireItems(items, false, true, false, true);
 		}
 		
 		IT("sets the value when pushing items") {
@@ -202,19 +202,19 @@ TEST_CASE("Reactive<Button>",
 			button.setClickingTogglesState(true);
 			
 			button.triggerClick();
-			RxJUCERunDispatchLoop();
+			varxRunDispatchLoop();
 			CHECK(button.rx.toggleState.getLatestItem() == var(true));
 		
 			button.triggerClick();
 			button.triggerClick();
-			RxJUCERunDispatchLoop();
+			varxRunDispatchLoop();
 			CHECK(button.rx.toggleState.getLatestItem() == var(true));
 			
 			button.triggerClick();
-			RxJUCERunDispatchLoop();
+			varxRunDispatchLoop();
 			CHECK(button.rx.toggleState.getLatestItem() == var(false));
 			
-			RxJUCERequireItems(items, false, true, false, true, false);
+			varxRequireItems(items, false, true, false, true, false);
 		}
 	}
 	
@@ -269,20 +269,20 @@ TEST_CASE("Reactive<Button> with custom TextButton subclass",
 	
 	Reactive<MyButton> button;
 	Array<var> items;
-	RxJUCECollectItems(button.rx.buttonState, items);
+	varxCollectItems(button.rx.buttonState, items);
 	
 	IT("initially has the normal state") {
-		RxJUCERequireItems(items, Button::ButtonState::buttonNormal);
+		varxRequireItems(items, Button::ButtonState::buttonNormal);
 	}
 	
 	IT("changes states when calling the method in the custom subclass") {
 		button.hoverAcrossButton();
-		RxJUCECheckItems(items,
+		varxCheckItems(items,
 						 Button::ButtonState::buttonNormal,
 						 Button::ButtonState::buttonOver);
-		RxJUCERunDispatchLoop();
+		varxRunDispatchLoop();
 		
-		RxJUCERequireItems(items,
+		varxRequireItems(items,
 						   Button::ButtonState::buttonNormal,
 						   Button::ButtonState::buttonOver,
 						   Button::ButtonState::buttonNormal);
@@ -297,19 +297,19 @@ TEST_CASE("Reactive<Label>",
 	Array<var> items;
 	
 	CONTEXT("text") {
-		RxJUCECollectItems(label.rx.text, items);
+		varxCollectItems(label.rx.text, items);
 		
 		IT("initially emits the empty String") {
 			CHECK(label.getText().isEmpty());
 			
-			RxJUCERequireItems(items, label.getText());
+			varxRequireItems(items, label.getText());
 		}
 		
 		IT("emits items when the Label changes its text") {
 			label.setText("Foo", sendNotificationSync);
 			label.setText("Bar", sendNotificationSync);
 			
-			RxJUCERequireItems(items, "", "Foo", "Bar");
+			varxRequireItems(items, "", "Foo", "Bar");
 		}
 		
 		IT("changes the Label text synchronously when calling onNext") {
@@ -318,13 +318,13 @@ TEST_CASE("Reactive<Label>",
 				REQUIRE(label.getText() == text);
 			}
 			
-			RxJUCERequireItems(items, "", "Hello", "World!");
+			varxRequireItems(items, "", "Hello", "World!");
 		}
 	}
 	
 	CONTEXT("showEditor, discardChangesWhenHidingEditor and textEditor") {
 		DisposeBag disposeBag;
-		RxJUCECollectItems(label.rx.showEditor, items);
+		varxCollectItems(label.rx.showEditor, items);
 		
 		Array<Component *> editors;
 		label.rx.textEditor.subscribe([&](var editor) {
@@ -338,20 +338,20 @@ TEST_CASE("Reactive<Label>",
 			CHECK(label.getCurrentTextEditor() == nullptr);
 			CHECK(editors == Array<Component *>({nullptr}));
 			
-			RxJUCERequireItems(items, false);
+			varxRequireItems(items, false);
 		}
 		
 		IT("remains false if the discard setting is changed") {
 			label.rx.discardChangesWhenHidingEditor.onNext(true);
 			CHECK(label.getCurrentTextEditor() == nullptr);
-			RxJUCECheckItems(items, false);
+			varxCheckItems(items, false);
 			CHECK(editors == Array<Component *>({nullptr}));
 			
 			label.rx.discardChangesWhenHidingEditor.onNext(false);
 			REQUIRE(label.getCurrentTextEditor() == nullptr);
 			CHECK(editors == Array<Component *>({nullptr}));
 			
-			RxJUCERequireItems(items, false);
+			varxRequireItems(items, false);
 		}
 		
 		IT("becomes true/non-null when calling Label::showEditor") {
@@ -360,7 +360,7 @@ TEST_CASE("Reactive<Label>",
 			CHECK(editors.size() == 2);
 			CHECK(editors.getLast() != nullptr);
 			
-			RxJUCERequireItems(items, false, true);
+			varxRequireItems(items, false, true);
 			
 			IT("becomes false/nullptr when calling Label::hideEditor") {
 				label.hideEditor(true);
@@ -368,13 +368,13 @@ TEST_CASE("Reactive<Label>",
 				CHECK(editors.size() == 3);
 				CHECK(editors.getLast() == nullptr);
 				
-				RxJUCERequireItems(items, false, true, false);
+				varxRequireItems(items, false, true, false);
 			}
 		}
 		
 		IT("shows the editor when pushing true") {
 			label.rx.showEditor.onNext(true);
-			RxJUCECheckItems(items, false, true);
+			varxCheckItems(items, false, true);
 			CHECK(editors.size() == 2);
 			CHECK(editors.getLast() != nullptr);
 			
@@ -383,7 +383,7 @@ TEST_CASE("Reactive<Label>",
 			IT("keeps showing the editor even if the discard setting changes") {
 				label.rx.discardChangesWhenHidingEditor.onNext(false);
 				label.rx.discardChangesWhenHidingEditor.onNext(true);
-				RxJUCECheckItems(items, false, true);
+				varxCheckItems(items, false, true);
 				CHECK(editors.size() == 2);
 				CHECK(editors.getLast() != nullptr);
 				
@@ -392,7 +392,7 @@ TEST_CASE("Reactive<Label>",
 			
 			IT("hides the editor when pushing false") {
 				label.rx.showEditor.onNext(false);
-				RxJUCECheckItems(items, false, true, false);
+				varxCheckItems(items, false, true, false);
 				CHECK(editors.size() == 3);
 				CHECK(editors.getLast() == nullptr);
 				
@@ -578,25 +578,25 @@ TEST_CASE("Reactive<Slider>",
 	Array<var> items;
 	
 	CONTEXT("value") {
-		RxJUCECollectItems(slider.rx.value, items);
+		varxCollectItems(slider.rx.value, items);
 		
 		IT("initially has the Slider value") {
-			RxJUCERequireItems(items, 10);
+			varxRequireItems(items, 10);
 		}
 		
 		IT("emits items when the Slider value changes") {
 			slider.setValue(3, sendNotificationSync);
 			slider.setValue(7.45, sendNotificationSync);
 			
-			RxJUCERequireItems(items, 10.0, 3.0, 7.45);
+			varxRequireItems(items, 10.0, 3.0, 7.45);
 		}
 	}
 	
 	CONTEXT("dragging") {
-		RxJUCECollectItems(slider.rx.dragging, items);
+		varxCollectItems(slider.rx.dragging, items);
 		
 		IT("is initially false") {
-			RxJUCERequireItems(items, false);
+			varxRequireItems(items, false);
 		}
 	}
 	
@@ -643,9 +643,9 @@ TEST_CASE("Reactive<Slider>",
 		slider.setMaxValue(8.45, sendNotificationSync);
 		
 		Array<var> minValues;
-		RxJUCECollectItems(slider.rx.minValue, minValues);
+		varxCollectItems(slider.rx.minValue, minValues);
 		Array<var> maxValues;
-		RxJUCECollectItems(slider.rx.maxValue, maxValues);
+		varxCollectItems(slider.rx.maxValue, maxValues);
 		
 		IT("initially has the values set on the slider") {
 			REQUIRE(slider.rx.minValue.getLatestItem() == var(1));
@@ -658,8 +658,8 @@ TEST_CASE("Reactive<Slider>",
 			slider.setMaxValue(8, sendNotificationSync);
 			slider.setValue(6, sendNotificationSync);
 			
-			RxJUCERequireItems(minValues, 1.0, 0.3, 1.344);
-			RxJUCERequireItems(maxValues, 8.45, 6.77, 8.0);
+			varxRequireItems(minValues, 1.0, 0.3, 1.344);
+			varxRequireItems(maxValues, 8.45, 6.77, 8.0);
 		}
 		
 		IT("calls setMinValue when pushing min values") {

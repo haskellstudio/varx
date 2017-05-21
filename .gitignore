@@ -6,3 +6,6 @@ xcuserdata
 /Tests/JuceLibraryCode
 /Tests/Builds
 /doxygen/doc
+/examples/Demo/Builds
+/examples/Demo/JuceLibraryCode
+/JUCE

@@ -42,6 +42,14 @@ body {
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+#titlearea, #MSearchBox {
+    display: none;
+}
+
+#main-menu {
+    background: ;
+}
+
 .memtitle .permalink {
 	margin-right: 5px;
 }
