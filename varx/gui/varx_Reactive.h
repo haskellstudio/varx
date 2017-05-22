@@ -46,9 +46,9 @@ class Reactive;
  
 		myValue.rx.subject.map(...).filter(...).subscribe(...);
  
-	And you can bind this value to some Observable, to change the value whenever the Observable emits an item:
+	And you can subscribe this value to some Observable, to change the value whenever the Observable emits an item:
 	
-		myValue.rx.subject.bindTo(someObservable);
+		someObservable.subscribe(myValue.rx.subject);
  */
 template<>
 class Reactive<juce::Value> : public juce::Value

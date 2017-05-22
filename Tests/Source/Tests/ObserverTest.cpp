@@ -47,7 +47,7 @@ TEST_CASE("Observer",
 		REQUIRE(completed);
 	}
 	
-	IT("can be bound to an Observable") {
+	IT("can subscribe to an Observable") {
 		DisposeBag disposeBag;
 		
 		// Create subject
@@ -58,9 +58,9 @@ TEST_CASE("Observer",
 		Array<var> items;
 		varxCollectItems(subject, items);
 		
-		// Bind observer to some observable
+		// Subscribe observer to some observable
 		Observer observer = subject.asObserver();
-		observer.bindTo(Observable::from({3, 4, 5})).disposedBy(disposeBag);
+		Observable::from({3, 4, 5}).subscribe(observer).disposedBy(disposeBag);
 		
 		// Subject should received items from Observable
 		varxRequireItems(items, var("Initial Value"), var(3), var(4), var(5));

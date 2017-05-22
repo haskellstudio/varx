@@ -31,13 +31,6 @@ public:
 	/** Notifies the Observer that no more values will be pushed. */
 	void onCompleted() const;
 	
-	/**
-		Binds the Observer to an Observable. Whenever the Observable emits an item, Observer::onNext is called with that item.
-	 
-		​ **You are responsible for managing the returned Disposable. It doesn't automatically expire when this Observer is destroyed.**
-	 */
-	Disposable bindTo(const Observable& observable) const;
-	
 private:
 	friend class Subject;
 	friend class Observable;

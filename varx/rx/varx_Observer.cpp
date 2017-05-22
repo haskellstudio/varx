@@ -26,10 +26,4 @@ void Observer::onCompleted() const
 	impl->wrapped.on_completed();
 }
 
-Disposable Observer::bindTo(const Observable& observable) const
-{
-	Observer self = *this;
-	return observable.subscribe([self](const var& next) { self.onNext(next); });
-}
-
 

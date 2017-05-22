@@ -130,6 +130,13 @@ Disposable Observable::subscribe(const std::function<void(const var&)>& onNext,
 	return subscribe(onNext, onError, onCompleted);
 }
 
+Disposable Observable::subscribe(const Observer& observer) const
+{
+	auto disposable = impl->wrapped.subscribe(observer.impl->wrapped);
+	
+	return Disposable(std::make_shared<Disposable::Impl>(disposable));
+}
+
 
 #pragma mark - Operators
 

@@ -6,7 +6,7 @@ varx uses the great [RxCpp](https://github.com/Reactive-Extensions/RxCpp) under 
 
 
 
-**[Download Latest Version](https://github.com/martinfinke/varx/releases/download/v0.6.0/varx-v0.6.0.zip)**
+**[Download Latest Version](https://github.com/martinfinke/varx/releases/download/v0.6.1/varx-v0.6.1.zip)**
 
 
 
@@ -111,7 +111,7 @@ Then we put two lines in the constructor:
 
 ```cpp
 Observable text = distortionSlider.rx.value.map(&MainComponent::textForDistortion);
-warmthLabel.rx.text.bindTo(text);
+text.subscribe(warmthLabel.rx.text);
 ```
 
 And that's it. No need to inherit, listen, or add a member function. And no need to set the initial text by hand.
@@ -126,7 +126,7 @@ To find out what `Observable`, `rx` and `map` is all about, continue with [Getti
 
 ## Installation
 
-[Download](https://github.com/martinfinke/varx/releases/download/v0.6.0/varx-v0.6.0.zip) varx and un-zip it. In Projucer, expand the *Modules* section, click the `+` button and choose *“Add a module from a specified folder…”*:
+[Download](https://github.com/martinfinke/varx/releases/download/v0.6.1/varx-v0.6.1.zip) varx and un-zip it. In Projucer, expand the *Modules* section, click the `+` button and choose *“Add a module from a specified folder…”*:
 
 <img src="img/projucer-add-module.png" width="603" height="503">
 
@@ -172,12 +172,12 @@ And then there's `.map(&MainComponent::textForDistortion)`. This `map` has nothi
 Now for the second line:
 
 ```cpp
-warmthLabel.rx.text.bindTo(text);
+text.subscribe(warmthLabel.rx.text);
 ```
 
 `warmthLabel.rx.text` is an `Observer`. **An Observer receives values and does something whenever a new value arrives**. The `warmthLabel.rx.text` observer calls JUCE's [`Label::setText`](https://www.juce.com/doc/classLabel#a3f0ca22cb63e924d3db23da48c210790) with every new value, making the `Label` update its text on the screen.
 
-Finally, the `.bindTo(text)` means: Whenever `text` changes its value, notify the `warmthLabel.rx.text` observer. Here, it also notifies the `Observer` with the current value.
+Finally, the `text.subscribe(...)` means: Whenever `text` changes its value, notify the `warmthLabel.rx.text` observer. Here, it also notifies the `Observer` with the current value.
 
 So to recap, **an Observable emits values, an Observer receives them**. Here we've used this to update a `Label` depending on a `Slider` value, by turning each new value into a `String`.
 
@@ -208,7 +208,7 @@ The `combineLatest` member function combines multiple observables into one, usin
 
 ### Subscribing
 
-In many cases, we can use `bindTo` to connect an `Observer` to an `Observable`. But what if we want to execute some piece of code whenever an `Observable` emits a new value? Simple: You just `subscribe` to the `Observable`:
+As we've seen, we can use `text.subscribe(someObserver)` to connect an `Observer` to an `Observable`. But what if we want to execute some piece of code whenever an `Observable` emits a new value? Simple: You just pass a lambda to `subscribe`:
 
 ```cpp
 DisposeBag disposeBag;

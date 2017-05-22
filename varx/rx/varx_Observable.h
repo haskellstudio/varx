@@ -136,6 +136,15 @@ public:
 						   const std::function<void(Error)>& onError = TerminateOnError) const;
 	///@}
 	
+	///@{
+	/**
+		Subscribes an Observer to an Observable. The Observer is notified whenever the Observable emits an item, or notifies an onError / onCompleted.
+	 
+		The returned Disposable can be used to unsubscribe the Observer, so it stops being notified by this Observable. **The Observer keeps receiving values until you call Disposable::dispose, or until the Observable source is destroyed**. The best way is to use a DisposeBag, which automatically unsubscribes when it is destroyed.
+	 */
+	Disposable subscribe(const Observer& observer) const;
+	///@}
+	
 	
 #pragma mark - Transform Functions
 	///@{
